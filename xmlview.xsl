@@ -14,7 +14,7 @@
 			</head>
 			<body>
 				<div class="b-page">
-					<xsl:apply-templates select="*" mode="xmlview"/>
+					<xsl:apply-templates select="* | comment()" mode="xmlview"/>
 				</div>
 			</body>
 		</html>
