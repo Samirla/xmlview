@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!-- comment -->
+<!--
+	multi
+	line
+	comment
+-->
+<xyz:foo xmlns:xlink='xlink-url' xmlns:xyz='abc' attr1='val"ue1' attr2="valu'e2" attr3="valu'&quot;e2"> <bar>
+
+<test xmlns='http://example.com/def'>asdf</test>
+
+<sub><xyz:bar>test</xyz:bar></sub>
+<selfclosed/>
+
+<selfclosed with='attributes'/>
+
+<attribute bothquotes='"&apos;'/>
+
+<attribute xlink:escaped_attr_values='&amp; &lt;'/>
+<attribute escaped_attr_values='&amp; &lt;'/>
+
+<bar:selfclosed xmlns:bar='http://example.com'/>
+
+<?processing instruction?>
+
+&#76;
+
+&amp;
+
+&lt;
+
+<span>&#76;&amp;&lt;</span>
+
+			<style type='text/css'>
+				body {
+					font-family: monospace;
+				}
+				
+				div.comment {
+					color: #555;
+					white-space: pre;
+				}
+				
+				div.xmlpi {
+					color: red;
+				}
+				
+				div.mixedcontent {
+					margin-left: 10px;
+				}
+				
+				span.tag {
+					color: #11a;
+				}
+				
+				span.attribute.name {
+					color: #080;
+				}
+
+				span.attribute.value {
+					color: black;
+				}
+				
+				span.namespace {
+					color: #88f;
+				}
+				
+				
+				/*
+				span.text {
+					white-space: pre;
+				}
+				*/
+			</style>
+
+<!--
+
+<markup>in comment</markup>
+
+-->
+<foo xlink:foo='baz'>
+ <xyz:what> <a xlink:foo='bar'> <mess/>
+ 
+ ö ä ü
+ 
+ ⌘ ⌥ ⇧ ⌫
+  </a>
+    </xyz:what> </foo></bar>
+<element>
+	text content
+			</element>
+</xyz:foo>
+

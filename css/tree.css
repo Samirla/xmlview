@@ -1,0 +1,23 @@
+/*
+ * UI behavior of document tree
+ */
+
+.x-tag-name,
+.x-tag-attr-name,
+.x-tag-attr-value {
+	cursor:pointer;
+}
+
+/* .x-tag-name:hover,
+.x-tag-attr-name:hover,
+.x-tag-attr-value:hover {
+	background-color:#d7e8f3;
+	border:1px solid #c7e0eb;
+	margin:-2px -3px;
+	background-image:-webkit-gradient(linear, 0% 0%, 0% 100%, from(#e6f0f7), to(#cde2f0));
+	z-index:2;
+} */
+
+.x-comment-content {
+	display:inline-block;
+}

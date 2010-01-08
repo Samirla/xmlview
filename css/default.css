@@ -1,0 +1,33 @@
+/*
+ * Default there of XML tag styling
+ * Inspired by Espresso
+ */
+
+.x-tag-open,
+.x-tag-close {
+	color: #5FAFEF;
+}
+
+.x-tag-name {
+	color: #2F6F9F;
+}
+
+.x-tag-attr {
+	color: #e69a4c;
+}
+
+.x-tag-attr-name {
+	color: #4F9FCF;
+}
+
+.x-tag-attr-value {
+	color: #bc670f;
+}
+
+.x-tag-content {
+	margin-left:4ex;
+}
+
+.x-comment {
+	color: #bbb;
+}
