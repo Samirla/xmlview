@@ -31,3 +31,9 @@
 .x-comment {
 	color: #bbb;
 }
+
+/* Processing instruction */
+.x-pi {
+	color: #d44950;
+	font-style:italic;
+}
