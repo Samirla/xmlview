@@ -150,31 +150,68 @@
 	}
 	
 	/**
+	 * Returns list of child elements with specified class name
+	 * @param {Element} parent
+	 * @param {String} class_name
+	 * @return {Element[]}
+	 */
+	function byClass(parent, class_name) {
+		var result = [],
+			children = parent.childNodes;
+			
+		for (var i = 0, il = children.length; i < il; i++) {
+			/** @type {Element} */
+			var child = children[i];
+			if (child.nodeType == 1 && hasClass(child, class_name))
+				result.push(child);
+		}
+		
+		return result;
+	}
+	
+	/**
+	 * Returns first element's <code>nodeValue</code> from <code>byClass()</code>
+	 * function call
+	 * @param {Element} parent
+	 * @param {String} class_name
+	 * @return {String}
+	 */
+	function valueByClass(parent, class_name) {
+		var list = byClass(parent, class_name);
+		if (list.length && list[0].firstChild)
+			return list[0].firstChild.nodeValue;
+		else
+			return '';
+	}
+	
+	/**
 	 * Transforms current colorized document tree into a XML string
 	 * for parsing using
-	 * @param {Element} [context] Search starting point (default is <code>document</code>) 
+	 * @param {Element} context Search starting point (default is <code>document</code>) 
 	 * @param {Tag} [root] Root tag 
 	 */
 	function documentToXMLString(context, root) {
-		context = context || document;
 		root = root || new Tag();
 		
-		$(context).contents()
-			.each(function(){
-				switch (this.nodeType) {
-					case 1:
-						if (hasClass(this, 'x-tag') || hasClass(this, 'x-tag-compact')) {
-							var tag = parseTag(this);
-							root.addChild(tag);
-							documentToXMLString($(this).find('>.x-tag-content'), tag);
-						}
-						break;
-					case 3: // text node
-						if (!isWhiteSpace(this.nodeValue))
-							root.addChild(new TextNode(this.nodeValue));
-						break;
-				}
-			});
+		if (!context) return;
+		
+		var children = context.childNodes;
+		for (var i = 0, il = children.length; i < il; i++) {
+			var child = children[i];
+			switch (child.nodeType) {
+				case 1:
+					if (hasClass(child, 'x-tag') || hasClass(child, 'x-tag-compact')) {
+						var tag = parseTag(child);
+						root.addChild(tag);
+						documentToXMLString(byClass(child, 'x-tag-content')[0], tag);
+					}
+					break;
+				case 3: // text node
+					if (!isWhiteSpace(child.nodeValue))
+						root.addChild(new TextNode(child.nodeValue));
+					break;
+			}
+		}
 		
 		return root;
 	}
@@ -185,13 +222,15 @@
 	 * @return {Tag}
 	 */
 	function parseTag(elem) {
-		elem = $(elem);
-		var open_tag = elem.find('>.x-tag-open');
-		var tag = new Tag(open_tag.find('.x-tag-name').text());
-		open_tag.find('.x-tag-attr').each(function(){
-			var attr = $(this);
-			tag.addAttribute(attr.find('.x-tag-attr-name').text(), attr.find('.x-tag-attr-value').text());
-		});
+//		elem = $(elem);
+		var open_tag = byClass(elem, 'x-tag-open')[0];
+		var tag = new Tag(valueByClass(open_tag, 'x-tag-name'));
+		
+		var attrs = byClass(open_tag, 'x-tag-attr');
+		for (var i = 0, il = attrs.length; i < il; i++) {
+			var attr = attrs[i]
+			tag.addAttribute(valueByClass(attr, 'x-tag-attr-name'), valueByClass(attr, 'x-tag-attr-value'));
+		}
 		
 		return tag;
 	}
