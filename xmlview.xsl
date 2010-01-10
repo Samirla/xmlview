@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns="http://www.w3.org/1999/xhtml">
+<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 	<xsl:output encoding="utf-8" method="html" indent="no"/>
 	
 	<xsl:param name="escape_chars" select="true()"/>
@@ -11,6 +11,10 @@
 				<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 				<title>XML view</title>
 				<link rel="stylesheet" href="../css/main.css" />
+				<script type="text/javascript" src="../src/jquery-1.3.2.min.js"></script>
+				<script type="text/javascript" src="../src/xmlview.js"></script>
+				<script type="text/javascript" src="../src/parser.js"></script>
+			 	<script type="text/javascript" src="../src/controller.js"></script>
 			</head>
 			<body>
 				<div class="b-page">
@@ -20,30 +24,20 @@
 		</html>
 	</xsl:template>
 	
-	<!-- Tag -->	<xsl:template match="*" mode="xmlview">		<div class="x-tag-open">
-			<xsl:text>&lt;</xsl:text>
-			<span class="x-tag-name">
-				<xsl:value-of select="name()"/>
-				<xsl:apply-templates select="." mode="xmlview_namespaces"/>
-				<xsl:apply-templates select="@*" mode="xmlview"/>
-			</span>
-			<xsl:text>&gt;</xsl:text>
-		</div>
-		<xsl:apply-templates select="." mode="xmlview_tag_content"/>
-				<div class="x-tag-close">&lt;/<span class="x-tag-name"><xsl:value-of select="name()"/></span>&gt;</div>
+	<!-- Tag -->	<xsl:template match="*" mode="xmlview">		<div class="x-tag">			<div class="x-tag-open">				<xsl:text>&lt;</xsl:text>				<xsl:apply-templates select="." mode="xmlview_open_tag"/>				<xsl:text>&gt;</xsl:text>			</div>			<xsl:apply-templates select="." mode="xmlview_tag_content"/>						<div class="x-tag-close">&lt;/<span class="x-tag-name"><xsl:value-of select="name()"/></span>&gt;</div>		</div>
 	</xsl:template>
 	
 	<!-- Empty tag -->	<xsl:template match="*[not(node())]" mode="xmlview">		<div class="x-tag-compact">
 			<div class="x-tag-open">
 				<xsl:text>&lt;</xsl:text>
-				<span class="x-tag-name">
-					<xsl:value-of select="name()"/>
-					<xsl:apply-templates select="." mode="xmlview_namespaces"/>
-					<xsl:apply-templates select="@*" mode="xmlview"/>
-				</span>
+				<xsl:apply-templates select="." mode="xmlview_open_tag"/>
 				<xsl:text>/&gt;</xsl:text>
 			</div>
 		</div>	</xsl:template>
+	
+	<!-- Opening tag contents -->	<xsl:template match="*" mode="xmlview_open_tag">		<span class="x-tag-name"><xsl:value-of select="name()"/></span>
+		<xsl:apply-templates select="." mode="xmlview_namespaces"/>
+		<xsl:apply-templates select="@*" mode="xmlview"/>	</xsl:template>
 	
 	<!-- Tag content -->	<xsl:template match="*" mode="xmlview_tag_content">		<div class="x-tag-content">			<xsl:apply-templates select="." mode="xmlview_content"/>		</div>	</xsl:template>
 	
