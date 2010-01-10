@@ -130,7 +130,7 @@
 	function hasClass(elem, class_name) {
 		class_name = ' ' + class_name + ' ';
 		var _cl = elem.className;
-		return _cl && (' ' + _cl + ' ').replace(/[\t\n]/g, ' ').indexOf(class_name) >= 0;
+		return _cl && (' ' + _cl + ' ').indexOf(class_name) >= 0;
 	}
 	
 	/**
