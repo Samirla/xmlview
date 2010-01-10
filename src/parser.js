@@ -155,17 +155,27 @@
 	 * @param {String} class_name
 	 * @return {Element[]}
 	 */
-	function byClass(parent, class_name) {
+	function byClass(parent, class_name, is_single) {
 		var result = [],
 			children = parent.childNodes;
 			
-		for (var i = 0, il = children.length; i < il; i++) {
-			/** @type {Element} */
-			var child = children[i];
-			if (child.nodeType == 1 && hasClass(child, class_name))
-				result.push(child);
+		// one 'if' is faster that 100 'if's
+		if (is_single) {
+			for (var i = 0, il = children.length; i < il; i++) {
+				/** @type {Element} */
+				var child = children[i];
+				if (child.nodeType == 1 && hasClass(child, class_name))
+					return child;
+			}
+		} else {
+			for (var i = 0, il = children.length; i < il; i++) {
+				/** @type {Element} */
+				var child = children[i];
+				if (child.nodeType == 1 && hasClass(child, class_name))
+					result.push(child);
+			}
 		}
-		
+			
 		return result;
 	}
 	
@@ -177,9 +187,9 @@
 	 * @return {String}
 	 */
 	function valueByClass(parent, class_name) {
-		var list = byClass(parent, class_name);
-		if (list.length && list[0].firstChild)
-			return list[0].firstChild.nodeValue;
+		var elem = byClass(parent, class_name, true);
+		if (elem && elem.firstChild)
+			return elem.firstChild.nodeValue;
 		else
 			return '';
 	}
