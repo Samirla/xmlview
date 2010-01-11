@@ -18,7 +18,7 @@
 	 * @return {Number}
 	 */
 	function generateId() {
-		return _id++;
+		return String(++_id);
 	}
 	
 	/**
@@ -74,7 +74,7 @@
 		
 		addAttribute: function(name, value) {
 			if (name)
-				this.attributes[name] = value;
+				this.attributes[name] = String(value);
 		},
 		
 		toString: function() {
@@ -236,9 +236,13 @@
 		var open_tag = byClass(elem, 'x-tag-open')[0];
 		var tag = new Tag(valueByClass(open_tag, 'x-tag-name'));
 		
+		var tag_id = generateId();
+		tag.addAttribute('x__xmlview_id', tag_id);
+		element_map[tag_id] = elem;
+		
 		var attrs = byClass(open_tag, 'x-tag-attr');
 		for (var i = 0, il = attrs.length; i < il; i++) {
-			var attr = attrs[i]
+			var attr = attrs[i];
 			tag.addAttribute(valueByClass(attr, 'x-tag-attr-name'), valueByClass(attr, 'x-tag-attr-value'));
 		}
 		
@@ -288,5 +292,5 @@
 		},
 		
 		toXml: toXml
-	}
+	};
 })();
