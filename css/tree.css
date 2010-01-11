@@ -21,3 +21,13 @@
 .x-comment-content {
 	display:inline-block;
 }
+
+.x-tag-compact > .x-tag-open,
+.x-tag-compact > .x-tag-content,
+.x-tag-compact > .x-tag-close {
+	display:inline-block;
+}
+
+.x-tag-compact > .x-tag-content {
+	margin-left:0;
+}

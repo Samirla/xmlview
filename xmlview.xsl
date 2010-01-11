@@ -4,6 +4,9 @@
 	
 	<xsl:param name="escape_chars" select="true()"/>
 	
+	<!-- Maximum characters length for cor compact (e.g. on single line) tag representation -->
+	<xsl:param name="compact_length" select="number(50)"/>
+	
 	<xsl:template match="/">
 		<xsl:text disable-output-escaping="yes">&lt;!DOCTYPE html&gt;</xsl:text>
 		<html>
@@ -24,7 +27,9 @@
 		</html>
 	</xsl:template>
 	
-	<!-- Tag -->	<xsl:template match="*" mode="xmlview">		<div class="x-tag">			<div class="x-tag-open">				<xsl:text>&lt;</xsl:text>				<xsl:apply-templates select="." mode="xmlview_open_tag"/>				<xsl:text>&gt;</xsl:text>			</div>			<xsl:apply-templates select="." mode="xmlview_tag_content"/>						<div class="x-tag-close">&lt;/<span class="x-tag-name"><xsl:value-of select="name()"/></span>&gt;</div>		</div>
+	<!-- Tag -->	<xsl:template match="*" mode="xmlview">		<div class="x-tag">
+			<xsl:attribute name="class">
+				<xsl:text>x-tag</xsl:text>				<xsl:if test="not(./*) and string-length(text()) &lt;= $compact_length">					x-tag-compact				</xsl:if>			</xsl:attribute>			<div class="x-tag-open">				<xsl:text>&lt;</xsl:text>				<xsl:apply-templates select="." mode="xmlview_open_tag"/>				<xsl:text>&gt;</xsl:text>			</div>			<xsl:apply-templates select="." mode="xmlview_tag_content"/>						<div class="x-tag-close">&lt;/<span class="x-tag-name"><xsl:value-of select="name()"/></span>&gt;</div>		</div>
 	</xsl:template>
 	
 	<!-- Selfclosing tag -->	<xsl:template match="*[not(node())]" mode="xmlview">		<div class="x-tag-selfclosing">
