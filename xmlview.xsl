@@ -27,7 +27,7 @@
 	<!-- Tag -->	<xsl:template match="*" mode="xmlview">		<div class="x-tag">			<div class="x-tag-open">				<xsl:text>&lt;</xsl:text>				<xsl:apply-templates select="." mode="xmlview_open_tag"/>				<xsl:text>&gt;</xsl:text>			</div>			<xsl:apply-templates select="." mode="xmlview_tag_content"/>						<div class="x-tag-close">&lt;/<span class="x-tag-name"><xsl:value-of select="name()"/></span>&gt;</div>		</div>
 	</xsl:template>
 	
-	<!-- Empty tag -->	<xsl:template match="*[not(node())]" mode="xmlview">		<div class="x-tag-compact">
+	<!-- Selfclosing tag -->	<xsl:template match="*[not(node())]" mode="xmlview">		<div class="x-tag-selfclosing">
 			<div class="x-tag-open">
 				<xsl:text>&lt;</xsl:text>
 				<xsl:apply-templates select="." mode="xmlview_open_tag"/>
