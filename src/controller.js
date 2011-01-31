@@ -111,7 +111,9 @@ var xv_controller = (function(){
 		process: function(data) {
 			var tree = xv_renderer.render(data, 1);
 			return tree;
-			
-		}
+		},
+		
+		expandNode: expandNode,
+		collapseNode: collapseNode
 	};
 })();
