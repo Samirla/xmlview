@@ -14,10 +14,10 @@ var xv_controller = (function(){
 	 */
 	function highlightElement(elem) {
 		elem = $(elem);
-		if (selected_elem)
+		if (selected_elem && selected_elem[0] != elem[0])
 			selected_elem.removeClass('selected');
 			
-		selected_elem = elem.addClass('selected');
+		selected_elem = elem.toggleClass('selected');
 	}
 	
 	/**
