@@ -29,8 +29,17 @@ var xv_controller = (function(){
 		return $(elem).hasClass('xv-has-unprocessed');
 	}
 	
-	function expandNode(elem) {
+	/**
+	 * Expand node
+	 * @param {Element|jQuery} elem Node to expand
+	 * @param {Boolean} is_recursive Recursively expand all child nodes
+	 */
+	function expandNode(elem, is_recursive) {
 		elem = $(elem);
+		
+		if (!elem.hasClass('xv-collapsed')) // additional check for recursive calls
+			return;
+		
 		// check if current node has unprocessed children
 		elem.removeClass('xv-collapsed');
 		if (hasUnprocessedChildren(elem)) {
@@ -46,13 +55,39 @@ var xv_controller = (function(){
 			cur_child.empty().append(f);
 			elem.removeClass('xv-has-unprocessed');
 		}
+		
+		if (is_recursive) {
+			elem.find('.xv-collapsed').each(function() {
+				expandNode(this, is_recursive);
+			});
+		}
+	}
+	
+	/**
+	 * Collapse expanded node
+	 * @param {Element|jQuery} elem Node to collapse
+	 * @param {Boolean} is_recursive Recursively collapse all child nodes
+	 */
+	function collapseNode(elem, is_recursive) {
+		elem = $(elem);
+		
+		if (elem.hasClass('xv-collapsed')) // additional check for recursive calls
+			return;
+			
+		elem.addClass('xv-collapsed');
+		
+		if (is_recursive) {
+			elem.find('.xv-tag').not('.xv-collapsed').not('.xv-one-line').each(function() {
+				collapseNode(this);
+			});
+		}
 	}
 		
 	$(document).delegate('.xv-tag-open, .xv-tag-close', 'click', function(/* Event */ evt) {
 		var elem = $(this).closest('.xv-tag');
 		if (elem.length) {
 			if (elem.hasClass('xv-collapsed')) {
-				expandNode(elem);
+				expandNode(elem, !!evt.altKey);
 			} else {
 				highlightElement(elem);
 			}
@@ -62,9 +97,9 @@ var xv_controller = (function(){
 	$(document).delegate('.xv-tag-switcher', 'click', function(evt) {
 		var elem = $(this).closest('.xv-tag');
 		if (elem.hasClass('xv-collapsed')) {
-			expandNode(elem);
+			expandNode(elem, !!evt.altKey);
 		} else {
-			elem.addClass('xv-collapsed');
+			collapseNode(elem, !!evt.altKey);
 		}
 	});
 	

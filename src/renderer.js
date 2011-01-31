@@ -63,7 +63,7 @@
 	 */
 	function canBeCollapsed(node) {
 		var child = node.childNodes;
-		return child.length && (child.length > 1 || node.firstChild.nodeType != 3);
+		return node.childNodes.length && (child.length > 1 || node.firstChild.nodeType != 3);
 	}
 	
 	/**
@@ -87,13 +87,16 @@
 			&& node.firstChild.nodeValue.length < 100;
 		
 		var result = [],
-			add_class = '';
+			add_class = '',
+			skip_children = false;
 			
 		if (is_one_liner || !node.childNodes.length)
 			add_class += ' xv-one-line';
 			
-		if (!depth && canBeCollapsed(node))
+		if (!depth && canBeCollapsed(node)) {
+			skip_children = true;
 			add_class += ' xv-collapsed xv-has-unprocessed';
+		}
 			
 		result.push('<span class="xv-tag' + add_class + '" data-xv-id="' + generateId(node) + '">');
 		result.push('<span class="xv-tag-switcher"></span>');
@@ -109,7 +112,7 @@
 			
 			result.push('<span class="xv-tag-children">');
 			
-			if (depth || is_one_liner) {
+			if (!skip_children || is_one_liner) {
 				for (i = 0, il = node.childNodes.length; i < il; i++) {
 					result.push(stylize(node.childNodes[i], depth - 1));
 				}

@@ -122,8 +122,9 @@
 	display: inline;
 }
 
-.xv-one-line > .xv-text {
+.xv-one-line > .xv-tag-children > .xv-text {
 	padding-left: 0;
+	display: inline;
 }
 
 .xv-one-line > .xv-tag-switcher {
