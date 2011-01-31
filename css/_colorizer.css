@@ -1,4 +1,6 @@
-.xv-tag {
+.xv-tag,
+.xv-pi,
+.xv-comment {
 	padding:0.25em 0 0.2em 15px;
 	font-family:monospace;
 	position:relative;
@@ -12,7 +14,7 @@
 
 .xv-tag.selected > .xv-tag-open,
 .xv-tag.selected > .xv-tag-close {
-	background:#faedb9;
+	background:#e7e7e7;
 }
 
 .xv-tag.selected > .xv-tag-open .xv-tag-name,
@@ -74,7 +76,8 @@
 	font-size:10px;
 }
 
-.xv-tag:hover > .xv-tag-switcher {
+.xv-tag:hover > .xv-tag-switcher,
+.xv-comment:hover > .xv-tag-switcher {
 	visibility:visible;
 }
 
@@ -93,7 +96,8 @@
 	display:none;
 }
 
-.xv-collapsed > .xv-tag-open {
+.xv-collapsed > .xv-tag-open,
+.xv-collapsed.xv-comment > .xv-comment-start {
 	background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#fbf0c3), to(#f7e683)) !important;
 	background-image: -moz-linear-gradient(top, #fbf0c3, #f7e683);
 	background-color:#f7e683 !important;
@@ -111,9 +115,9 @@
 }
 
 .xv-marked > .xv-tag-open {
-	background:#ccf3d8;
+	background:#ebf2fb;
 	-webkit-border-radius:5px;
-	-moz-border-radius:5px 5px;
+	-moz-border-radius:5px;
 }
 
 .xv-one-line > .xv-tag-open,
@@ -129,4 +133,42 @@
 
 .xv-one-line > .xv-tag-switcher {
 	display: none;
+}
+
+.xv-comment {
+	color: #ccc;
+}
+
+.xv-comment-value {
+	display: block;
+	padding-left: 15px;
+}
+
+.xv-comment-start {
+	/* display: inline-block; */
+	padding:0 3px;
+	border:1px solid transparent;
+	-webkit-border-radius:1em;
+	-moz-border-radius:0.8em;
+	border-radius:0.8em;
+}
+
+.xv-collapsed > .xv-comment-value,
+.xv-collapsed > .xv-comment-end {
+	display: none;
+}
+
+.xv-collapsed > .xv-comment-start:after {
+	content: '... -->';
+}
+
+.xv-one-line > .xv-comment-value {
+	display: inline;
+	padding-left: 0;
+}
+
+.xv-pi {
+	font-weight: bold;
+	padding-left:17px;
+	color: #2F6F9F;
 }

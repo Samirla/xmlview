@@ -5,10 +5,25 @@
  */var xv_renderer = (function() {
 	
 	var _id = 0,
-		orig_elems = {};
+		orig_elems = {},
+		oneline_text_len = 100,
+		escape_vals = {
+			'<': '&lt;',
+			'>': '&gt;',
+			'&': '&amp;'
+		};
 		
 	function trim(text) {
 		return (text || '').replace(/^(\s|\u00A0)+|(\s|\u00A0)+$/g, '');
+	}
+	
+	/**
+	 * @param {String} text
+	 */
+	function escapeXML(text) {
+		return text.replace(/[<>&]/g, function(s) {
+			return escape_vals[s];
+		});
 	}
 		
 	/**
@@ -44,12 +59,23 @@
 	function stylize(node, depth) {
 		if (node) {
 			switch (node.nodeType) {
-			case 1: // element
-				return stylizeElement(node, depth);
-			case 3: // text node
-				return stylizeTextNode(node, depth);
-			case 9: // document
-				return stylize(node.documentElement, depth);
+				case 1: // element
+					return stylizeElement(node, depth);
+				case 3: // text node
+					return stylizeTextNode(node, depth);
+				case 7: // processing instruction
+					return stylizeProcessingInstruction(node, depth);
+				case 8: // comment
+					return stylizeComment(node, depth);
+				case 9: // document
+					var result = [];
+					for (var i = 0, il = node.childNodes.length; i < il; i++) {
+						result.push(stylize(node.childNodes[i], depth));
+					}
+					return result.join('');
+				default:
+					if (window.console)
+						console.log('processing undefined type:', node.nodeType);
 			}
 		}
 		
@@ -84,7 +110,7 @@
 		// test if current node should be displayed on one line
 		var is_one_liner = node.childNodes.length == 1 
 			&& node.firstChild.nodeType == 3 
-			&& node.firstChild.nodeValue.length < 100;
+			&& node.firstChild.nodeValue.length < oneline_text_len;
 		
 		var result = [],
 			add_class = '',
@@ -138,6 +164,35 @@
 		return v ? '<span class="xv-text">' + trim(node.nodeValue) + '</span>' : '';
 	}
 	
+	/**
+	 * @param {Element} node
+	 * @return {String} 
+	 */
+	function stylizeProcessingInstruction(node) {
+		return '<span class="xv-pi">&lt;?<span class="xv-pi-name">' + node.nodeName + '</span> ' +
+				'<span class="xv-pi-value">' + node.nodeValue + '</span>?&gt;</span>';
+	}
+	
+	/**
+	 * @param {Element} node
+	 * @return {String} 
+	 */
+	function stylizeComment(node) {
+		var v = trim(node.nodeValue),
+			class_name = 'xv-comment';
+			
+		if (v.length < oneline_text_len) {
+			class_name += ' xv-one-line';
+		}
+		
+		return '<span class="' + class_name + '">' +
+				'<span class="xv-tag-switcher"></span>' +
+				'<span class="xv-comment-start">&lt;!-- </span>' +
+				'<span class="xv-comment-value">' + escapeXML(v) + '</span>' +
+				'<span class="xv-comment-end"> --&gt;</span>' +
+				'</span>';
+	}
+	
 	return {
 		/**
 		 * Render XML fragment as styled HTML tree
@@ -157,9 +212,8 @@
 			
 			div.innerHTML = stylize(elem, depth);
 			
-			for (var i = 0, il = div.childNodes.length; i < il; i++) {
-				f.appendChild(div.childNodes[i]);
-			}
+			while (div.firstChild)
+				f.appendChild(div.firstChild);
 			
 			return f;
 		},

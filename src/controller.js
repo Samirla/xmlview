@@ -77,14 +77,14 @@ var xv_controller = (function(){
 		elem.addClass('xv-collapsed');
 		
 		if (is_recursive) {
-			elem.find('.xv-tag').not('.xv-collapsed').not('.xv-one-line').each(function() {
+			elem.find('.xv-tag, .xv-comment').not('.xv-collapsed').not('.xv-one-line').each(function() {
 				collapseNode(this);
 			});
 		}
 	}
 		
-	$(document).delegate('.xv-tag-open, .xv-tag-close', 'click', function(/* Event */ evt) {
-		var elem = $(this).closest('.xv-tag');
+	$(document).delegate('.xv-tag-open, .xv-tag-close, .xv-comment-start', 'click', function(/* Event */ evt) {
+		var elem = $(this).closest('.xv-tag, .xv-comment');
 		if (elem.length) {
 			if (elem.hasClass('xv-collapsed')) {
 				expandNode(elem, !!evt.altKey);
@@ -95,7 +95,7 @@ var xv_controller = (function(){
 	});
 	
 	$(document).delegate('.xv-tag-switcher', 'click', function(evt) {
-		var elem = $(this).closest('.xv-tag');
+		var elem = $(this).closest('.xv-tag, .xv-comment');
 		if (elem.hasClass('xv-collapsed')) {
 			expandNode(elem, !!evt.altKey);
 		} else {
