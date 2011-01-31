@@ -1,32 +1,4 @@
-@import url(tree.css);
-@import url(default.css);
-
-* {
-	font-size: 100%;
-}
-
-html, body, ul, ol, li, dl, dt, dd, p, h1, h2, h3, h4, h5, h6, blockquote, form, fieldset, legend, table, td, th {
-	margin: 0;
-	padding: 0;
-}
-
-body {
-	font-family: monospace;
-	font-size: 62.5%;
-	background: #fff;
-	color: #000;
-}
-
-p {
-	margin-bottom: 1.33em;
-}
-
-img {
-	border: 0;
-}
-
-.b-page {
-	padding:20px;
-	font-size:1.41em;
-	line-height:1.5;
-}
+@CHARSET "UTF-8";
+@import url(_yui-reset.css);
+@import url(_colorizer.css);
+@import url(_interface.css);

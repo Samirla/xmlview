@@ -1,0 +1,131 @@
+.xv-tag {
+	padding:0.25em 0 0.2em 15px;
+	font-family:monospace;
+	position:relative;
+	display: block;
+}
+
+.xv-tag.hover{
+	background:#fefcf1;
+	border-color:#f2c202;
+}
+
+.xv-tag.selected > .xv-tag-open,
+.xv-tag.selected > .xv-tag-close {
+	background:#faedb9;
+}
+
+.xv-tag.selected > .xv-tag-open .xv-tag-name,
+.xv-tag.selected > .xv-tag-close .xv-tag-name {
+	background:transparent;
+}
+
+.xv-tag-open, 
+.xv-tag-close {
+	color:#5FAFEF;
+	display: inline-block;
+	padding:0 3px;
+	white-space:nowrap;
+	border:1px solid transparent;
+	-webkit-border-radius:1em;
+	-moz-border-radius:0.8em;
+	border-radius:0.8em;
+}
+
+.xv-tag-name {
+	color: #2F6F9F;
+	background-color: rgb(244, 250, 255);
+}
+
+.xv-attr {
+	color: #4F9FCF;
+}
+
+.xv-attr-name {
+	color: #4F9FCF;
+}
+
+.xv-attr-value {
+	color: #d44950;
+}
+
+.xv-text {
+	color:#000;
+	padding-left: 20px;
+	display: block;
+}
+
+.xv-tag-switcher {
+	display:inline-block;
+	width:10px;
+	height:1em;
+	margin-right:-10px;
+	margin-left:-0.9em;
+	margin-top:0.15em;
+	cursor:pointer;
+	position:absolute;
+	visibility:hidden;
+}
+
+.xv-tag-switcher:before {
+	content:'▼';
+	color:#7d7d7d;
+	position:absolute;
+	font-size:10px;
+}
+
+.xv-tag:hover > .xv-tag-switcher {
+	visibility:visible;
+}
+
+.xv-collapsed > .xv-tag-switcher {
+	opacity:1 !important;
+}
+
+.xv-collapsed > .xv-tag-switcher:before {
+	content:'▶';
+}
+
+.xv-collapsed > .xv-tag,
+.xv-collapsed > .xv-text,
+.xv-collapsed > .xv-tag-children,
+.xv-collapsed > .xv-tag-close {
+	display:none;
+}
+
+.xv-collapsed > .xv-tag-open {
+	background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#fbf0c3), to(#f7e683)) !important;
+	background-image: -moz-linear-gradient(top, #fbf0c3, #f7e683);
+	background-color:#f7e683 !important;
+	color:#b89946 !important;
+	text-shadow:0 1px 0 #fcf4d2;
+	border-color:#fcee9e #fae089 #f8d36e #fae28c;
+}
+
+.xv-collapsed > .xv-tag-open > .xv-tag-name,
+.xv-collapsed > .xv-tag-open > .xv-attr,
+.xv-collapsed > .xv-tag-open > .xv-attr > .xv-attr-name, 
+.xv-collapsed > .xv-tag-open > .xv-attr > .xv-attr-value {
+	color:inherit;
+	background:none;
+}
+
+.xv-marked > .xv-tag-open {
+	background:#ccf3d8;
+	-webkit-border-radius:5px;
+	-moz-border-radius:5px 5px;
+}
+
+.xv-one-line > .xv-tag-open,
+.xv-one-line > .xv-tag-close,
+.xv-one-line > .xv-text {
+	display: inline;
+}
+
+.xv-one-line > .xv-text {
+	padding-left: 0;
+}
+
+.xv-one-line > .xv-tag-switcher {
+	display: none;
+}
