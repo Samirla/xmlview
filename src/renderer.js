@@ -104,7 +104,8 @@
 		
 		for (i = 0, il = node.attributes.length; i < il; i++) {
 			var n = node.attributes[i];
-			attrs.push('<span class="xv-attr"><span class="xv-attr-name">' + n.nodeName + '</span>' +					'="' +					'<span class="xv-attr-value">' + n.nodeValue + '</span>' +					'"</span>');
+			if (n.nodeName.indexOf('data-xv-') == -1)
+				attrs.push('<span class="xv-attr"><span class="xv-attr-name">' + n.nodeName + '</span>' +						'="' +						'<span class="xv-attr-value">' + n.nodeValue + '</span>' +						'"</span>');
 		}
 		
 		// test if current node should be displayed on one line
