@@ -72,6 +72,17 @@
 	text-shadow:0 1px 0 rgba(0,0,0,0.7);
 }
 
+.xv-search-result-xpath {
+	color: #ccc;
+	margin-left:10px;
+	font-weight: normal;
+	display: inline-block;
+	max-width: 30em;
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+}
+
 /** neat scrollbars for Webkit */
 .xv-search-result-content::-webkit-scrollbar {
 	width:9px;
