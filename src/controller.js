@@ -4,10 +4,16 @@
  * 
  * @include "renderer.js"
  * @include "search.js"
+ * @include "signals.js"
  */
 var xv_controller = (function(){
 	/** @type {jQuery} Currently selected element */
-	var selected_elem;
+	var selected_elem,
+		/** Cache for rendered nodes */
+		rendered_nodes = {},
+		
+		/** @type {jQuery} Pane for rendered nodes */
+		pane;
 	
 	/**
 	 * Highlight element
@@ -19,6 +25,8 @@ var xv_controller = (function(){
 			selected_elem.removeClass('selected');
 			
 		selected_elem = elem.toggleClass('selected');
+		
+		xv_signals.nodeFocused.dispatch(xv_renderer.getOriginalNode(selected_elem[0]), 'main');
 	}
 	
 	/**
@@ -83,6 +91,26 @@ var xv_controller = (function(){
 			});
 		}
 	}
+	
+	/**
+	 * Returns rendered node for original one
+	 * @param {Element} orig_node
+	 * @return {Element} Pointer to rendered node
+	 */
+	function getRenderedNode(orig_node) {
+		var id = xv_renderer.getId(orig_node);
+		
+		if (!(id in rendered_nodes)) {
+			pane.find('.xv-node').each(function(i, n) {
+				if (xv_renderer.getId(n) == id) {
+					rendered_nodes[id] = n;
+					return false;
+				}
+			});
+		}
+		
+		return rendered_nodes[id];
+	}
 		
 	$(document).delegate('.xv-tag-open, .xv-tag-close, .xv-comment-start', 'click', function(/* Event */ evt) {
 		var elem = $(this).closest('.xv-tag, .xv-comment');
@@ -104,6 +132,33 @@ var xv_controller = (function(){
 		}
 	});
 	
+	// listen to signals
+	xv_signals.nodeFocused.add(function(/* Element */ node, /* String */ source) {
+		// handle focused node
+		if (source != 'main') {
+			// create list of nodes to expand
+			var node_list = [], n = node;
+			do {
+				if (n.nodeType == 1)
+					node_list.push(n);
+			} while (n = n.parentNode);
+			
+			// expand each node, from top to bottom
+			node_list.reverse();
+			$.each(node_list, function(i, n) {
+				expandNode(getRenderedNode(n));
+			});
+			
+			var cur_node = getRenderedNode(node);
+			highlightElement(cur_node);
+			cur_node.scrollIntoViewIfNeeded();
+		}
+	});
+	
+	$(function(){
+		pane = $('.xv-source-pane-inner');
+	});
+	
 	return {
 		/**
 		 * Process XML/JSON document
@@ -111,7 +166,10 @@ var xv_controller = (function(){
 		 */
 		process: function(data) {
 			var tree = xv_renderer.render(data, 1);
+			pane.empty().append(tree);
+			
 			xv_search.init(data);
+			rendered_nodes = {};
 			return tree;
 		},
 		

@@ -5,18 +5,35 @@
 var xv_utils = (function(){
 	return {
 		/**
-		 * Creates XPath for element
-		 * @param {Element} elem
+		 * Creates XPath for specified <code>node</code> element.
+		 * If <code>context</code> passed, the XPath will be built up till this
+		 * element.
+		 * 
+		 * @param {Element} node 
+		 * @param {Element} [context] 
+		 * @return {String}
 		 */
-		createXPath: function(elem) {
-			var result = [];
-			do {
-				if (elem.nodeType == 1)
-					result.push(elem.nodeName);
-			} while (elem = elem.parentNode);
+		createXPath: function(node, context) {
+			var parts = [];
 			
-			result.reverse();
-			return '/' + result.join('/');
+			function walk(node){
+				var _node = node;
+				var name = node.nodeName;
+				var count = 1;
+				while (node = node.previousSibling) {
+					if (node.nodeType == 1 && node.nodeName == name) {
+						count++;
+					}
+				}
+				
+				parts.unshift(name + '[' + count + ']');
+				if (_node.parentNode && _node.parentNode != context && _node.ownerDocument != _node.parentNode)
+					walk(_node.parentNode);
+			}
+			
+			walk(node);
+			
+			return (!context ? '/' : '') + parts.join('/');
 		}
 	};
 })();

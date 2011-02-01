@@ -124,7 +124,7 @@
 			add_class += ' xv-collapsed xv-has-unprocessed';
 		}
 			
-		result.push('<span class="xv-tag' + add_class + '" data-xv-id="' + generateId(node) + '">');
+		result.push('<span class="xv-node xv-tag' + add_class + '" data-xv-id="' + generateId(node) + '">');
 		result.push('<span class="xv-tag-switcher"></span>');
 		result.push('<span class="xv-tag-open">&lt;');
 		result.push('<span class="xv-tag-name">' + node.nodeName +'</span>');
@@ -169,7 +169,7 @@
 	 * @return {String} 
 	 */
 	function stylizeProcessingInstruction(node) {
-		return '<span class="xv-pi">&lt;?<span class="xv-pi-name">' + node.nodeName + '</span> ' +
+		return '<span class="xv-node xv-pi">&lt;?<span class="xv-pi-name">' + node.nodeName + '</span> ' +
 				'<span class="xv-pi-value">' + node.nodeValue + '</span>?&gt;</span>';
 	}
 	
@@ -179,7 +179,7 @@
 	 */
 	function stylizeComment(node) {
 		var v = trim(node.nodeValue),
-			class_name = 'xv-comment';
+			class_name = 'xv-node xv-comment';
 			
 		if (v.length < oneline_text_len) {
 			class_name += ' xv-one-line';
@@ -237,6 +237,8 @@
 				id = getId(id);
 				
 			return orig_elems[id];
-		}
+		},
+		
+		getId: getId
 	};
 })();

@@ -4,6 +4,7 @@
  * @link http://chikuyonok.ru
  * 
  * @include "utils.js"
+ * @include "signals.js"
  */
 var xv_search = (function(){
 	var search_index = [],
@@ -40,7 +41,8 @@ var xv_search = (function(){
 		var attrs = [];
 		if (node.attributes) {
 			for (var i = 0, il = node.attributes.length; i < il; i++) {
-				attrs.push(node.attributes[i].name);
+				if (node.attributes[i].name.indexOf('data-xv-') == -1)
+					attrs.push(node.attributes[i].name);
 			}
 		}
 		
@@ -124,6 +126,7 @@ var xv_search = (function(){
 		}
 		
 		selected_item = ix;
+		xv_signals.searchItemSelected.dispatch(cur_item[0], selected_item);
 	}
 	
 	/**
@@ -154,11 +157,11 @@ var xv_search = (function(){
 			/** @type {Element} */
 			var node = n.node,
 				name = node.nodeName,
-				xpath = node.getAttribute('data-xpath');
+				xpath = node.getAttribute('data-xv-xpath');
 				
 			if (!xpath) {
 				xpath = xv_utils.createXPath(node);
-				node.setAttribute('data-xpath', xpath);
+				node.setAttribute('data-xv-xpath', xpath);
 			}
 				
 			if ('ix' in n && n.ix < name.length) { // mark search result
@@ -214,7 +217,7 @@ var xv_search = (function(){
 	}
 	
 	function applyProposal(ix) {
-		console.log('applying', ix);
+		xv_signals.nodeFocused.dispatch(last_search[ix].node, 'search');
 		hidePopup();
 	}
 	
