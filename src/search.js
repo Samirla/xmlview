@@ -17,7 +17,8 @@ var xv_search = (function(){
 		last_query,
 		/** @type {jQuery} */
 		popup = $('<div class="xv-search-result"><ul class="xv-search-result-content"></ul></div>'),
-		max_results = 10,
+		max_visible_results = 20,
+		max_results = 100,
 		
 		selected_item = -1,
 		
@@ -161,6 +162,46 @@ var xv_search = (function(){
 	}
 	
 	/**
+	 * Creates label that will be displayed as a search result
+	 * @param {Object} item Search result item
+	 * @param {String} query Search query
+	 */
+	function createSearchResultLabel(item, query) {
+		/** @type {Element} */
+		var node = item.node,
+			name = node.nodeName,
+			ql = query.length,
+			xpath = node.getAttribute('data-xv-xpath');
+			
+		if (!xpath) {
+			xpath = xv_utils.createXPath(node);
+			node.setAttribute('data-xv-xpath', xpath);
+		}
+			
+		if ('ix' in item) { // simple text search result
+			if (item.ix < name.length) {  // mark search result in node name
+				name = name.substr(0, item.ix) + 
+					'<em>' + name.substr(item.ix, ql) + '</em>'
+					+ name.substr(item.ix + ql);
+			} else { // match found somethere in attribute, add it
+				var _ix;
+				$.each(node.attributes, function(i, n) {
+					_ix = n.name.indexOf(query);
+					if (_ix != -1) {
+						name += '[@' + n.name.substr(0, _ix) + 
+							'<em>' + n.name.substr(_ix, ql) + '</em>'
+							+ n.name.substr(_ix + ql) + ']';
+							
+						return false;
+					}
+				});
+			}
+		}
+		
+		return name + ' <span class="xv-search-result-xpath">' + xpath + '</span>';
+	}
+	
+	/**
 	 * Creates HTML list of found nodes
 	 * @param {Array} found List of matched nodes
 	 * @param {String} query Search query
@@ -170,24 +211,24 @@ var xv_search = (function(){
 		var items = [];
 		$.each(found, function(i, n) {
 			/** @type {Element} */
-			var node = n.node,
-				name = node.nodeName,
-				xpath = node.getAttribute('data-xv-xpath');
-				
-			if (!xpath) {
-				xpath = xv_utils.createXPath(node);
-				node.setAttribute('data-xv-xpath', xpath);
-			}
-				
-			if ('ix' in n && n.ix < name.length) { // mark search result
-				name = name.substr(0, n.ix) + 
-					'<em>' + name.substr(n.ix, query.length) + '</em>'
-					+ name.substr(n.ix + query.length);
-			}
+//			var node = n.node,
+//				name = node.nodeName,
+//				xpath = node.getAttribute('data-xv-xpath');
+//				
+//			if (!xpath) {
+//				xpath = xv_utils.createXPath(node);
+//				node.setAttribute('data-xv-xpath', xpath);
+//			}
+//				
+//			if ('ix' in n && n.ix < name.length) { // mark search result
+//				name = name.substr(0, n.ix) + 
+//					'<em>' + name.substr(n.ix, query.length) + '</em>'
+//					+ name.substr(n.ix + query.length);
+//			}
+//			
+//			var label = name + ' <span class="xv-search-result-xpath">' + xpath + '</span>';
 			
-			var label = name + ' <span class="xv-search-result-xpath">' + xpath + '</span>';
-			
-			items.push('<li class="xv-search-result-item" data-xv-search-ix="' + i + '">' + label + '</li>');
+			items.push('<li class="xv-search-result-item" data-xv-search-ix="' + i + '">' + createSearchResultLabel(n, query) + '</li>');
 			
 			// reset selected item
 			selected_item = -1;
@@ -195,9 +236,9 @@ var xv_search = (function(){
 		
 		popup.find('.xv-search-result-content').empty().append(items.join(''));
 			
-		if (items.length > max_results) {
+		if (items.length > max_visible_results) {
 			popup.addClass('xv-search-result-overflow');
-			popup.find('.xv-search-result-content').css('height', getSearchResultItems().eq(0).height() * max_results);
+			popup.find('.xv-search-result-content').css('height', getSearchResultItems().eq(0).height() * max_visible_results);
 		} else {
 			popup.removeClass('xv-search-result-overflow');
 			popup.find('.xv-search-result-content').css('height', 'auto');

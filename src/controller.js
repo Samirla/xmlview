@@ -165,7 +165,7 @@ var xv_controller = (function(){
 		 * @param {Document|Object} data 
 		 */
 		process: function(data) {
-			var tree = xv_renderer.render(data, 1);
+			var tree = xv_renderer.render(data, 2);
 			pane.empty().append(tree);
 			
 			xv_search.init(data);

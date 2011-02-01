@@ -47,6 +47,7 @@
 	cursor:pointer;
 	overflow:hidden;
 	position:relative;
+	white-space: nowrap;
 	
 	-webkit-border-radius: 3px;
 	-moz-border-radius: 3px;
