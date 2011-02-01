@@ -18,7 +18,7 @@ var xv_search = (function(){
 		/** @type {jQuery} */
 		popup = $('<div class="xv-search-result"><ul class="xv-search-result-content"></ul></div>'),
 		max_visible_results = 20,
-		max_results = 100,
+		max_results = 200,
 		
 		selected_item = -1,
 		
@@ -80,11 +80,15 @@ var xv_search = (function(){
 		if (query) {
 			$.each(search_index, function(i, /* searchIndexItem */ n) {
 				var ix = n.str.indexOf(query);
-				if (ix != -1)
+				if (ix != -1) {
 					result.push({
 						ix: ix,
 						node: n.node
 					});
+					
+					if (result.length >= max_results)
+						return false;
+				}
 			});
 		}
 		
@@ -92,14 +96,15 @@ var xv_search = (function(){
 	}
 	
 	function searchXPath(query) {
-		var result = [];
+		var result = [], i = 0;
 		try {
 			// TODO handle namespaces
 			var nodes = doc.evaluate(query, doc, null, XPathResult.ANY_TYPE, null);
 			var n = nodes.iterateNext();
-			while (n) {
+			while (n && i < max_results) {
 				result.push({node: n});
 				n = nodes.iterateNext();
+				i++;
 			}
 		} catch(e) {}
 		
