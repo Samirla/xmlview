@@ -197,9 +197,10 @@ var xv_search = (function(){
 			
 		if (items.length > max_results) {
 			popup.addClass('xv-search-result-overflow');
-			// TODO fix popup height
+			popup.find('.xv-search-result-content').css('height', getSearchResultItems().eq(0).height() * max_results);
 		} else {
 			popup.removeClass('xv-search-result-overflow');
+			popup.find('.xv-search-result-content').css('height', 'auto');
 		}
 	}
 	
