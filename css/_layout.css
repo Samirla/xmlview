@@ -2,3 +2,22 @@ body {
 	font-family: sans-serif;
 	font-size: 11px;
 }
+
+.xv-source-pane {
+	position: absolute;
+	top:37px;
+	bottom:0;
+	left:0;
+	right:0;
+	overflow: auto;
+}
+
+.xv-source-pane-inner {
+	position: relative;
+	padding: 10px;
+	padding-left: 0;
+}
+
+.xv-source-xml {
+	display: none;
+}
