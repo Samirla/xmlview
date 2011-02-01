@@ -1,4 +1,6 @@
-@CHARSET "UTF-8";
 @import url(_yui-reset.css);
+@import url(_layout.css);
 @import url(_colorizer.css);
 @import url(_interface.css);
+@import url(_search-panel.css);
+@import url(_search-result.css);

@@ -3,6 +3,7 @@
  * @link http://chikuyonok.ru
  * 
  * @include "renderer.js"
+ * @include "search.js"
  */
 var xv_controller = (function(){
 	/** @type {jQuery} Currently selected element */
@@ -110,6 +111,7 @@ var xv_controller = (function(){
 		 */
 		process: function(data) {
 			var tree = xv_renderer.render(data, 1);
+			xv_search.init(data);
 			return tree;
 		},
 		
