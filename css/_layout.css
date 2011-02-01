@@ -21,3 +21,37 @@ body {
 .xv-source-xml {
 	display: none;
 }
+
+#xv-source-data {
+	display: none;
+}
+
+.xv-error {
+	position: absolute;
+	left:50%;
+	top:100px;
+	width:30em;
+	padding: 20px;
+	-webkit-border-radius: 10px;
+	-moz-border-radius: 10px;
+	border-radius: 10px;
+	border: 1px solid #ccc;
+	margin-left:-15em;
+	font-size: 15px;
+	color:#c00;
+	line-height: 1.5;
+	-webkit-box-shadow: 0 0 10px rgba(0,0,0,0.3);
+	-moz-box-shadow: 0 0 10px rgba(0,0,0,0.3);
+	-ms-box-shadow: 0 0 10px rgba(0,0,0,0.3);
+	box-shadow: 0 0 10px rgba(0,0,0,0.3);
+}
+
+.xv-error h2 {
+	font-size: 20px;
+	margin-bottom: 1em;
+}
+
+.xv-error-state .xv-source-pane,
+.xv-error-state .xv-search-panel {
+	display: none;
+}

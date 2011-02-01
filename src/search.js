@@ -215,24 +215,6 @@ var xv_search = (function(){
 	function buildSearchResult(found, query) {
 		var items = [];
 		$.each(found, function(i, n) {
-			/** @type {Element} */
-//			var node = n.node,
-//				name = node.nodeName,
-//				xpath = node.getAttribute('data-xv-xpath');
-//				
-//			if (!xpath) {
-//				xpath = xv_utils.createXPath(node);
-//				node.setAttribute('data-xv-xpath', xpath);
-//			}
-//				
-//			if ('ix' in n && n.ix < name.length) { // mark search result
-//				name = name.substr(0, n.ix) + 
-//					'<em>' + name.substr(n.ix, query.length) + '</em>'
-//					+ name.substr(n.ix + query.length);
-//			}
-//			
-//			var label = name + ' <span class="xv-search-result-xpath">' + xpath + '</span>';
-			
 			items.push('<li class="xv-search-result-item" data-xv-search-ix="' + i + '">' + createSearchResultLabel(n, query) + '</li>');
 			
 			// reset selected item

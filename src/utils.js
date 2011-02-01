@@ -45,6 +45,36 @@ var xv_utils = (function(){
 		 */
 		isXPath: function(str) {
 			return !re_not_xpath.test(str);
+		},
+		
+		unescapeHTML: function(text) {
+			var chars = {
+				'&lt;': '<',
+				'&gt;': '>',
+				'&amp;': '&',
+				'&quot;': '"',
+				'&apos;': '\''
+			};
+			
+			text = $.trim(text);
+			
+			return text.replace(/&(lt|gt|amp|apos|quot);/g, function(str) {
+				return chars[str];
+			});
+		},
+		
+		toXml: function(text) {
+			var result = (new DOMParser()).parseFromString(text, 'text/xml');
+			
+			if (!result || !result.documentElement
+					|| result.documentElement.nodeName == 'parsererror'
+					|| result.getElementsByTagName('parsererror').length) {
+						
+				console.log(result);
+				throw "<h2>Can’t parse XML document</h2> \n" + $('parsererror', result).html();
+			}
+			
+			return result;
 		}
 	};
 })();

@@ -165,12 +165,28 @@ var xv_controller = (function(){
 		 * @param {Document|Object} data 
 		 */
 		process: function(data) {
-			var tree = xv_renderer.render(data, 2);
-			pane.empty().append(tree);
+			if (typeof data == 'string') {
+				try {
+					data = xv_utils.toXml(data);
+				} catch(e) {
+					$('<div class="xv-error"></div>')
+						.html(e.toString())
+						.appendTo('body');
+						
+					$('body').addClass('xv-error-state');
+						
+					data = null;
+				}
+			}
 			
-			xv_search.init(data);
-			rendered_nodes = {};
-			return tree;
+			if (data) {
+				var tree = xv_renderer.render(data, 2);
+				pane.empty().append(tree);
+				
+				xv_search.init(data);
+				rendered_nodes = {};
+				return tree;
+			}
 		},
 		
 		expandNode: expandNode,
