@@ -3,6 +3,8 @@
  * @link http://chikuyonok.ru
  */
 var xv_utils = (function(){
+	var re_not_xpath = /^[\w\-\:]+$/;
+	
 	return {
 		/**
 		 * Creates XPath for specified <code>node</code> element.
@@ -34,6 +36,15 @@ var xv_utils = (function(){
 			walk(node);
 			
 			return (!context ? '/' : '') + parts.join('/');
+		},
+		
+		/**
+		 * Check is passed string looks like XPath
+		 * @param {String} str
+		 * @return {Boolean}
+		 */
+		isXPath: function(str) {
+			return !re_not_xpath.test(str);
 		}
 	};
 })();

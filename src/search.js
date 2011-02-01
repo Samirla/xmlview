@@ -90,6 +90,21 @@ var xv_search = (function(){
 		return result.length ? result : null;
 	}
 	
+	function searchXPath(query) {
+		var result = [];
+		try {
+			// TODO handle namespaces
+			var nodes = doc.evaluate(query, doc, null, XPathResult.ANY_TYPE, null);
+			var n = nodes.iterateNext();
+			while (n) {
+				result.push({node: n});
+				n = nodes.iterateNext();
+			}
+		} catch(e) {}
+		
+		return result.length ? result : null;
+	}
+	
 	/**
 	 * Returns list of search result items
 	 * @return {jQuery}
@@ -205,7 +220,7 @@ var xv_search = (function(){
 			return;
 		
 		last_query = query;
-		last_search = searchText(query);
+		last_search = xv_utils.isXPath(query) ? searchXPath(query) : searchText(query);
 		
 		if (last_search) {
 			popup.show();
