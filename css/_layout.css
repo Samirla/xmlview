@@ -55,3 +55,42 @@ body {
 .xv-error-state .xv-search-panel {
 	display: none;
 }
+
+.xv-drag-image {
+	position: absolute;
+	left: -1000px;
+}
+
+.xv-dnd-tooltip {
+	padding: 2px 5px 3px 5px;
+	color: #fff;
+	font-family: "Lucida Grande", sans-serif;
+	position: absolute;
+	display: inline-block;
+	font-size: 11px !important;
+	-webkit-border-radius: 5px;
+	-moz-border-radius: 5px;
+	border-radius: 5px;
+	background: #000;
+	opacity: 0.8;
+	z-index:1;
+	white-space: nowrap;
+	margin-top:-2em;
+	text-shadow: none !important;
+}
+
+.xv-dnd-tooltip:after {
+	display: inline-block;
+	content: '.';
+	text-indent: -2em;
+	overflow: hidden;
+	position: absolute;
+	width:6px;
+	height: 6px;
+	top:100%;
+	left:10px;
+	margin-top:-3px;
+	background: #000;
+	z-index: -1;
+	-webkit-transform: rotate(45deg);
+}
