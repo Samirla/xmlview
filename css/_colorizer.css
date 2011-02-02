@@ -1,8 +1,6 @@
-.xv-tag,
-.xv-pi,
-.xv-comment {
+.xv-node {
 	padding:0.25em 0 0.2em 15px;
-	font-family:monospace;
+	font-family:'Consolas', 'DejaVu Sans Mono', monospace;
 	position:relative;
 	display: block;
 }
