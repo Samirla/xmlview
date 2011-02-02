@@ -20,8 +20,6 @@ $(function(){
 		drag_elem,
 		is_dragging = false,
 		data_transfer,
-		transfer_state = 0,
-		
 		
 		/** @type {Element} */
 		source_node,
@@ -30,8 +28,7 @@ $(function(){
 	var META_KEY = 1, 
 		ALT_KEY = 2,
 		SHIFT_KEY = 4,
-		CTRL_KEY = 8,
-		key_mask = 0;
+		CTRL_KEY = 8;
 	
 	bg.onload = function() {
 		bg_pattern = ctx.createPattern(bg, 'repeat');
@@ -263,7 +260,6 @@ $(function(){
 		})
 		.delegate(delegate_items, 'dragstart', function(/* Event */ evt) {
 			is_dragging = true;
-			transfer_state = 0;
 			
 			data_transfer = evt.originalEvent.dataTransfer;
 			data_transfer.effectAllowed = 'copy';

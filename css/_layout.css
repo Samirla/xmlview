@@ -58,7 +58,9 @@ body {
 
 .xv-drag-image {
 	position: absolute;
-	left: -1000px;
+	left: 0px;
+	top:0;
+	z-index: 1;
 }
 
 .xv-dnd-tooltip {
