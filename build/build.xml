@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+<project name="XML View" basedir="../" default="compile">
+	<property file="${basedir}/build/build.properties"/>
+	<import file="${webtasks.dir}/webtasks.xml"/>
+	
+	<target name="init">
+		<mkdir dir="${dist.dir}"/>
+		<mkdir dir="${dist.css.dir}"/>
+		<mkdir dir="${dist.js.dir}"/>
+	</target>
+	
+	<target name="compile.js" depends="init">
+		<compress-js-lib tofile="${dist.js.dir}/xv.js" force="${force-rebuild}" use-cc="${webtasks.use-cc}">
+			<filelist dir="${js-src.dir}">
+				<file name="lib/jquery-1.4.4.min.js"/>
+				<file name="lib/js-signals.js"/>
+				<file name="settings.js"/>
+				<file name="utils.js"/>
+				<file name="signals.js"/>
+				<file name="renderer.js"/>
+				<file name="search.js"/>
+				<file name="controller.js"/>
+				<file name="dnd.js"/>
+				<file name="init.js"/>
+			</filelist>
+		</compress-js-lib>
+	</target>
+	
+	<target name="compile.css" depends="init">
+		<compress-css dir="${css-src.dir}" todir="${dist.css.dir}" force="${force-rebuild}"/>
+	</target>
+	
+	<target name="compile" depends="compile.css, compile.js">
+		<copy file="${basedir}/xml-pretty-print.xslt" tofile="${dist.dir}/xmlview.xsl"/>
+		<echo>Build done</echo>
+	</target>
+</project>

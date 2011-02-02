@@ -25,14 +25,6 @@
 		
 		<link rel="stylesheet" type="text/css" href="{$web_resource_base}/css/main.css" media="all" />
 		<style type='text/css'><xsl:copy-of select="$user_css"/></style>
-		<script type="text/javascript" src="{$web_resource_base}/src/lib/jquery-1.4.4.min.js"></script>
-		<script type="text/javascript" src="{$web_resource_base}/src/lib/js-signals.js"></script>
-		<script type="text/javascript" src="{$web_resource_base}/src/settings.js"></script>
-		<script type="text/javascript" src="{$web_resource_base}/src/utils.js"></script>
-		<script type="text/javascript" src="{$web_resource_base}/src/signals.js"></script>
-		<script type="text/javascript" src="{$web_resource_base}/src/renderer.js"></script>
-		<script type="text/javascript" src="{$web_resource_base}/src/search.js"></script>
-		<script type="text/javascript" src="{$web_resource_base}/src/controller.js"></script>
 	</head>
 	<body>
 		<div class="xv-search-panel">
@@ -44,12 +36,7 @@
 		
 		<div id="xv-source-data"><xsl:apply-templates/></div>
 		
-		<script type="text/javascript">
-			$(function() {
-				xv_controller.process($('#xv-source-data').text());
-			});
-		</script>
-		
+		<script type="text/javascript" src="{$web_resource_base}/js/xv.js"></script>
 		<!-- <script type="text/javascript" src="data:text/javascript;base64,{$user_js_base64}"/> -->
 	</body>
 </html>
