@@ -151,7 +151,10 @@ var xv_controller = (function(){
 			
 			var cur_node = getRenderedNode(node);
 			highlightElement(cur_node);
-			cur_node.scrollIntoViewIfNeeded();
+			if ('scrollIntoViewIfNeeded' in cur_node)
+				cur_node.scrollIntoViewIfNeeded();
+			else
+				cur_node.scrollIntoView();
 		}
 	});
 	

@@ -26,6 +26,7 @@
 	display: inline-block;
 	padding:0 3px;
 	white-space:nowrap;
+	position: relative;
 	border:1px solid transparent;
 	-webkit-border-radius:1em;
 	-moz-border-radius:0.8em;
@@ -39,6 +40,7 @@
 
 .xv-attr {
 	color: #4F9FCF;
+	position: relative;
 }
 
 .xv-attr-name {

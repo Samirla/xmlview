@@ -77,7 +77,8 @@ body {
 	opacity: 0.8;
 	z-index:1;
 	white-space: nowrap;
-	margin-top:-2em;
+	top:-2em;
+	left:0;
 	text-shadow: none !important;
 }
 
@@ -95,4 +96,7 @@ body {
 	background: #000;
 	z-index: -1;
 	-webkit-transform: rotate(45deg);
+	-moz-transform: rotate(45deg);
+	-o-transform: rotate(45deg);
+	-ms-transform: rotate(45deg);
 }

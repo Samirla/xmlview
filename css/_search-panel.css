@@ -6,6 +6,8 @@
 	border-top: 1px solid #ededed;
 	border-bottom: 1px solid #a3a3a3;
 	background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#e5e5e5), to(#d6d6d6)) !important;
+	background-image: -moz-linear-gradient(top left, #e5e5e5, #d6d6d6) !important;
+	background-color: #e5e5e5;
 	font-size:11px;
 	height:37px;
 	z-index: 2;
