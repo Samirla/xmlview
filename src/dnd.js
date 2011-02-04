@@ -160,7 +160,7 @@ $(function(){
 					attrs.push('@' + n.name);
 				});
 				
-				return source_node.nodeName + (attrs.length ? '[' + attrs.join(' ') + ']' : '');
+				return source_node.nodeName + (attrs.length ? '[' + attrs.join(' and ') + ']' : '');
 			case META_KEY | SHIFT_KEY: // name and attr names and values
 			case META_KEY | SHIFT_KEY | ALT_KEY: 
 				var attrs = [], q = getAttrQuote();
@@ -168,7 +168,7 @@ $(function(){
 					attrs.push('@' + n.name + ' = ' + q + n.value + q);
 				});
 				
-				return source_node.nodeName + (attrs.length ? '[' + attrs.join(' ') + ']' : '');
+				return source_node.nodeName + (attrs.length ? '[' + attrs.join(' and ') + ']' : '');
 		}
 		
 		return null;
