@@ -130,11 +130,26 @@
 	}
 	
 	/**
+	 * Escape specified <code>quote</code> in <code>text</code>
+	 * @param {String} text
+	 * @param {String} quote
+	 * @return {String}
+	 */
+	function escapeQuote(text, quote) {
+		var quote_map = {
+			'"': '&quot;',
+			"'": '&apos;'
+		};
+		return text.replace(new RegExp(quote, 'g'), quote_map[quote]);
+	}
+	
+	/**
 	 * Returns transfer data for node name (<code>drag_elem</code>)
 	 * @param {Event} evt
 	 * @return {String}
 	 */
 	function getTransferForNodeName(evt) {
+		var q = getAttrQuote();
 		switch (getKeyMask(evt)) {
 			case META_KEY: // name only
 				return source_node.nodeName;
@@ -147,7 +162,7 @@
 			case META_KEY | SHIFT_KEY: // name and attr names and values
 			case META_KEY | SHIFT_KEY | ALT_KEY:
 				var attrs = _.map(xv_utils.filterValidAttributes(source_node), function(n) {
-					return '@' + n.name + ' = ' + q + n.value + q;
+					return '@' + n.name + ' = ' + q + escapeQuote(n.value, q) + q;
 				});
 				
 				return source_node.nodeName + (attrs.length ? '[' + attrs.join(' and ') + ']' : '');
@@ -182,7 +197,7 @@
 			case META_KEY | SHIFT_KEY: // node name with attribute name.
 				return source_node.nodeName + '[@' + name + ']';
 			case META_KEY | SHIFT_KEY | ALT_KEY: // node name with attribute name.
-				return source_node.nodeName + '[@' + name + ' = ' + q + getValue() + q + ']';
+				return source_node.nodeName + '[@' + name + ' = ' + q + escapeQuote(getValue(), q) + q + ']';
 		}
 		
 		return null;
@@ -224,64 +239,66 @@
 		return xv_dom.hasClass(elem, 'xv-tag-name') || xv_dom.hasClass(elem, 'xv-attr-name');
 	}
 	
-	
-	var delegate_items = 'xv-tag-name,xv-attr-name';
-	xv_dom.addEvent(document, 'mouseover', function(/* Event */ evt) {
-		if (isHoverElement(evt.target)) {
-			drag_elem = evt.target;
-			source_node = xv_renderer.getOriginalNode(xv_dom.bubbleSearch(drag_elem, 'xv-node'));
-			if (evt.metaKey) {
+	// init module
+	xv_signals.documentProcessed.addOnce(function() {
+		var delegate_items = 'xv-tag-name,xv-attr-name';
+		xv_dom.addEvent(document, 'mouseover', function(/* Event */ evt) {
+			if (isHoverElement(evt.target)) {
+				drag_elem = evt.target;
+				source_node = xv_renderer.getOriginalNode(xv_dom.bubbleSearch(drag_elem, 'xv-node'));
+				if (evt.metaKey) {
+					drag_elem.draggable = true;
+					attachTooltip(evt);
+				}
+			}
+		});
+		
+		xv_dom.addEvent(document, 'mouseout', function(/* Event */ evt) {
+			if (isHoverElement(evt.target)) {
+				evt.target.draggable = false;
+				detachTooltip();
+				drag_elem = null;
+			}
+		});
+		
+		xv_dom.addEvent(document, 'dragstart', function(/* Event */ evt) {
+			is_dragging = true;
+			
+			data_transfer = evt.dataTransfer;
+			data_transfer.effectAllowed = 'copy';
+			updateTransferState(evt);
+			detachTooltip();
+		});
+		
+		xv_dom.addEvent(document, 'dragend', function(/* Event */ evt) {
+			is_dragging = false;
+		});
+		
+		
+		xv_dom.addEvent(document, 'keydown', function(/* Event */ evt) {
+			if (evt.keyCode == 91 && drag_elem) {
 				drag_elem.draggable = true;
 				attachTooltip(evt);
 			}
-		}
-	});
-	
-	xv_dom.addEvent(document, 'mouseout', function(/* Event */ evt) {
-		if (isHoverElement(evt.target)) {
-			evt.target.draggable = false;
-			detachTooltip();
-			drag_elem = null;
-		}
-	});
-	
-	xv_dom.addEvent(document, 'dragstart', function(/* Event */ evt) {
-		is_dragging = true;
+				
+			if (isModifierKeyTrigger(evt) && drag_elem) {
+				updateTransferState(evt);
+			}
+		});
 		
-		data_transfer = evt.dataTransfer;
-		data_transfer.effectAllowed = 'copy';
-		updateTransferState(evt);
-		detachTooltip();
-	});
-	
-	xv_dom.addEvent(document, 'dragend', function(/* Event */ evt) {
-		is_dragging = false;
-	});
-	
-	
-	xv_dom.addEvent(document, 'keydown', function(/* Event */ evt) {
-		if (evt.keyCode == 91 && drag_elem) {
-			drag_elem.draggable = true;
-			attachTooltip(evt);
-		}
+		xv_dom.addEvent(document, 'keyup', function(/* Event */ evt) {
+			if (evt.keyCode == 91 && drag_elem) {
+				drag_elem.draggable = false;
+				detachTooltip(evt);
+			}
+				
+			if (isModifierKeyTrigger(evt) && drag_elem) {
+				updateTransferState(evt);
+			}
+		});
 			
-		if (isModifierKeyTrigger(evt) && drag_elem) {
-			updateTransferState(evt);
-		}
+		canvas.className = 'xv-drag-image';
+		canvas.width = canvas.height = 1;
+		(document.body || document.documentElement).appendChild(canvas);
 	});
-	
-	xv_dom.addEvent(document, 'keyup', function(/* Event */ evt) {
-		if (evt.keyCode == 91 && drag_elem) {
-			drag_elem.draggable = false;
-			detachTooltip(evt);
-		}
-			
-		if (isModifierKeyTrigger(evt) && drag_elem) {
-			updateTransferState(evt);
-		}
-	});
-		
-	canvas.className = 'xv-drag-image';
-	canvas.width = canvas.height = 1;
-	document.body.appendChild(canvas);
-});
+})();

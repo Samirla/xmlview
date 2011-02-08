@@ -193,7 +193,7 @@ var xv_controller = (function(){
 				xv_dom.empty(pane);
 				pane.appendChild(tree);
 				
-				xv_search.init(data);
+				xv_signals.documentProcessed.dispatch(tree, data);
 				return tree;
 			}
 		},

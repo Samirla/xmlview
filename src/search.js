@@ -7,7 +7,7 @@
  * @include "dom.js"
  * @include "signals.js"
  */
-var xv_search = (function(){
+(function(){
 	var search_index = [],
 		/** @type {Document} */
 		doc,
@@ -24,9 +24,6 @@ var xv_search = (function(){
 		selected_item = -1,
 		
 		is_visible = false,
-		
-		/** @type {Element} Search panel */
-		panel,
 		
 		/** @type {Element} Search field */
 		search_field,
@@ -313,14 +310,15 @@ var xv_search = (function(){
 		}
 	}
 	
-	// bind events to search field
-	xv_dom.onDomReady(function(){
+	xv_signals.documentProcessed.addOnce(function() {
 		hidePopup();
+		
 		var panel = xv_dom.getOneByClass('xv-search-panel');
 		panel.appendChild(popup);
 		
 		search_field = xv_dom.getOneByClass('xv-search-field', panel);
 		
+		// bind events to search field
 		xv_dom.addEvent(search_field, 'keydown', handleKeyEvent);
 		
 		// delegate hover event: hilight proposal
@@ -359,16 +357,9 @@ var xv_search = (function(){
 		xv_dom.addEvent(document, 'mousedown', hidePopup);
 	});
 	
-	
-	return {
-		/**
-		 * Init search module
-		 * @param {Document} tree
-		 */
-		init: function(tree) {
-			search_index.length = 0;
-			buildIndex(tree.documentElement);
-			doc = tree;
-		}
-	};
+	xv_signals.documentProcessed.add(function(render_tree, original_tree) {
+		search_index.length = 0;
+		buildIndex(original_tree.documentElement);
+		doc = original_tree;
+	});
 })();

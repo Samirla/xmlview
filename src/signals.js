@@ -12,5 +12,12 @@ var xv_signals = {
 	 * @param {Element} node Focused node
 	 * @param {String} source Signal source 
 	 */
-	nodeFocused: new signals.Signal
+	nodeFocused: new signals.Signal,
+	
+	/**
+	 * New XML is feeded to XV component
+	 * @param {Element} render_tree Rendered tree
+	 * @param {Document} original_tree Original tree feeded to XV component
+	 */
+	documentProcessed: new signals.Signal
 };
