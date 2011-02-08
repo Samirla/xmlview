@@ -9,21 +9,27 @@
 		<mkdir dir="${dist.js.dir}"/>
 	</target>
 	
+	<filelist dir="${js-src.dir}" id="js.source">
+		<file name="lib/jquery-1.4.4.min.js"/>
+		<file name="lib/js-signals.js"/>
+		<file name="settings.js"/>
+		<file name="utils.js"/>
+		<file name="signals.js"/>
+		<file name="renderer.js"/>
+		<file name="search.js"/>
+		<file name="controller.js"/>
+		<file name="dnd.js"/>
+		<file name="init.js"/>
+	</filelist>
+	
 	<target name="compile.js" depends="init">
 		<compress-js-lib tofile="${dist.js.dir}/xv.js" force="${force-rebuild}" use-cc="${webtasks.use-cc}">
-			<filelist dir="${js-src.dir}">
-				<file name="lib/jquery-1.4.4.min.js"/>
-				<file name="lib/js-signals.js"/>
-				<file name="settings.js"/>
-				<file name="utils.js"/>
-				<file name="signals.js"/>
-				<file name="renderer.js"/>
-				<file name="search.js"/>
-				<file name="controller.js"/>
-				<file name="dnd.js"/>
-				<file name="init.js"/>
-			</filelist>
+			<filelist refid="js.source"/>
 		</compress-js-lib>
+		
+		<concat destfile="${dist.js.dir}/xv-src.js">
+			<filelist refid="js.source"/>
+		</concat>
 	</target>
 	
 	<target name="compile.css" depends="init">

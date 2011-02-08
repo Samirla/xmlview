@@ -5,8 +5,9 @@
  * @link http://chikuyonok.ru
  * 
  * @include "controller.js"
+ * @include "dom.js"
  */
-$(function(){
+(function(){
 	var canvas = document.createElement('canvas'),
 		/** @type {CanvasRenderingContext2D} */
 		ctx = canvas.getContext('2d'),
@@ -17,13 +18,14 @@ $(function(){
 		padding_top = 4,
 		bg_pattern,
 		
+		/** @type {Element} */
 		drag_elem,
 		is_dragging = false,
 		data_transfer,
 		
 		/** @type {Element} */
 		source_node,
-		dnd_tooltip = $('<span class="xv-dnd-tooltip"></span>');
+		dnd_tooltip = xv_dom.fromHTML('<span class="xv-dnd-tooltip"></span>');
 		
 	var META_KEY = 1, 
 		ALT_KEY = 2,
@@ -119,22 +121,6 @@ $(function(){
 	}
 	
 	/**
-	 * Returns list of valid node's attributes
-	 * @param {Element} node
-	 * @return {Array}
-	 */
-	function getValidAttributes(node) {
-		var result = [];
-		for (var i = 0, il = node.attributes.length; i < il; i++) {
-			var n = node.attributes[i];
-			if (n.name.indexOf('data-xv-'))
-				result.push({name: n.name, value: n.value});
-		}
-		
-		return result;
-	}
-	
-	/**
 	 * Return attribute quote for XPath
 	 * TODO get from settings
 	 * @return {String}
@@ -149,23 +135,19 @@ $(function(){
 	 * @return {String}
 	 */
 	function getTransferForNodeName(evt) {
-		var elem = $(drag_elem);
-			
 		switch (getKeyMask(evt)) {
 			case META_KEY: // name only
 				return source_node.nodeName;
 			case META_KEY | ALT_KEY: // name and attr names
-				var attrs = [];
-				$.each(getValidAttributes(source_node), function(i, n) {
-					attrs.push('@' + n.name);
+				var attrs = _.map(xv_utils.filterValidAttributes(source_node), function(n) {
+					return '@' + n.name;
 				});
 				
 				return source_node.nodeName + (attrs.length ? '[' + attrs.join(' and ') + ']' : '');
 			case META_KEY | SHIFT_KEY: // name and attr names and values
-			case META_KEY | SHIFT_KEY | ALT_KEY: 
-				var attrs = [], q = getAttrQuote();
-				$.each(getValidAttributes(source_node), function(i, n) {
-					attrs.push('@' + n.name + ' = ' + q + n.value + q);
+			case META_KEY | SHIFT_KEY | ALT_KEY:
+				var attrs = _.map(xv_utils.filterValidAttributes(source_node), function(n) {
+					return '@' + n.name + ' = ' + q + n.value + q;
 				});
 				
 				return source_node.nodeName + (attrs.length ? '[' + attrs.join(' and ') + ']' : '');
@@ -180,21 +162,16 @@ $(function(){
 	 * @return {String}
 	 */
 	function getTransferForAttrName(evt) {
-		var elem = $(drag_elem), 
-			name = elem.text(),
+		var name = drag_elem.textContent,
 			q = getAttrQuote(),
 			value = '';
 			
 		var getValue = function() {
-			var value = '';
-			$.each(getValidAttributes(source_node), function(i, n) {
-				if (n.name == name) {
-					value = n.value;
-					return false;
-				}
+			var value = _.detect(xv_utils.filterValidAttributes(source_node), function(n) {
+				return n.name == name;
 			});
 			
-			return value;
+			return value ? value.value : null;
 		};
 			
 		switch (getKeyMask(evt)) {
@@ -212,11 +189,11 @@ $(function(){
 	}
 	
 	function updateTransferState(evt) {
-		var state = null, elem = $(drag_elem);
+		var state = null;
 		
-		if (elem.hasClass('xv-tag-name'))
+		if (xv_dom.hasClass(drag_elem, 'xv-tag-name'))
 			state = getTransferForNodeName(evt);
-		else if (elem.hasClass('xv-attr-name'))
+		else if (xv_dom.hasClass(drag_elem, 'xv-attr-name'))
 			state = getTransferForAttrName(evt);
 			
 		if (state !== null) {
@@ -226,72 +203,85 @@ $(function(){
 				data_transfer.setData('text/plain', state);
 				data_transfer.setDragImage(canvas, padding_left, canvas.height);
 			} else {
-				dnd_tooltip.css('visibility', 'visible').text(state);
+				xv_dom.setCSS(dnd_tooltip, {visibility: 'visible'});
+				xv_dom.setText(dnd_tooltip, state);
 			}
 		} else {
-			dnd_tooltip.css('visibility', 'hidden');
+			xv_dom.setCSS(dnd_tooltip, {visibility: 'hidden'});
 		}
 	}
 	
 	function attachTooltip(evt) {
 		updateTransferState(evt);
-		dnd_tooltip.insertBefore(drag_elem);
+		drag_elem.parentNode.insertBefore(dnd_tooltip, drag_elem);
 	}
 	
 	function detachTooltip() {
-		dnd_tooltip.remove();
+		xv_dom.removeElement(dnd_tooltip);
 	}
 	
-	var delegate_items = '.xv-tag-name, .xv-attr-name';
-	$(document)
-		.delegate(delegate_items, 'hover', function(/* Event */ evt) {
-			if (evt.type == 'mouseenter') {
-				drag_elem = this;
-				source_node = xv_renderer.getOriginalNode($(this).closest('.xv-node')[0]);
-				if (evt.metaKey) {
-					this.draggable = true;
-					attachTooltip(evt);
-				}
-			} else {
-				this.draggable = false;
-				detachTooltip(evt);
-				drag_elem = null;
-			}
-		})
-		.delegate(delegate_items, 'dragstart', function(/* Event */ evt) {
-			is_dragging = true;
-			
-			data_transfer = evt.originalEvent.dataTransfer;
-			data_transfer.effectAllowed = 'copy';
-			updateTransferState(evt);
-			detachTooltip();
-		})
-		.bind('dragend', function() {
-			is_dragging = false;
-		});
-		
-	$(document)
-		.keydown(function(/* Event */ evt) {
-			if (evt.keyCode == 91 && drag_elem) {
+	function isHoverElement(elem) {
+		return xv_dom.hasClass(elem, 'xv-tag-name') || xv_dom.hasClass(elem, 'xv-attr-name');
+	}
+	
+	
+	var delegate_items = 'xv-tag-name,xv-attr-name';
+	xv_dom.addEvent(document, 'mouseover', function(/* Event */ evt) {
+		if (isHoverElement(evt.target)) {
+			drag_elem = evt.target;
+			source_node = xv_renderer.getOriginalNode(xv_dom.bubbleSearch(drag_elem, 'xv-node'));
+			if (evt.metaKey) {
 				drag_elem.draggable = true;
 				attachTooltip(evt);
 			}
-				
-			if (isModifierKeyTrigger(evt) && drag_elem) {
-				updateTransferState(evt);
-			}
-		})
-		.keyup(function(/* Event */ evt) {
-			if (evt.keyCode == 91 && drag_elem) {
-				drag_elem.draggable = false;
-				detachTooltip(evt);
-			}
-				
-			if (isModifierKeyTrigger(evt) && drag_elem) {
-				updateTransferState(evt);
-			}
-		});
+		}
+	});
+	
+	xv_dom.addEvent(document, 'mouseout', function(/* Event */ evt) {
+		if (isHoverElement(evt.target)) {
+			evt.target.draggable = false;
+			detachTooltip();
+			drag_elem = null;
+		}
+	});
+	
+	xv_dom.addEvent(document, 'dragstart', function(/* Event */ evt) {
+		is_dragging = true;
+		
+		data_transfer = evt.dataTransfer;
+		data_transfer.effectAllowed = 'copy';
+		updateTransferState(evt);
+		detachTooltip();
+	});
+	
+	xv_dom.addEvent(document, 'dragend', function(/* Event */ evt) {
+		is_dragging = false;
+	});
+	
+	
+	xv_dom.addEvent(document, 'keydown', function(/* Event */ evt) {
+		if (evt.keyCode == 91 && drag_elem) {
+			drag_elem.draggable = true;
+			attachTooltip(evt);
+		}
+			
+		if (isModifierKeyTrigger(evt) && drag_elem) {
+			updateTransferState(evt);
+		}
+	});
+	
+	xv_dom.addEvent(document, 'keyup', function(/* Event */ evt) {
+		if (evt.keyCode == 91 && drag_elem) {
+			drag_elem.draggable = false;
+			detachTooltip(evt);
+		}
+			
+		if (isModifierKeyTrigger(evt) && drag_elem) {
+			updateTransferState(evt);
+		}
+	});
 		
 	canvas.className = 'xv-drag-image';
+	canvas.width = canvas.height = 1;
 	document.body.appendChild(canvas);
 });

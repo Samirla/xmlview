@@ -4,6 +4,7 @@
  * @link http://chikuyonok.ru
  * 
  * @include "utils.js"
+ * @include "dom.js"
  * @include "signals.js"
  */
 var xv_search = (function(){
@@ -15,8 +16,8 @@ var xv_search = (function(){
 		last_search,
 		
 		last_query,
-		/** @type {jQuery} */
-		popup = $('<div class="xv-search-result"><ul class="xv-search-result-content"></ul></div>'),
+		/** @type {Element} Popup container */
+		popup = xv_dom.fromHTML('<div class="xv-search-result"><ul class="xv-search-result-content"></ul></div>'),
 		max_visible_results = 20,
 		max_results = 200,
 		
@@ -24,10 +25,10 @@ var xv_search = (function(){
 		
 		is_visible = false,
 		
-		/** @type {jQuery} Search panel */
+		/** @type {Element} Search panel */
 		panel,
 		
-		/** @type {jQuery} Search field */
+		/** @type {Element} Search field */
 		search_field,
 		
 		hover_lock_timeout,
@@ -38,14 +39,8 @@ var xv_search = (function(){
 	 * @param {Element} node
 	 */
 	function searchIndexItem(node) {
-		var search_str = node.nodeName;
-		var attrs = [];
-		if (node.attributes) {
-			for (var i = 0, il = node.attributes.length; i < il; i++) {
-				if (node.attributes[i].name.indexOf('data-xv-') == -1)
-					attrs.push(node.attributes[i].name);
-			}
-		}
+		var search_str = node.nodeName,
+			attrs = xv_utils.filterValidAttributes(node);
 		
 		if (attrs.length)
 			search_str += ' ' + attrs.join(' ');
@@ -65,9 +60,7 @@ var xv_search = (function(){
 			return;
 			
 		search_index.push(searchIndexItem(node));
-		for (var i = 0, il = node.childNodes.length; i < il; i++) {
-			buildIndex(node.childNodes[i]);
-		}
+		_.each(node.childNodes, buildIndex);
 	}
 	
 	/**
@@ -78,7 +71,7 @@ var xv_search = (function(){
 	function searchText(query) {
 		var result = [];
 		if (query) {
-			$.each(search_index, function(i, /* searchIndexItem */ n) {
+			_.each(search_index, function(/* searchIndexItem */ n) {
 				var ix = n.str.indexOf(query);
 				if (ix != -1) {
 					result.push({
@@ -113,10 +106,10 @@ var xv_search = (function(){
 	
 	/**
 	 * Returns list of search result items
-	 * @return {jQuery}
+	 * @return {NodeList}
 	 */
 	function getSearchResultItems() {
-		return popup.find('.xv-search-result-item');
+		return xv_dom.getByClass('xv-search-result-item');
 	}
 	
 	/**
@@ -126,28 +119,35 @@ var xv_search = (function(){
 	 * selected item is always visible
 	 */
 	function selectItem(ix, no_scroll) {
-		var cur_item = getSearchResultItems()
-			.removeClass('xv-search-result-item-selected')
-			.eq(ix)
-			.addClass('xv-search-result-item-selected');
+		var result_items = getSearchResultItems(),
+			/** @type {Element} */
+			cur_item;
+			
+		_.each(result_items, function(n, i) {
+			xv_dom.removeClass(n, 'xv-search-result-item-selected');
+			if (i == ix) {
+				cur_item = n;
+				xv_dom.addClass(n, 'xv-search-result-item-selected');
+			}
+		});
 		
-		if (!no_scroll && cur_item.length) {
-			var content = cur_item.parent();
+		if (!no_scroll && cur_item) {
+			var content = cur_item.parentNode;
 			// make sure that selected proposal is visible
-			var proposal_top = cur_item[0].offsetTop,
-				proposal_height = cur_item[0].offsetHeight,
-				popup_scroll = content[0].scrollTop,
-				popup_height = content[0].offsetHeight;
+			var proposal_top = cur_item.offsetTop,
+				proposal_height = cur_item.offsetHeight,
+				popup_scroll = content.scrollTop,
+				popup_height = content.offsetHeight;
 				
 			if (proposal_top < popup_scroll) {
-				content[0].scrollTop = proposal_top;
+				content.scrollTop = proposal_top;
 			} else if (proposal_top + proposal_height > popup_scroll + popup_height) {
-				content[0].scrollTop = proposal_top + proposal_height - popup_height;
+				content.scrollTop = proposal_top + proposal_height - popup_height;
 			}
 		}
 		
 		selected_item = ix;
-		xv_signals.searchItemSelected.dispatch(cur_item[0], selected_item);
+		xv_signals.searchItemSelected.dispatch(cur_item, selected_item);
 	}
 	
 	/**
@@ -189,17 +189,17 @@ var xv_search = (function(){
 					'<em>' + name.substr(item.ix, ql) + '</em>'
 					+ name.substr(item.ix + ql);
 			} else { // match found somethere in attribute, add it
-				var _ix;
-				$.each(node.attributes, function(i, n) {
+				for (var i = 0, n, _ix, il = node.attributes.length; i < il; i++) {
+					n = node.attributes[i];
 					_ix = n.name.indexOf(query);
 					if (_ix != -1) {
 						name += '[@' + n.name.substr(0, _ix) + 
 							'<em>' + n.name.substr(_ix, ql) + '</em>'
 							+ n.name.substr(_ix + ql) + ']';
 							
-						return false;
+						break;
 					}
-				});
+				}
 			}
 		}
 		
@@ -213,32 +213,38 @@ var xv_search = (function(){
 	 * @return {jQuery}
 	 */
 	function buildSearchResult(found, query) {
-		var items = [];
-		$.each(found, function(i, n) {
-			items.push('<li class="xv-search-result-item" data-xv-search-ix="' + i + '">' + createSearchResultLabel(n, query) + '</li>');
-			
-			// reset selected item
-			selected_item = -1;
+		var items = _.map(found, function(n, i) {
+			return '<li class="xv-search-result-item" data-xv-search-ix="' + i + '">' + createSearchResultLabel(n, query) + '</li>';
 		});
 		
-		popup.find('.xv-search-result-content').empty().append(items.join(''));
+		// reset selected item
+		selected_item = -1;
+		
+		var content = xv_dom.getOneByClass('xv-search-result-content');
+		xv_dom.empty(content);
+		content.appendChild(xv_dom.fromHTML(items.join('')));
 			
-		if (items.length > max_visible_results) {
-			popup.addClass('xv-search-result-overflow');
-			popup.find('.xv-search-result-content').css('height', getSearchResultItems().eq(0).height() * max_visible_results);
+		if (found.length > max_visible_results) {
+			xv_dom.addClass(popup, 'xv-search-result-overflow');
+			xv_dom.setCSS(content, {'height': getSearchResultItems()[0].offsetHeight * max_visible_results});
 		} else {
-			popup.removeClass('xv-search-result-overflow');
-			popup.find('.xv-search-result-content').css('height', 'auto');
+			xv_dom.removeClass(popup, 'xv-search-result-overflow');
+			xv_dom.setCSS(content, {'height': 'auto'});
 		}
 	}
 	
 	function hidePopup() {
-		popup.hide();
+		xv_dom.setCSS(popup, {display: 'none'});
 		is_visible = false;
 	}
 	
+	function showPopup() {
+		xv_dom.setCSS(popup, {display: 'block'});
+		is_visible = true;
+	}
+	
 	function performSearch() {
-		var query = $.trim(search_field.val()).toLowerCase();
+		var query = xv_utils.trim(search_field.value).toLowerCase();
 		
 		if (!query) {
 			hidePopup();
@@ -252,9 +258,8 @@ var xv_search = (function(){
 		last_search = xv_utils.isXPath(query) ? searchXPath(query) : searchText(query);
 		
 		if (last_search) {
-			popup.show();
+			showPopup();
 			buildSearchResult(last_search, query);
-			is_visible = true;
 		} else {
 			hidePopup();
 		}
@@ -265,82 +270,93 @@ var xv_search = (function(){
 		hidePopup();
 	}
 	
-	// bind events to search field
-	$(function(){
-		var search_timer;
-		panel = $('.xv-search-panel');
-		panel.append(popup.hide());
-		
-		search_field = $('.xv-search-field').keydown(function(evt) {
-			if (is_visible) {
-				switch (evt.keyCode) {
-					case 38: //up
-						selectItem(Math.max(selected_item - 1, 0));
-						lockHover();
-						evt.preventDefault();
-						return;
-					case 40: //down
-						selectItem(Math.min(selected_item + 1, last_search.length - 1));
-						lockHover();
-						evt.preventDefault();
-						return;
-					case 13: //enter
-						applyProposal(selected_item);
-						hidePopup();
-						evt.preventDefault();
-						return;
-					case 27: // escape
-						hidePopup();
-						evt.preventDefault();
-						return;
-				}
+	var _doSearch = _.debounce(performSearch, 150);
+	
+	/**
+	 * Handle keyboard event performed on search field
+	 * @param {Event} evt
+	 */
+	function handleKeyEvent(evt) {
+		if (is_visible) {
+			switch (evt.keyCode) {
+				case 38: //up
+					selectItem(Math.max(selected_item - 1, 0));
+					lockHover();
+					evt.preventDefault();
+					return;
+				case 40: //down
+					selectItem(Math.min(selected_item + 1, last_search.length - 1));
+					lockHover();
+					evt.preventDefault();
+					return;
+				case 13: //enter
+					applyProposal(selected_item);
+					hidePopup();
+					evt.preventDefault();
+					return;
+				case 27: // escape
+					hidePopup();
+					evt.preventDefault();
+					return;
 			}
-			
-			if (search_timer)
-				clearTimeout(search_timer);
-				
-			search_timer = setTimeout(performSearch, 150);
+		}
+		
+		_doSearch();
+	}
+	
+	function runOnDelegated(cur_elem, fn) {
+		var elem = xv_dom.bubbleSearch(cur_elem, 'xv-search-result-item');
+		if (elem) {
+			var ix = _.indexOf(getSearchResultItems(), elem);
+			if (ix != -1)
+				fn(ix);
+		}
+	}
+	
+	// bind events to search field
+	xv_dom.onDomReady(function(){
+		hidePopup();
+		var panel = xv_dom.getOneByClass('xv-search-panel');
+		panel.appendChild(popup);
+		
+		search_field = xv_dom.getOneByClass('xv-search-field', panel);
+		
+		xv_dom.addEvent(search_field, 'keydown', handleKeyEvent);
+		
+		// delegate hover event: hilight proposal
+		xv_dom.addEvent(popup, 'mouseover', function(/* Event */ evt) {
+			if (is_hover_locked) return;
+			runOnDelegated(evt.target, function(ix) { selectItem(ix, true); });
 		});
 		
-		popup
-			// delegate hover event: hilight proposal
-			.delegate('.xv-search-result-item', 'mouseover', function(/* Event */ evt) {
-				if (is_hover_locked) return;
-					
-				var ix = getSearchResultItems().index(this);
-				if (ix != -1)
-					selectItem(ix, true);
-			})
-			// delegate click event: apply proposal
-			.delegate('.xv-search-result-item', 'click', function(/* Event */ evt) {
-				var ix = getSearchResultItems().index(this);
-				if (ix != -1) {
-					applyProposal(ix);
-					hidePopup();
-				}
+		// delegate click event: apply proposal
+		xv_dom.addEvent(popup, 'click', function(/* Event */ evt) {
+			runOnDelegated(evt.target, function(ix) {
+				applyProposal(ix);
+				hidePopup();
 			});
+		});
 		
-		var dont_hide = false, 
-			hide_timeout;
+		var dont_hide = false;
 		
-		search_field
-			.blur(function() {
-				// use delayed execution in to handle popup click event correctly
-				hide_timeout = setTimeout(function() {
-					if (!dont_hide) hidePopup();
-					dont_hide = false;
-				}, 200);
-			})
-			.focus(performSearch);
+		xv_dom.addEvent(search_field, 'blur', function() {
+			// use delayed execution in to handle popup click event correctly
+			setTimeout(function() {
+				if (!dont_hide) hidePopup();
+				dont_hide = false;
+			}, 200);
+		});
 		
-		popup.mousedown(function(/* Event */ evt) {
+		xv_dom.addEvent(search_field, 'focus', performSearch);
+		
+		xv_dom.addEvent(popup, 'mousedown', function(/* Event */ evt) {
 			evt.preventDefault();
 			evt.stopPropagation();
 			dont_hide = true;
 			return false;
 		});
 		
-		$(document).mousedown(hidePopup);
+		xv_dom.addEvent(document, 'mousedown', hidePopup);
 	});
 	
 	

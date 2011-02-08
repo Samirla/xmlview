@@ -5,36 +5,38 @@
  * 
  * @include "xsl_tracer.js"
  * @include "renderer.js"
+ * @include "dom.js"
  */(function(){
-	/** @type {jQuery} Currently selected element */
+	/** @type {Element} Currently selected element */
 	var selected_elem;
 	
 	/**
 	 * Highlight element
-	 * @param {jQuery} element
+	 * @param {Element} element
 	 */
 	function highlightElement(elem) {
-		elem = $(elem);
 		if (selected_elem)
-			selected_elem.removeClass('selected');
-			
-		selected_elem = elem.addClass('selected');
-	}
+			xv_dom.removeClass(selected_elem, 'selected');
 		
-	$(document).delegate('.xv-tag-open, .xv-tag-close', 'click', function(/* Event */ evt) {
-		var elem = $(this).closest('.xv-tag');
-		if (elem.length) {
-			if (elem.hasClass('xt-collapsed')) {
+		xv_dom.addClass(elem, 'selected');
+		selected_elem = elem;
+	}
+	
+	xv_dom.addEvent(document, 'click', function(/* Event */ evt) {
+		var elem = xv_dom.bubbleSearch(evt.target, 'xv-tag-switcher');
+		if (elem) {
+			xv_dom.toggleClass(xv_dom.bubbleSearch(elem, 'xv-tag'), 'xt-collapsed');
+			return;
+		}
+		
+		elem = xv_dom.bubbleSearch(evt.target, 'xv-tag');
+		if (elem) {
+			if (xv_dom.hasClass(elem, 'xt-collapsed')) {
 				// expand collapsed data
-				elem.removeClass('xt-collapsed');
+				xv_dom.removeClass(elem, 'xt-collapsed');
 			} else {
 				highlightElement(elem);
 			}
 		}
 	});
-	
-	$(document).delegate('.xv-tag-switcher', 'click', function(evt) {
-		$(this).closest('.xv-tag').toggleClass('xt-collapsed');
-	});
-	
 })();

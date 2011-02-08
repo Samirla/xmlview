@@ -3,16 +3,17 @@
  * @link http://chikuyonok.ru
  * 
  * @include "renderer.js"
+ * @include "dom.js"
  * @include "search.js"
  * @include "signals.js"
  */
 var xv_controller = (function(){
-	/** @type {jQuery} Currently selected element */
+	/** @type {Element} Currently selected element */
 	var selected_elem,
 		/** Cache for rendered nodes */
 		rendered_nodes = {},
 		
-		/** @type {jQuery} Pane for rendered nodes */
+		/** @type {Element} Pane for rendered nodes */
 		pane;
 	
 	/**
@@ -20,13 +21,12 @@ var xv_controller = (function(){
 	 * @param {jQuery} element
 	 */
 	function highlightElement(elem) {
-		elem = $(elem);
-		if (selected_elem && selected_elem[0] != elem[0])
-			selected_elem.removeClass('selected');
+		if (selected_elem && selected_elem != elem)
+			xv_dom.removeClass(selected_elem, 'selected');
 			
-		selected_elem = elem.toggleClass('selected');
-		
-		xv_signals.nodeFocused.dispatch(xv_renderer.getOriginalNode(selected_elem[0]), 'main');
+		selected_elem = elem;
+		xv_dom.toggleClass(selected_elem, 'selected');
+		xv_signals.nodeFocused.dispatch(xv_renderer.getOriginalNode(selected_elem), 'main');
 	}
 	
 	/**
@@ -35,7 +35,7 @@ var xv_controller = (function(){
 	 * @return {Boolean}
 	 */
 	function hasUnprocessedChildren(elem) {
-		return $(elem).hasClass('xv-has-unprocessed');
+		return xv_dom.hasClass(elem, 'xv-has-unprocessed');
 	}
 	
 	/**
@@ -44,30 +44,32 @@ var xv_controller = (function(){
 	 * @param {Boolean} is_recursive Recursively expand all child nodes
 	 */
 	function expandNode(elem, is_recursive) {
-		elem = $(elem);
-		
-		if (!elem.hasClass('xv-collapsed')) // additional check for recursive calls
+		if (!xv_dom.hasClass(elem, 'xv-collapsed')) // additional check for recursive calls
 			return;
 		
 		// check if current node has unprocessed children
-		elem.removeClass('xv-collapsed');
+		xv_dom.removeClass(elem, 'xv-collapsed');
 		if (hasUnprocessedChildren(elem)) {
 			// render all first-level child nodes
-			var orig_elem = xv_renderer.getOriginalNode(elem[0]),
-				cur_child = elem.children('.xv-tag-children');
+			var orig_elem = xv_renderer.getOriginalNode(elem),
+				/** @type {Element} */
+				cur_child = _.detect(elem.childNodes, function(n) {
+					return n.nodeType == 1 && xv_dom.hasClass(n, 'xv-tag-children');
+				});
 				
 			var f = document.createDocumentFragment();
-			$.each(orig_elem.childNodes, function(i, n) {
+			_.each(orig_elem.childNodes, function(n) {
 				f.appendChild(xv_renderer.render(n, 0));
 			});
 			
-			cur_child.empty().append(f);
-			elem.removeClass('xv-has-unprocessed');
+			xv_dom.empty(cur_child);
+			cur_child.appendChild(f);
+			xv_dom.removeClass(elem, 'xv-has-unprocessed');
 		}
 		
 		if (is_recursive) {
-			elem.find('.xv-collapsed').each(function() {
-				expandNode(this, is_recursive);
+			_.each(xv_dom.getByClass('xv-collapsed', elem), function(n) {
+				expandNode(n, is_recursive);
 			});
 		}
 	}
@@ -78,16 +80,15 @@ var xv_controller = (function(){
 	 * @param {Boolean} is_recursive Recursively collapse all child nodes
 	 */
 	function collapseNode(elem, is_recursive) {
-		elem = $(elem);
-		
-		if (elem.hasClass('xv-collapsed')) // additional check for recursive calls
+		if (xv_dom.hasClass(elem, 'xv-collapsed')) // additional check for recursive calls
 			return;
 			
-		elem.addClass('xv-collapsed');
+		xv_dom.addClass(elem, 'xv-collapsed');
 		
 		if (is_recursive) {
-			elem.find('.xv-tag, .xv-comment').not('.xv-collapsed').not('.xv-one-line').each(function() {
-				collapseNode(this);
+			_.each(xv_dom.getByClass('xv-node', elem), function(n) {
+				if (!xv_dom.hasClass(n, 'xv-collapsed') && !xv_dom.hasClass(n, 'xv-one-line'))
+					collapseNode(n);
 			});
 		}
 	}
@@ -101,10 +102,10 @@ var xv_controller = (function(){
 		var id = xv_renderer.getId(orig_node);
 		
 		if (!(id in rendered_nodes)) {
-			pane.find('.xv-node').each(function(i, n) {
+			_.detect(xv_dom.getByClass('xv-node', pane), function(n) {
 				if (xv_renderer.getId(n) == id) {
 					rendered_nodes[id] = n;
-					return false;
+					return true;
 				}
 			});
 		}
@@ -112,10 +113,11 @@ var xv_controller = (function(){
 		return rendered_nodes[id];
 	}
 		
-	$(document).delegate('.xv-tag-open, .xv-tag-close, .xv-comment-start', 'click', function(/* Event */ evt) {
-		var elem = $(this).closest('.xv-tag, .xv-comment');
-		if (elem.length) {
-			if (elem.hasClass('xv-collapsed')) {
+	xv_dom.addEvent(document, 'click', function(/* Event */ evt) {
+		var elem = xv_dom.bubbleSearch(evt.target, 'xv-tag-open,xv-tag-close,xv-comment-start');
+		if (elem) {
+			elem = xv_dom.bubbleSearch(elem, 'xv-node');
+			if (xv_dom.hasClass(elem, 'xv-collapsed')) {
 				expandNode(elem, !!evt.altKey);
 			} else {
 				highlightElement(elem);
@@ -123,12 +125,15 @@ var xv_controller = (function(){
 		}
 	});
 	
-	$(document).delegate('.xv-tag-switcher', 'click', function(evt) {
-		var elem = $(this).closest('.xv-tag, .xv-comment');
-		if (elem.hasClass('xv-collapsed')) {
-			expandNode(elem, !!evt.altKey);
-		} else {
-			collapseNode(elem, !!evt.altKey);
+	xv_dom.addEvent(document, 'click', function(/* Event */ evt) {
+		var elem = xv_dom.bubbleSearch(evt.target, 'xv-tag-open,xv-tag-close,xv-comment-start');
+		if (xv_dom.hasClass(evt.target, 'xv-tag-switcher')) {
+			elem = xv_dom.bubbleSearch(evt.target, 'xv-node');
+			if (xv_dom.hasClass(elem, 'xv-collapsed')) {
+				expandNode(elem, !!evt.altKey);
+			} else {
+				collapseNode(elem, !!evt.altKey);
+			}
 		}
 	});
 	
@@ -145,7 +150,7 @@ var xv_controller = (function(){
 			
 			// expand each node, from top to bottom
 			node_list.reverse();
-			$.each(node_list, function(i, n) {
+			_.each(node_list, function(n) {
 				expandNode(getRenderedNode(n));
 			});
 			
@@ -158,10 +163,6 @@ var xv_controller = (function(){
 		}
 	});
 	
-	$(function(){
-		pane = $('.xv-source-pane-inner');
-	});
-	
 	return {
 		/**
 		 * Process XML/JSON document
@@ -172,22 +173,27 @@ var xv_controller = (function(){
 				try {
 					data = xv_utils.toXml(data);
 				} catch(e) {
-					$('<div class="xv-error"></div>')
-						.html(e.toString())
-						.appendTo('body');
-						
-					$('body').addClass('xv-error-state');
-						
+					var error_msg = xv_dom.fromHTML('<div class="xv-error">' + e.toString() + '</div>');
+					var root_elem = document.body || document.documentElement;
+					
+					root_elem.appendChild(error_msg);
+					xv_dom.addClass(root_elem, 'xv-error-state');
 					data = null;
 				}
 			}
 			
 			if (data) {
 				var tree = xv_renderer.render(data, 2);
-				pane.empty().append(tree);
+				
+				if (!pane)
+					pane = xv_dom.getOneByClass('xv-source-pane-inner');
+					
+				rendered_nodes = {};
+				
+				xv_dom.empty(pane);
+				pane.appendChild(tree);
 				
 				xv_search.init(data);
-				rendered_nodes = {};
 				return tree;
 			}
 		},

@@ -7,6 +7,15 @@ var xv_utils = (function(){
 	
 	return {
 		/**
+		 * Trim whitespace from the beginning and the end of string
+		 * @param {String} text
+		 * @return {String}
+		 */
+		trim: function(text) {
+			return (text || '').replace(/^(\s|\u00A0)+|(\s|\u00A0)+$/g, '');
+		},
+		
+		/**
 		 * Creates XPath for specified <code>node</code> element.
 		 * If <code>context</code> passed, the XPath will be built up till this
 		 * element.
@@ -56,7 +65,7 @@ var xv_utils = (function(){
 				'&apos;': '\''
 			};
 			
-			text = $.trim(text);
+			text = this.trim(text);
 			
 			return text.replace(/&(lt|gt|amp|apos|quot);/g, function(str) {
 				return chars[str];
@@ -70,11 +79,24 @@ var xv_utils = (function(){
 					|| result.documentElement.nodeName == 'parsererror'
 					|| result.getElementsByTagName('parsererror').length) {
 						
-				console.log(result);
-				throw "<h2>Can’t parse XML document</h2> \n" + $('parsererror', result).html();
+						
+					var error = result.getElementsByTagName('parsererror')[0];
+						
+				throw "<h2>Can’t parse XML document</h2> \n" + (error ? error.innerHTML : '');
 			}
 			
 			return result;
+		},
+		
+		/**
+		 * Returns list of valid attributes for node (i.e. without internal ones)
+		 * @param {Element} elem
+		 * @return {Array}
+		 */
+		filterValidAttributes: function(elem) {
+			return _.filter(elem.attributes, function(n) {
+				return n.name.indexOf('data-xv-') != 0;
+			});
 		}
 	};
 })();

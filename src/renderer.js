@@ -2,6 +2,8 @@
  * Renders XML document
  * @author Sergey Chikuyonok (serge.che@gmail.com)
  * @link http://chikuyonok.ru
+ * 
+ * @include "utils.js"
  */var xv_renderer = (function() {
 	
 	var _id = 0,
@@ -13,10 +15,6 @@
 			'&': '&amp;'
 		};
 		
-	function trim(text) {
-		return (text || '').replace(/^(\s|\u00A0)+|(\s|\u00A0)+$/g, '');
-	}
-	
 	/**
 	 * @param {String} text
 	 */
@@ -100,13 +98,15 @@
 	 * @return {String} 
 	 */
 	function stylizeElement(node, depth) {
-		var attrs = [], i, il;
+		var i, il;
 		
-		for (i = 0, il = node.attributes.length; i < il; i++) {
-			var n = node.attributes[i];
-			if (n.nodeName.indexOf('data-xv-') == -1)
-				attrs.push('<span class="xv-attr"><span class="xv-attr-name">' + n.nodeName + '</span>' +						'="' +						'<span class="xv-attr-value">' + n.nodeValue + '</span>' +						'"</span>');
-		}
+		var attrs = _.map(xv_utils.filterValidAttributes(node), function(n) {
+			return '<span class="xv-attr"><span class="xv-attr-name">' + n.name + '</span>' +
+				'="' +
+				'<span class="xv-attr-value">' + n.value + '</span>' +
+				'"</span>';
+		});
+		
 		
 		// test if current node should be displayed on one line
 		var is_one_liner = node.childNodes.length == 1 
@@ -140,9 +140,9 @@
 			result.push('<span class="xv-tag-children">');
 			
 			if (!skip_children || is_one_liner) {
-				for (i = 0, il = node.childNodes.length; i < il; i++) {
-					result.push(stylize(node.childNodes[i], depth - 1));
-				}
+				_.each(node.childNodes, function(n) {
+					result.push(stylize(n, depth - 1));
+				});
 			}
 			
 			result.push('</span>');
@@ -161,8 +161,8 @@
 	 * @return {String} 
 	 */
 	function stylizeTextNode(node) {
-		var v = trim(node.nodeValue);
-		return v ? '<span class="xv-text">' + trim(node.nodeValue) + '</span>' : '';
+		var v = xv_utils.trim(node.nodeValue);
+		return v ? '<span class="xv-text">' + xv_utils.trim(node.nodeValue) + '</span>' : '';
 	}
 	
 	/**
@@ -179,7 +179,7 @@
 	 * @return {String} 
 	 */
 	function stylizeComment(node) {
-		var v = trim(node.nodeValue),
+		var v = xv_utils.trim(node.nodeValue),
 			class_name = 'xv-node xv-comment';
 			
 		if (v.length < oneline_text_len) {
@@ -206,17 +206,8 @@
 			if (typeof depth == 'undefined')
 				depth = -1;
 				
-			var div = document.createElement('div'),
-				f = document.createDocumentFragment();
-			
-			if (!elem) return f;
-			
-			div.innerHTML = stylize(elem, depth);
-			
-			while (div.firstChild)
-				f.appendChild(div.firstChild);
-			
-			return f;
+			if (!elem) return document.createDocumentFragment();
+			return xv_dom.fromHTML(stylize(elem, depth));
 		},
 		
 		/**
