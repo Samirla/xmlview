@@ -6,20 +6,21 @@
 	<target name="init">
 		<mkdir dir="${dist.dir}"/>
 		<mkdir dir="${dist.css.dir}"/>
+		<mkdir dir="${dist.css-full.dir}"/>
 		<mkdir dir="${dist.js.dir}"/>
 	</target>
 	
 	<filelist dir="${js-src.dir}" id="js.source">
-		<file name="lib/jquery-1.4.4.min.js"/>
+		<file name="lib/underscore.js"/>
 		<file name="lib/js-signals.js"/>
-		<file name="settings.js"/>
-		<file name="utils.js"/>
 		<file name="signals.js"/>
+		<file name="utils.js"/>
+		<file name="dom.js"/>
+		<file name="settings.js"/>
 		<file name="renderer.js"/>
 		<file name="search.js"/>
 		<file name="controller.js"/>
 		<file name="dnd.js"/>
-		<file name="init.js"/>
 	</filelist>
 	
 	<target name="compile.js" depends="init">
@@ -33,6 +34,7 @@
 	</target>
 	
 	<target name="compile.css" depends="init">
+		<cssGlue dir="${css-src.dir}" todir="${dist.css-full.dir}" force="${force-rebuild}"/>
 		<compress-css dir="${css-src.dir}" todir="${dist.css.dir}" force="${force-rebuild}"/>
 	</target>
 	
