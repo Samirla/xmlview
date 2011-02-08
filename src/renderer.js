@@ -8,21 +8,7 @@
 	
 	var _id = 0,
 		orig_elems = {},
-		oneline_text_len = 100,
-		escape_vals = {
-			'<': '&lt;',
-			'>': '&gt;',
-			'&': '&amp;'
-		};
-		
-	/**
-	 * @param {String} text
-	 */
-	function escapeXML(text) {
-		return text.replace(/[<>&]/g, function(s) {
-			return escape_vals[s];
-		});
-	}
+		oneline_text_len = 100;
 		
 	/**
 	 * Returns node internal id, if exists
@@ -103,7 +89,7 @@
 		var attrs = _.map(xv_utils.filterValidAttributes(node), function(n) {
 			return '<span class="xv-attr"><span class="xv-attr-name">' + n.name + '</span>' +
 				'="' +
-				'<span class="xv-attr-value">' + n.value + '</span>' +
+				'<span class="xv-attr-value">' + processText(n.value) + '</span>' +
 				'"</span>';
 		});
 		
@@ -155,6 +141,10 @@
 		return result.join('');
 	}
 	
+	function processText(text) {
+		return xv_utils.escapeHTML(xv_utils.trim(text));
+	}
+	
 	/**
 	 * Stylize element node as tokenized HTML fragment
 	 * @param {Element} node
@@ -162,7 +152,7 @@
 	 */
 	function stylizeTextNode(node) {
 		var v = xv_utils.trim(node.nodeValue);
-		return v ? '<span class="xv-text">' + xv_utils.trim(node.nodeValue) + '</span>' : '';
+		return v ? '<span class="xv-text">' + processText(node.nodeValue) + '</span>' : '';
 	}
 	
 	/**
@@ -171,7 +161,7 @@
 	 */
 	function stylizeProcessingInstruction(node) {
 		return '<span class="xv-node xv-pi">&lt;?<span class="xv-pi-name">' + node.nodeName + '</span> ' +
-				'<span class="xv-pi-value">' + node.nodeValue + '</span>?&gt;</span>';
+				'<span class="xv-pi-value">' + processText(node.nodeValue) + '</span>?&gt;</span>';
 	}
 	
 	/**
@@ -189,7 +179,7 @@
 		return '<span class="' + class_name + '">' +
 				'<span class="xv-tag-switcher"></span>' +
 				'<span class="xv-comment-start">&lt;!-- </span>' +
-				'<span class="xv-comment-value">' + escapeXML(v) + '</span>' +
+				'<span class="xv-comment-value">' + processText(v) + '</span>' +
 				'<span class="xv-comment-end"> --&gt;</span>' +
 				'</span>';
 	}

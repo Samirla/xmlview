@@ -72,6 +72,23 @@ var xv_utils = (function(){
 			});
 		},
 		
+		/**
+		 * Escapes unsafe HTML characters
+		 * @param {String} str
+		 * @return {String}
+		 */
+		escapeHTML: function(str) {
+			var charmap = {
+				'<': '&lt;',
+				'>': '&gt;',
+				'&': '&amp;'
+			};
+			
+			return str.replace(/[<>&]/g, function(s) {
+				return charmap[s] || s;
+			});
+		},
+		
 		toXml: function(text) {
 			var result = (new DOMParser()).parseFromString(text, 'text/xml');
 			

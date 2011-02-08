@@ -20,7 +20,7 @@
 		<file name="renderer.js"/>
 		<file name="search.js"/>
 		<file name="controller.js"/>
-		<file name="dnd.js"/>
+		<!-- <file name="dnd.js"/> -->
 	</filelist>
 	
 	<target name="compile.js" depends="init">

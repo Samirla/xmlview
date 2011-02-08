@@ -14,6 +14,32 @@ var xv_dom = {
 	},
 	
 	/**
+	 * Returns 'class' attribute value of the element
+	 * @param {Element} elem
+	 * @return {String}
+	 */
+	getClassName: function(elem) {
+		if ('className' in elem)
+			return elem.className;
+		else if (elem.getAttribute)
+			return elem.getAttribute('class') || '';
+		
+		return '';
+	},
+	
+	/**
+	 * Updates 'class' attribute of the element
+	 * @param {Element} elem
+	 * @param {String} value
+	 */
+	setClassName: function(elem, value) {
+		if ('className' in elem)
+			elem.className = value;
+		else
+			elem.setAttribute('class', value);
+	},
+	
+	/**
 	 * Check if element contains specified class name
 	 *
 	 * @param {Element} elem
@@ -22,7 +48,7 @@ var xv_dom = {
 	 */
 	hasClass: function(elem, class_name) {
 		class_name = ' ' + class_name + ' ';
-		var _cl = elem.className;
+		var _cl = this.getClassName(elem);
 		return _cl && (' ' + _cl + ' ').indexOf(class_name) >= 0;
 	},
 	
@@ -55,9 +81,11 @@ var xv_dom = {
 			if (_c[i] && !this.hasClass(elem, _c[i]))
 				classes.push(_c[i]);
 		}
-	
+		
+		var value = this.getClassName(elem);
 		if (classes.length)
-			elem.className += (elem.className ? ' ' : '') + classes.join(' ');
+			value += (value ? ' ' : '') + classes.join(' ');
+		this.setClassName(elem, this.trim(value));
 	},
 	
 	/**
@@ -67,13 +95,13 @@ var xv_dom = {
 	 * @param {String} class_name
 	 */
 	removeClass: function(elem, class_name) {
-		var elem_class = elem.className || '';
+		var elem_class = this.getClassName(elem) || '';
 		var _c = class_name.split(/\s+/g);
 		for (var i = 0, il = _c.length; i < il; i++) {
 			elem_class = elem_class.replace(new RegExp('\\b' + _c[i] + '\\b'), '');
 		}
-	
-		elem.className = this.trim(elem_class);
+		
+		this.setClassName(elem, this.trim(elem_class));
 	},
 	
 	/**
@@ -172,8 +200,10 @@ var xv_dom = {
 				value = params[p];
 			props.push(name + ':' + ((typeof(value) == 'number' && !(name in num_props)) ? value + 'px' : value));
 		}
-	
-		elem.style.cssText += ';' + props.join(';');
+		
+		if (elem.style) {
+			elem.style.cssText += ';' + props.join(';');
+		}
 	},
 	
 	/**
@@ -223,7 +253,7 @@ var xv_dom = {
 				f.appendChild(div.firstChild);
 		} else {
 			// working inside XML document
-			var doc = xv_utils.toXml('<d>' + result + '</d>'),
+			var doc = xv_utils.toXml('<d>' + html + '</d>'),
 				doc_elem = doc.documentElement;
 			
 			while (doc_elem.firstChild) {

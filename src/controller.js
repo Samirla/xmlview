@@ -112,32 +112,33 @@ var xv_controller = (function(){
 		
 		return rendered_nodes[id];
 	}
-		
-	xv_dom.addEvent(document, 'click', function(/* Event */ evt) {
-		var elem = xv_dom.bubbleSearch(evt.target, 'xv-tag-open,xv-tag-close,xv-comment-start');
-		if (elem) {
-			elem = xv_dom.bubbleSearch(elem, 'xv-node');
-			if (xv_dom.hasClass(elem, 'xv-collapsed')) {
-				expandNode(elem, !!evt.altKey);
-			} else {
-				highlightElement(elem);
-			}
-		}
-	});
-	
-	xv_dom.addEvent(document, 'click', function(/* Event */ evt) {
-		var elem = xv_dom.bubbleSearch(evt.target, 'xv-tag-open,xv-tag-close,xv-comment-start');
-		if (xv_dom.hasClass(evt.target, 'xv-tag-switcher')) {
-			elem = xv_dom.bubbleSearch(evt.target, 'xv-node');
-			if (xv_dom.hasClass(elem, 'xv-collapsed')) {
-				expandNode(elem, !!evt.altKey);
-			} else {
-				collapseNode(elem, !!evt.altKey);
-			}
-		}
-	});
 	
 	// listen to signals
+	xv_signals.documentProcessed.addOnce(function() {
+		xv_dom.addEvent(document, 'click', function(/* Event */ evt) {
+			var elem = xv_dom.bubbleSearch(evt.target, 'xv-tag-open,xv-tag-close,xv-comment-start');
+			if (elem) {
+				elem = xv_dom.bubbleSearch(elem, 'xv-node');
+				if (xv_dom.hasClass(elem, 'xv-collapsed')) {
+					expandNode(elem, !!evt.altKey);
+				} else {
+					highlightElement(elem);
+				}
+			}
+		});
+		
+		xv_dom.addEvent(document, 'click', function(/* Event */ evt) {
+			if (xv_dom.hasClass(evt.target, 'xv-tag-switcher')) {
+				var elem = xv_dom.bubbleSearch(evt.target, 'xv-node');
+				if (xv_dom.hasClass(elem, 'xv-collapsed')) {
+					expandNode(elem, !!evt.altKey);
+				} else {
+					collapseNode(elem, !!evt.altKey);
+				}
+			}
+		});
+	});
+		
 	xv_signals.nodeFocused.add(function(/* Element */ node, /* String */ source) {
 		// handle focused node
 		if (source != 'main') {

@@ -359,7 +359,7 @@
 	
 	xv_signals.documentProcessed.add(function(render_tree, original_tree) {
 		search_index.length = 0;
-		buildIndex(original_tree.documentElement);
+		buildIndex(original_tree.nodeType == 9 ? original_tree.documentElement : original_tree);
 		doc = original_tree;
 	});
 })();
