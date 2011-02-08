@@ -203,6 +203,10 @@ var xv_dom = {
 		
 		if (elem.style) {
 			elem.style.cssText += ';' + props.join(';');
+		} else {
+			var style = elem.getAttribute('style') || '';
+			style += (style ? ';' : '') + props.join(';');
+			elem.setAttribute(style);
 		}
 	},
 	

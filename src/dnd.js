@@ -218,11 +218,11 @@
 				data_transfer.setData('text/plain', state);
 				data_transfer.setDragImage(canvas, padding_left, canvas.height);
 			} else {
-				xv_dom.setCSS(dnd_tooltip, {visibility: 'visible'});
+				xv_dom.removeClass(dnd_tooltip, 'xv-dnd-tooltip-hidden');
 				xv_dom.setText(dnd_tooltip, state);
 			}
 		} else {
-			xv_dom.setCSS(dnd_tooltip, {visibility: 'hidden'});
+			xv_dom.addClass(dnd_tooltip, 'xv-dnd-tooltip-hidden');
 		}
 	}
 	

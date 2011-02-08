@@ -22,6 +22,10 @@
 	border-top-left-radius:2px;
 }
 
+.xv-search-result-hidden {
+	display: none;
+}
+
 .xv-search-result-content {
 	position:relative;
 	overflow:auto;

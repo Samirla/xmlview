@@ -231,12 +231,12 @@
 	}
 	
 	function hidePopup() {
-		xv_dom.setCSS(popup, {display: 'none'});
+		xv_dom.addClass(popup, 'xv-search-result-hidden');
 		is_visible = false;
 	}
 	
 	function showPopup() {
-		xv_dom.setCSS(popup, {display: 'block'});
+		xv_dom.removeClass(popup, 'xv-search-result-hidden');
 		is_visible = true;
 	}
 	

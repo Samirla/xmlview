@@ -100,3 +100,7 @@ body {
 	-o-transform: rotate(45deg);
 	-ms-transform: rotate(45deg);
 }
+
+.xv-dnd-tooltip-hidden {
+	visibility: hidden;
+}
