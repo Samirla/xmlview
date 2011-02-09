@@ -59,7 +59,8 @@ var xv_controller = (function(){
 				
 			var f = document.createDocumentFragment();
 			_.each(orig_elem.childNodes, function(n) {
-				f.appendChild(xv_renderer.render(n, 0));
+				var r = xv_renderer.render(n, 0);
+				if (r) f.appendChild(r);
 			});
 			
 			xv_dom.empty(cur_child);
