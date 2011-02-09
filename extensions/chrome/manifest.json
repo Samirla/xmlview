@@ -8,6 +8,12 @@
 		"http://*/*",
 		"https://*/*"
 	],
+	"omnibox": {
+		"keyword" : "xv"
+	},
+	"icons": {
+		"16": "icon-16.png"
+	},
 	"content_scripts": [{
 		"js": ["xv.js", "controller.js"],
 		"matches": ["http://*/*", "https://*/*", "file://*/*"],

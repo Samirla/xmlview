@@ -1,3 +1,35 @@
-<html>
+<script>
+	function sendRequest(request, response) {
+		chrome.tabs.getSelected(null, function(tab) {
+			chrome.tabs.sendRequest(tab.id, request, function(r) {
+				if (response)
+					response(r);
+			});
+		});
+	}
+	
+	
+	chrome.omnibox.onInputChanged.addListener(function(text, suggest) {
+		sendRequest({action: "xv.search", query: text}, suggest);
+	});
+	
+	chrome.omnibox.onInputStarted.addListener(function() {
+		
+	});
 
-</html>
+	chrome.omnibox.onInputCancelled.addListener(function() {
+		resetDefaultSuggestion();
+	});
+	
+	chrome.omnibox.onInputEntered.addListener(function(text) {
+		sendRequest({action: "xv.search-apply", query: text});
+	});
+	
+	function resetDefaultSuggestion() {
+		chrome.omnibox.setDefaultSuggestion({
+			description: '<url><match>xv:</match></url> Find node in current XML document'
+		});
+	}
+
+	resetDefaultSuggestion();
+</script>

@@ -23,4 +23,37 @@ if (canTransform()) {
 	document.insertBefore(pi, document.firstChild);
 		
 	document.replaceChild(html, document.documentElement);
+	
+	xv_controller.process(source_doc);
 }
+
+chrome.extension.onRequest.addListener(function(request, sender, sendResponse){
+	if (request.action == 'xv.search') {
+		var search_result = xv_search.search(request.query),
+			result = [];
+			
+		if (search_result.results) {
+			result = _.map(search_result.results, function(n, i) {
+				/** @type {String} */
+				var label = n.label;
+				if (n.query_start != -1) {
+					label = label.substring(0, n.query_start) + 
+						'<match>' + label.substring(n.query_start, n.query_end) + '</match>' +
+						label.substring(n.query_end)
+				}
+				
+				return {
+					content: n.label + ' (id ' + i + ')',
+					description: '<url>' + label + '</url>  <dim>' + n.xpath + '</dim>'
+				};
+			})
+		}
+		
+		sendResponse(result);
+	} else if (request.action == 'xv.search-apply') {
+		try {
+			var id = request.query.match(/\(id\s+(\d+)\)$/i)[1];
+			xv_search.applyProposal(parseInt(id));
+		} catch(e) {}
+	}
+});
