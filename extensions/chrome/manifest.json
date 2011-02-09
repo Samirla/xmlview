@@ -1,0 +1,16 @@
+{
+	"name" : "XV",
+	"version" : "1.0",
+	"description" : "View XML files in Google Chrome",
+	"background_page": "background.html",
+	"permissions" : [
+		"tabs",
+		"http://*/*",
+		"https://*/*"
+	],
+	"content_scripts": [{
+		"js": ["xv.js", "controller.js"],
+		"matches": ["http://*/*", "https://*/*", "file://*/*"],
+		"run_at": "document_end"
+	}]
+}

@@ -19,8 +19,9 @@
 		<file name="settings.js"/>
 		<file name="renderer.js"/>
 		<file name="search.js"/>
+		<file name="search_ui.js"/>
 		<file name="controller.js"/>
-		<!-- <file name="dnd.js"/> -->
+		<file name="dnd.js"/>
 	</filelist>
 	
 	<target name="compile.js" depends="init">
@@ -38,7 +39,27 @@
 		<compress-css dir="${css-src.dir}" todir="${dist.css.dir}" force="${force-rebuild}"/>
 	</target>
 	
-	<target name="compile" depends="compile.css, compile.js">
+	<target name="chrome.extension" depends="init" description="Build Google Chrome extension">
+		<mkdir dir="${dist.chrome.dir}"/>
+		<copy todir="${dist.chrome.dir}">
+			<fileset dir="${chrome-src.dir}"/>
+		</copy>
+		<concat destfile="${dist.chrome.dir}/xv.js">
+			<filelist dir="${js-src.dir}">
+				<file name="lib/underscore.js"/>
+				<file name="lib/js-signals.js"/>
+				<file name="signals.js"/>
+				<file name="utils.js"/>
+				<file name="dom.js"/>
+				<file name="settings.js"/>
+				<file name="renderer.js"/>
+				<file name="search.js"/>
+				<file name="controller.js"/>
+			</filelist>
+		</concat>
+	</target>
+	
+	<target name="compile" depends="compile.css, compile.js, chrome.extension">
 		<copy file="${basedir}/xml-pretty-print.xslt" tofile="${dist.dir}/xmlview.xsl"/>
 		<echo>Build done</echo>
 	</target>
