@@ -43,9 +43,11 @@ var xv_dnd_feedback = (function(){
 		/**
 		 * Draw feedback image with <code>text</code> in it
 		 * @param {String} text
+		 * @param {Function} fn Callback function to be called when image is 
+		 * generated. Used because of async nature of some extensions
 		 * @return {String} data:url of image
 		 */
-		draw: function(text) {
+		draw: function(text, fn) {
 			ctx.font = font;
 		
 			var tx = ctx.measureText(text),
@@ -83,7 +85,11 @@ var xv_dnd_feedback = (function(){
 			
 			ctx.restore();
 			
-			return canvas.toDataURL();
+			var url = canvas.toDataURL();
+			if (fn)
+				fn(url);
+			
+			return url;
 		}
 	};
 })();

@@ -77,8 +77,13 @@
 	}
 	
 	function updateTransferImage() {
-		if (data_transfer)
+		if (data_transfer && dnd_image.src)
 			data_transfer.setDragImage(dnd_image, 6, dnd_image.height);
+	}
+	
+	function setTransferImage(data_url) {
+		dnd_image.src = data_url;
+		updateTransferImage();
 	}
 	
 	/**
@@ -150,7 +155,8 @@
 			state = getTransferForAttrName(evt);
 			
 		if (state !== null) {
-			dnd_image.src = xv_dnd_feedback.draw(state);
+			
+			xv_dnd_feedback.draw(state, setTransferImage);
 //			drawFeedback(state);
 			
 			if (is_dragging) {
