@@ -135,8 +135,13 @@ var xv_search = (function(){
 	
 	xv_signals.documentProcessed.add(function(render_tree, original_tree) {
 		search_index.length = 0;
-		buildIndex(original_tree.nodeType == 9 ? original_tree.documentElement : original_tree);
-		doc = original_tree;
+		if (original_tree.nodeType == 9) {
+			buildIndex(original_tree.documentElement);
+			doc = original_tree;
+		} else {
+			buildIndex(original_tree);
+			doc = original_tree.ownerDocument;
+		}
 	});
 	
 	return {
