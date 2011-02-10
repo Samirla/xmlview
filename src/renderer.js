@@ -84,8 +84,6 @@
 	 * @return {String} 
 	 */
 	function stylizeElement(node, depth) {
-		var i, il;
-		
 		var attrs = _.map(xv_utils.filterValidAttributes(node), function(n) {
 			return '<span class="xv-attr"><span class="xv-attr-name">' + n.name + '</span>' +
 				'="' +
@@ -221,6 +219,6 @@
 			return orig_elems[id];
 		},
 		
-		getId: getId
+		getId: generateId
 	};
 })();

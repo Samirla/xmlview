@@ -1,0 +1,131 @@
+.xv-outline {
+	position: absolute;
+	top:37px;
+	bottom:0;
+	width:300px;
+	right:0;
+	overflow: auto;
+	padding-right:10px;
+	background: #f5f5f5;
+	border-left:1px solid #b4b4b4;
+	-webkit-box-sizing:border-box;
+	-moz-box-sizing:border-box;
+	-ms-box-sizing:border-box;
+	box-sizing:border-box;
+}
+	
+.xv-outline-inner {
+	position: relative;
+	z-index: 1;
+}
+	
+.xv-outline-node {
+	font-family: "Lucida Grande", sans-serif;
+	font-size: 11px;
+	line-height: 16px;
+	margin: 3px 0;
+	display: block;
+	padding: 0 0 0 15px;
+	white-space: nowrap;
+	overflow: hidden;
+	cursor: default;
+	position: static;
+}
+	
+.xv-outline-node-selected > .xv-outline-node-inner {
+	color: #fff !important;
+	font-weight: bold;
+	text-shadow: 0 1px #6b757f;
+}
+	
+.xv-outline-node-selected:before {
+	position: absolute;
+	left:0;
+	width:100%;
+	background: #a4b1bf;
+	overflow:hidden;
+	content: '.';
+	text-indent: -2em;
+	display: block;
+	padding-right:10px;
+	padding-bottom: 2px;
+	z-index: -1;
+	margin-top:-1px;
+	border-top:1px solid #a5b3bd;
+	border-bottom:1px solid #909faf;
+	background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#b8c4cf), to(#93a1b1));
+	background-image: -moz-linear-gradient(top, #b8c4cf, #93a1b1);
+	background-color:#b8c4cf;
+}
+	
+.xv-outline-tag-name {
+	-webkit-border-image:url(images/outline-elem.png) 1 5 1 10 stretch stretch;
+	border-width:1px 5px 1px 10px;
+	padding-left:2px;
+	padding-right: 1px;
+	color:#005082;
+	text-shadow: 0px 1px 0 rgba(255,255,255,0.6);
+	display: inline-block;
+	margin-right: 3px;
+}
+
+.xv-outline-pi-name {
+	-webkit-border-image:url(images/outline-pi.png) 1 5 1 10 stretch stretch;
+	border-width:1px 5px 1px 10px;
+	padding: 0 1px 0 2px;
+	color:#40368f;
+	text-shadow: 0px 1px 0 rgba(255,255,255,0.6);
+	display: inline-block;
+}
+
+.xv-outline-comment {
+	padding-left:35px;
+	background: url(images/comment.png) 15px 1px no-repeat;
+	color:#666;
+}
+
+.xv-outline-small .xv-outline-node {
+	font-size: 9px;
+	line-height: 12px;
+}
+
+.xv-outline-small .xv-outline-tag-name,
+.xv-outline-small .xv-outline-pi-name {
+	border-left-width:7px;
+}
+
+.xv-outline-small .xv-outline-comment {
+	background: url(images/comment-icon-small.png) 0 3px no-repeat;
+	padding-left: 14px;
+}
+
+.xv-outline-node .xv-tag-switcher {
+	margin-left:-1em;
+}
+
+.xv-outline-node .xv-tag-switcher:before {
+	font-size: 8px;
+}
+
+.xv-outline-node-empty .xv-tag-switcher {
+	display: none;
+}
+
+.xv-collapsed .xv-outline-tag-children {
+	display: none;
+}
+
+.xv-outline-node-inner {
+	display: block;
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow:ellipsis;
+}
+
+.xv-outline-rs-handler {
+	position: absolute;
+	top:0;
+	bottom:0;
+	width:10px;
+	cursor: col-resize
+}

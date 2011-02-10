@@ -76,13 +76,12 @@
 	font-size:10px;
 }
 
-.xv-tag:hover > .xv-tag-switcher,
-.xv-comment:hover > .xv-tag-switcher {
+.xv-node:hover > .xv-tag-switcher {
 	visibility:visible;
 }
 
 .xv-collapsed > .xv-tag-switcher {
-	opacity:1 !important;
+	visibility:visible !important;
 }
 
 .xv-collapsed > .xv-tag-switcher:before {

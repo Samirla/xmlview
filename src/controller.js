@@ -20,13 +20,14 @@ var xv_controller = (function(){
 	 * Highlight element
 	 * @param {jQuery} element
 	 */
-	function highlightElement(elem) {
+	function highlightElement(elem, no_signal) {
 		if (selected_elem && selected_elem != elem)
 			xv_dom.removeClass(selected_elem, 'selected');
 			
 		selected_elem = elem;
 		xv_dom.toggleClass(selected_elem, 'selected');
-		xv_signals.nodeFocused.dispatch(xv_renderer.getOriginalNode(selected_elem), 'main');
+		if (!no_signal)
+			xv_signals.nodeFocused.dispatch(xv_renderer.getOriginalNode(selected_elem), 'main');
 	}
 	
 	/**
@@ -142,7 +143,7 @@ var xv_controller = (function(){
 		
 	xv_signals.nodeFocused.add(function(/* Element */ node, /* String */ source) {
 		// handle focused node
-		if (source != 'main') {
+		if (source != 'main' && node) {
 			// create list of nodes to expand
 			var node_list = [], n = node;
 			do {
@@ -157,7 +158,7 @@ var xv_controller = (function(){
 			});
 			
 			var cur_node = getRenderedNode(node);
-			highlightElement(cur_node);
+			highlightElement(cur_node, true);
 			if ('scrollIntoViewIfNeeded' in cur_node)
 				cur_node.scrollIntoViewIfNeeded();
 			else

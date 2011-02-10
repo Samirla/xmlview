@@ -43,6 +43,16 @@ if (canTransform()) {
 	
 	// handle clicks to copy xpath
 	handleDndClicks();
+	
+	if (document.implementation.createCSSStyleSheet) {
+		setTimeout(function() {
+			var ss = document.firstChild.sheet;
+//			ss.addRule('div[class~=xv-source-pane]', 'right:300px !important', 0);
+//			console.dir(  ss.insertRule('div[class~=xv-source-pane]{right:300px !important}', 0) );
+			console.dir(window);
+		}, 0)
+//		console.dir(document);
+	}
 }
 
 function dummy() {}
