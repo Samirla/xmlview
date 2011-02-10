@@ -147,11 +147,12 @@
 	}
 	
 	function updateTransferState(evt) {
-		var state = null;
+		var state = null,
+			elem = drag_elem || evt.target;
 		
-		if (xv_dom.hasClass(drag_elem, 'xv-tag-name'))
+		if (xv_dom.hasClass(elem, 'xv-tag-name'))
 			state = getTransferForNodeName(evt);
-		else if (xv_dom.hasClass(drag_elem, 'xv-attr-name'))
+		else if (xv_dom.hasClass(elem, 'xv-attr-name'))
 			state = getTransferForAttrName(evt);
 			
 		if (state !== null) {
@@ -184,6 +185,24 @@
 		return xv_dom.hasClass(elem, 'xv-tag-name') || xv_dom.hasClass(elem, 'xv-attr-name');
 	}
 	
+	/**
+	 * Make element draggable
+	 * @param {Element} elem
+	 */
+	function makeDraggable(elem) {
+		elem.draggable = true;
+		elem.setAttribute('draggable', 'true');
+	}
+	
+	/**
+	 * Make element normal (undraggable)
+	 * @param {Element} elem
+	 */
+	function makeNormal(elem) {
+		elem.draggable = false;
+		elem.setAttribute('draggable', 'false');
+	}
+	
 	dnd_image.onload = updateTransferImage;
 	
 	// init module
@@ -194,7 +213,7 @@
 				drag_elem = evt.target;
 				source_node = xv_renderer.getOriginalNode(xv_dom.bubbleSearch(drag_elem, 'xv-node'));
 				if (evt.metaKey) {
-					drag_elem.draggable = true;
+					makeDraggable(drag_elem);
 					attachTooltip(evt);
 				}
 			}
@@ -202,7 +221,7 @@
 		
 		xv_dom.addEvent(document, 'mouseout', function(/* Event */ evt) {
 			if (isHoverElement(evt.target)) {
-				evt.target.draggable = false;
+				makeNormal(evt.target);
 				detachTooltip();
 				drag_elem = null;
 			}
@@ -224,7 +243,7 @@
 		
 		xv_dom.addEvent(document, 'keydown', function(/* Event */ evt) {
 			if (evt.keyCode == 91 && drag_elem) {
-				drag_elem.draggable = true;
+				makeDraggable(drag_elem);
 				attachTooltip(evt);
 			}
 				
@@ -235,7 +254,7 @@
 		
 		xv_dom.addEvent(document, 'keyup', function(/* Event */ evt) {
 			if (evt.keyCode == 91 && drag_elem) {
-				drag_elem.draggable = false;
+				makeNormal(drag_elem);
 				detachTooltip(evt);
 			}
 				
