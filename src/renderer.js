@@ -59,7 +59,7 @@
 					return result.join('');
 				default:
 					if (window.console)
-						console.log('processing undefined type:', node.nodeType);
+						console.log('processing unknown type:', node.nodeType);
 			}
 		}
 		
