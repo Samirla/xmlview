@@ -34,8 +34,14 @@
 	chrome.extension.onRequest.addListener(function(request, sender, sendResponse) {
 		if (request.action == 'xv.get-dnd-feedback') {
 			sendResponse({image: xv_dnd_feedback.draw(request.text)});
+		} else if (request.action == 'xv.copy') {
+			var ta = document.getElementById('ta');
+			ta.value = request.text;
+			ta.select();
+			var rv = document.execCommand("copy", false, null);
 		}
 	});
 
 	resetDefaultSuggestion();
 </script>
+<textarea id="ta"></textarea>

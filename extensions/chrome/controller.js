@@ -1,3 +1,8 @@
+/**
+ * @include "../../src/signals.js"
+ */
+ 
+ 
 function isXML(doc) {
 	return !(doc instanceof HTMLDocument || doc instanceof SVGDocument);
 }
@@ -29,13 +34,42 @@ if (canTransform()) {
 	
 	var pi = document.createProcessingInstruction('xml-stylesheet', 'type="text/css" href="' + chrome.extension.getURL('xv.css') + '"');
 	document.insertBefore(pi, document.firstChild);
-		
 	document.replaceChild(html, document.documentElement);
 	
 	var xml_doc = document.implementation.createDocument();
 	xml_doc.replaceChild(xml_doc.adoptNode(source_doc), xml_doc.documentElement);
 	
 	xv_controller.process(xml_doc);
+	
+	// handle clicks to copy xpath
+	handleDndClicks();
+}
+
+function dummy() {}
+
+function handleDndClicks() {
+	var is_dnd_mode = false,
+		copy_text = '';
+		
+	xv_signals.dndModeEntered.add(function() {
+		is_dnd_mode = true;
+	});
+	
+	xv_signals.dndModeQuit.add(function() {
+		is_dnd_mode = false;
+	});
+	
+	xv_signals.dndMessageChanged.add(function(message) {
+		copy_text = message;
+	});
+	
+	document.addEventListener('click', function(evt) {
+		if (is_dnd_mode && copy_text) {
+			chrome.extension.sendRequest({action: 'xv.copy', text: copy_text}, dummy);
+			evt.preventDefault();
+			evt.stopPropagation();
+		}
+	}, false);
 }
 
 chrome.extension.onRequest.addListener(function(request, sender, sendResponse){
