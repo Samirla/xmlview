@@ -12,6 +12,7 @@
 	/** @type {Element} */
 	var drag_elem,
 		is_dragging = false,
+		is_drag_mode = false,
 		data_transfer,
 		dnd_image = new Image,
 		
@@ -155,6 +156,8 @@
 		else if (xv_dom.hasClass(elem, 'xv-attr-name'))
 			state = getTransferForAttrName(evt);
 			
+		xv_signals.dndMessageChanged.dispatch(state);
+			
 		if (state !== null) {
 			
 			xv_dnd_feedback.draw(state, setTransferImage);
@@ -203,7 +206,37 @@
 		elem.setAttribute('draggable', 'false');
 	}
 	
+	function enterDndMode(evt) {
+		if (drag_elem)
+			makeDraggable(drag_elem);
+		
+		if (!is_drag_mode) {
+			is_drag_mode = true;
+			xv_signals.dndModeEntered.dispatch(drag_elem, evt);
+		}
+	}
+	
+	function exitDndMode() {
+		if (drag_elem)
+			makeNormal(drag_elem);
+			
+		is_dragging = false;
+		
+		if (is_drag_mode) {
+			is_drag_mode = false;
+			xv_signals.dndModeQuit.dispatch();
+		}
+	}
+	
 	dnd_image.onload = updateTransferImage;
+	
+	xv_signals.dndModeEntered.add(function(elem, evt) {
+		attachTooltip(evt);
+	});
+	
+	xv_signals.dndModeQuit.add(function(evt) {
+		detachTooltip();
+	});
 	
 	// init module
 	xv_signals.documentProcessed.addOnce(function() {
@@ -213,16 +246,14 @@
 				drag_elem = evt.target;
 				source_node = xv_renderer.getOriginalNode(xv_dom.bubbleSearch(drag_elem, 'xv-node'));
 				if (evt.metaKey) {
-					makeDraggable(drag_elem);
-					attachTooltip(evt);
+					enterDndMode(evt);
 				}
 			}
 		});
 		
 		xv_dom.addEvent(document, 'mouseout', function(/* Event */ evt) {
 			if (isHoverElement(evt.target)) {
-				makeNormal(evt.target);
-				detachTooltip();
+				exitDndMode();
 				drag_elem = null;
 			}
 		});
@@ -237,14 +268,13 @@
 		});
 		
 		xv_dom.addEvent(document, 'dragend', function(/* Event */ evt) {
-			is_dragging = false;
+			exitDndMode();
 		});
 		
 		
 		xv_dom.addEvent(document, 'keydown', function(/* Event */ evt) {
 			if (evt.keyCode == 91 && drag_elem) {
-				makeDraggable(drag_elem);
-				attachTooltip(evt);
+				enterDndMode(evt);
 			}
 				
 			if (isModifierKeyTrigger(evt) && drag_elem) {
@@ -254,8 +284,7 @@
 		
 		xv_dom.addEvent(document, 'keyup', function(/* Event */ evt) {
 			if (evt.keyCode == 91 && drag_elem) {
-				makeNormal(drag_elem);
-				detachTooltip(evt);
+				exitDndMode();
 			}
 				
 			if (isModifierKeyTrigger(evt) && drag_elem) {

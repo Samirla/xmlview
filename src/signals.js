@@ -19,5 +19,24 @@ var xv_signals = {
 	 * @param {Element} render_tree Rendered tree
 	 * @param {Document} original_tree Original tree feeded to XV component
 	 */
-	documentProcessed: new signals.Signal
+	documentProcessed: new signals.Signal,
+	
+	/**
+	 * Enter drag’n’drop mode
+	 * @param {Element} elem Element to be dragged
+	 * @param {Event} evt Event that triggered dnd mode
+	 */
+	dndModeEntered: new signals.Signal,
+	
+	/**
+	 * Exit drag’n’drop mode
+	 * @param {Event} evt Event that triggered dnd mode exit
+	 */
+	dndModeQuit: new signals.Signal,
+	
+	/**
+	 * Changed drag’n’drop data transfer message
+	 * @param {String} message
+	 */
+	dndMessageChanged: new signals.Signal
 };
