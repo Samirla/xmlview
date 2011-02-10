@@ -32,35 +32,9 @@
 	position: static;
 }
 	
-.xv-outline-node-selected > .xv-outline-node-inner {
-	color: #fff !important;
-	font-weight: bold;
-	text-shadow: 0 1px #6b757f;
-}
-	
-.xv-outline-node-selected:before {
-	position: absolute;
-	left:0;
-	width:100%;
-	background: #a4b1bf;
-	overflow:hidden;
-	content: '.';
-	text-indent: -2em;
-	display: block;
-	padding-right:10px;
-	padding-bottom: 2px;
-	z-index: -1;
-	margin-top:-1px;
-	border-top:1px solid #a5b3bd;
-	border-bottom:1px solid #909faf;
-	background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#b8c4cf), to(#93a1b1));
-	background-image: -moz-linear-gradient(top, #b8c4cf, #93a1b1);
-	background-color:#b8c4cf;
-}
-	
 .xv-outline-tag-name {
-	-webkit-border-image:url(images/outline-elem.png) 1 5 1 10 stretch stretch;
-	border-width:1px 5px 1px 10px;
+	-webkit-border-image:url(images/outline-elem.png) 1 5 2 10 stretch stretch;
+	border-width:1px 5px 2px 10px;
 	padding-left:2px;
 	padding-right: 1px;
 	color:#005082;
@@ -70,8 +44,8 @@
 }
 
 .xv-outline-pi-name {
-	-webkit-border-image:url(images/outline-pi.png) 1 5 1 10 stretch stretch;
-	border-width:1px 5px 1px 10px;
+	-webkit-border-image:url(images/outline-pi.png) 1 5 2 10 stretch stretch;
+	border-width:1px 5px 2px 10px;
 	padding: 0 1px 0 2px;
 	color:#40368f;
 	text-shadow: 0px 1px 0 rgba(255,255,255,0.6);
@@ -128,4 +102,37 @@
 	bottom:0;
 	width:10px;
 	cursor: col-resize
+}
+
+.xv-outline-node-selected > .xv-outline-node-inner {
+	color: #fff !important;
+	font-weight: bold;
+	text-shadow: 0 1px #6b757f;
+}
+	
+.xv-outline-node-selected:before {
+	position: absolute;
+	left:0;
+	width:100%;
+	background: #a4b1bf;
+	overflow:hidden;
+	content: '.';
+	text-indent: -2em;
+	display: block;
+	padding-right:10px;
+	padding-bottom: 2px;
+	z-index: -1;
+	margin-top:-1px;
+	border-top:1px solid #a5b3bd;
+	border-bottom:1px solid #909faf;
+	background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#b8c4cf), to(#93a1b1));
+	background-image: -moz-linear-gradient(top, #b8c4cf, #93a1b1);
+	background-color:#b8c4cf;
+}
+
+.xv-outline-node-selected > .xv-outline-node-inner > .xv-outline-tag-name,
+.xv-outline-node-selected > .xv-outline-node-inner > .xv-outline-pi-name {
+	color:#fff;
+	-webkit-border-image:url(images/outline-sel.png) 1 5 2 10 stretch stretch;
+	text-shadow: 0 1px #6b757f;
 }
