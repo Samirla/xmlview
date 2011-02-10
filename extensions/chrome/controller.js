@@ -12,6 +12,18 @@ xv_dom.getByClass = function(class_name, context) {
 	});
 };
 
+var xv_dnd_feedback = {
+	draw: function(text, fn) {
+		var img;
+		chrome.extension.sendRequest({action: 'xv.get-dnd-feedback', text: text}, function(response){
+			img = response.image;
+			fn(img);
+		});
+		
+		return img;
+	}
+}
+
 if (canTransform()) {
 	var html = xv_dom.fromHTML('<html><body>' +
 				'<div class="xv-source-pane"><div class="xv-source-pane-inner"></div></div>' +

@@ -104,3 +104,7 @@ body {
 .xv-dnd-tooltip-hidden {
 	visibility: hidden;
 }
+
+.xv-draggable {
+	-webkit-user-drag:element;
+}

@@ -54,9 +54,11 @@
 				<file name="settings.js"/>
 				<file name="renderer.js"/>
 				<file name="search.js"/>
+				<file name="dnd.js"/>
 				<file name="controller.js"/>
 			</filelist>
 		</concat>
+		<copy file="${js-src.dir}/dnd_feedback.js" todir="${dist.chrome.dir}"/>
 	</target>
 	
 	<target name="compile" depends="compile.css, compile.js, chrome.extension">
