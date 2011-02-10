@@ -14,13 +14,9 @@ xv_dom.getByClass = function(class_name, context) {
 
 var xv_dnd_feedback = {
 	draw: function(text, fn) {
-		var img;
 		chrome.extension.sendRequest({action: 'xv.get-dnd-feedback', text: text}, function(response){
-			img = response.image;
-			fn(img);
+			fn(response.image);
 		});
-		
-		return img;
 	}
 }
 
@@ -36,7 +32,10 @@ if (canTransform()) {
 		
 	document.replaceChild(html, document.documentElement);
 	
-	xv_controller.process(source_doc);
+	var xml_doc = document.implementation.createDocument();
+	xml_doc.replaceChild(xml_doc.adoptNode(source_doc), xml_doc.documentElement);
+	
+	xv_controller.process(xml_doc);
 }
 
 chrome.extension.onRequest.addListener(function(request, sender, sendResponse){
