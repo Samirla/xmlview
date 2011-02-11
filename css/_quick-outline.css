@@ -1,0 +1,81 @@
+div[class~=xv-quick-outline] {
+	position: absolute;
+	z-index: 3;
+	width:300px;
+	left:50%;
+	margin-left:-150px;
+	top:200px;
+	border: 1px solid #c4c4c4;
+	background: #fafafa;
+	
+	-webkit-border-radius: 10px;
+	-moz-border-radius: 10px;
+	border-radius: 10px;
+	
+	 -webkit-box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+	-moz-box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+	-ms-box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+	box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+}
+
+div[class~=xv-quick-outline] h2 {
+	font-weight: normal;
+	padding: 10px;
+	border-bottom: 1px solid #c4c4c4;
+}
+
+input[id=fld-xv-search] {
+	width:100%;
+}
+
+div[class~=xv-quick-outline-content] {
+	height:300px;
+	overflow: auto;
+	padding: 10px;
+}
+
+span[class~=xv-quick-outline-close] {
+	display: block;
+	position: absolute;
+	width:1.6em;
+	height:1.6em;
+	line-height: 1.5em;
+	background: rgba(0,0,0,0.7);
+	color:#fff;
+	font-family:'Lucida Grande', sans-serif;
+	top:-0.8em;
+	right:-0.8em;
+	text-align:center;
+	cursor: pointer;
+	font-size: 11px;
+	font-weight: bold;
+	-webkit-box-shadow: 2px 2px 9px rgba(0,0,0,1);
+	-moz-box-shadow: 2px 2px 9px rgba(0,0,0,1);
+	-ms-box-shadow: 2px 2px 9px rgba(0,0,0,1);
+	box-shadow: 2px 2px 9px rgba(0,0,0,1);
+	
+	-webkit-border-radius: 1em;
+	-moz-border-radius: 1em;
+	border-radius: 1em;
+	-webkit-background-clip:padding-box;
+}
+
+span[class~=xv-quick-outline-close]:before {
+	position: absolute;
+	width:100%;
+	height: 100%;
+	-webkit-border-radius: 1em;
+	-moz-border-radius: 1em;
+	border-radius: 1em;
+	border:3px solid #fff;
+	top:-3px;
+	left:-3px;
+	content:'.';
+	text-indent: -2em;
+	overflow: hidden;
+	display: block;
+}
+
+span[class~=xv-quick-outline-close]:hover {
+	background: rgba(0,0,0,0.9);
+}
