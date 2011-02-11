@@ -107,7 +107,11 @@ var xv_outline = (function(){
 	 * @return {String} 
 	 */
 	function stylizeProcessingInstruction(node) {
-		return '<span class="xv-node xv-outline-node xv-outline-pi"><span class="xv-outline-node-inner"><span class="xv-outline-pi-name">' + node.nodeName+ '</span></span></span>';
+		return '<span class="xv-node xv-outline-node xv-outline-pi" data-xv-id="' + xv_renderer.getId(node) + '">' +
+				'<span class="xv-outline-node-inner">' +
+				'<span class="xv-outline-pi-name">' + node.nodeName+ '</span>' +
+				'</span>' +
+				'</span>';
 	}
 	
 	/**
@@ -119,7 +123,10 @@ var xv_outline = (function(){
 		if (v.length > 50)
 			v = v.substring(0, 50) + '...';
 			
-		return '<span class="xv-node xv-outline-node xv-outline-comment"><span class="xv-outline-node-inner">' + v + '</span></span>';
+		return '<span class="xv-node xv-outline-node xv-outline-comment" ' +
+				'data-xv-id="' + xv_renderer.getId(node) + '">' +
+				'<span class="xv-outline-node-inner">' + v + '</span>' +
+				'</span>';
 	}
 	
 	return {

@@ -105,7 +105,7 @@ var xv_controller = (function(){
 		
 		if (!(id in rendered_nodes)) {
 			_.detect(xv_dom.getByClass('xv-node', pane), function(n) {
-				if (xv_renderer.getId(n) == id) {
+				if (xv_renderer.getId( xv_renderer.getOriginalNode(n) ) == id) {
 					rendered_nodes[id] = n;
 					return true;
 				}
