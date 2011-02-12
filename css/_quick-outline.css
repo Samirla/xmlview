@@ -1,4 +1,4 @@
-div[class~=xv-quick-outline] {
+.xv-quick-outline {
 	position: absolute;
 	z-index: 3;
 	width:300px;
@@ -18,29 +18,29 @@ div[class~=xv-quick-outline] {
 	box-shadow: 0 5px 20px rgba(0,0,0,0.2);
 }
 
-div[class~=xv-quick-outline-hidden] {
+.xv-quick-outline-hidden {
 	display:none;
 }
 
-div[class~=xv-quick-outline] h2 {
+.xv-quick-outline h2 {
 	font-weight: normal;
 	padding: 10px;
 	border-bottom: 1px solid #c4c4c4;
 }
 
-input[id=fld-quick-outline-search] {
+#fld-quick-outline-search {
 	width:100%;
 	-webkit-user-modify: read-write-plaintext-only;
 	-webkit-appearance:searchfield;
 }
 
-div[class~=xv-quick-outline-content] {
+.xv-quick-outline-content {
 	max-height:300px;
 	overflow: auto;
 	padding: 10px;
 }
 
-span[class~=xv-quick-outline-close] {
+.xv-quick-outline-close {
 	display: block;
 	position: absolute;
 	width:1.6em;
@@ -66,7 +66,7 @@ span[class~=xv-quick-outline-close] {
 	-webkit-background-clip:padding-box;
 }
 
-span[class~=xv-quick-outline-close]:before {
+.xv-quick-outline-close:before {
 	position: absolute;
 	width:100%;
 	height: 100%;
@@ -82,6 +82,6 @@ span[class~=xv-quick-outline-close]:before {
 	display: block;
 }
 
-span[class~=xv-quick-outline-close]:hover {
+.xv-quick-outline-close:hover {
 	background: rgba(0,0,0,0.9);
 }
