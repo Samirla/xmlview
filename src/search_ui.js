@@ -36,13 +36,13 @@
 	 * @return {NodeList}
 	 */
 	function getSearchResultItems() {
-		return xv_dom.getByClass('xv-search-result-item');
+		return xv_dom.getByClass('xv-search-result-item', popup);
 	}
 	
 	/**
-	 * Select search reult item
+	 * Select search result item
 	 * @param {Number} ix Index of item
-	 * @param {Boolean} no_scroll Do not scroll popup content to make shure that
+	 * @param {Boolean} no_scroll Do not scroll popup content to make sure that
 	 * selected item is always visible
 	 */
 	function selectItem(ix, no_scroll) {
