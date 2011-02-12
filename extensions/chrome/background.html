@@ -1,5 +1,17 @@
 <script type="text/javascript" src="dnd_feedback.js"></script>
 <script>
+	var xsl = null;
+	function loadXsl(url){
+		var xhr = new XMLHttpRequest();
+		xhr.open('GET', url, true);
+		xhr.onreadystatechange = function(){
+			if (xhr.readyState == 4) {
+				xsl = xhr.responseText;
+			}
+		}
+		xhr.send();
+	}
+
 	function sendRequest(request, response) {
 		chrome.tabs.getSelected(null, function(tab) {
 			chrome.tabs.sendRequest(tab.id, request, function(r) {
@@ -8,40 +20,50 @@
 			});
 		});
 	}
-	
+
 	chrome.omnibox.onInputChanged.addListener(function(text, suggest) {
 		sendRequest({action: "xv.search", query: text}, suggest);
 	});
-	
+
 	chrome.omnibox.onInputStarted.addListener(function() {
-		
+
 	});
 
 	chrome.omnibox.onInputCancelled.addListener(function() {
 		resetDefaultSuggestion();
 	});
-	
+
 	chrome.omnibox.onInputEntered.addListener(function(text) {
 		sendRequest({action: "xv.search-apply", query: text});
 	});
-	
+
 	function resetDefaultSuggestion() {
 		chrome.omnibox.setDefaultSuggestion({
 			description: '<url><match>xv:</match></url> Find node in current XML document'
 		});
 	}
-	
+
 	chrome.extension.onRequest.addListener(function(request, sender, sendResponse) {
-		if (request.action == 'xv.get-dnd-feedback') {
-			sendResponse({image: xv_dnd_feedback.draw(request.text)});
-		} else if (request.action == 'xv.copy') {
-			var ta = document.getElementById('ta');
-			ta.value = request.text;
-			ta.select();
-			var rv = document.execCommand("copy", false, null);
+		switch (request.action) {
+			case 'xv.get-dnd-feedback':
+				sendResponse({image: xv_dnd_feedback.draw(request.text)});
+				break;
+			case 'xv.copy':
+				var ta = document.getElementById('ta');
+				ta.value = request.text;
+				ta.select();
+				sendResponse({success: document.execCommand("copy", false, null)});
+				break;
+			case 'xv.get-xsl':
+				if (xsl === null)
+					loadXsl(request.filePath);
+					
+				sendResponse({fileText: xsl});
+				break;
 		}
 	});
 
 	resetDefaultSuggestion();
+	loadXsl('process.xsl');
 </script>
 <textarea id="ta"></textarea>

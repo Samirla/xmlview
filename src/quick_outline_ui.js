@@ -9,13 +9,16 @@
  * @include "outline.js"
  * @include "signals.js"
  */(function(){
-	var popup = xv_dom.fromHTML('<div class="xv-quick-outline">' +
+	var popup_html = '<div class="xv-quick-outline">' +
 			'<span class="xv-quick-outline-close">×</span>' +
-			'<h2><input type="search" name="quick-outline-search" id="fld-quick-outline-search" /></h2>' +
+			'<div class="xv-quick-outline-search"></div>' +
 			'<div class="xv-quick-outline-content"></div>' +
-			'</div>'),
+			'</div>';
+	
+	/** @type {Element} */
+	var popup,
 		/** @type {Element} */
-		search_fld = popup.getElementsByTagName('input')[0];
+		search_fld;
 			
 	function showPopup() {
 		xv_dom.removeClass(search_fld, 'xv-quick-outline-hidden');
@@ -31,7 +34,14 @@
 	
 	
 	xv_signals.documentProcessed.addOnce(function() {
+		var popup = xv_dom.getOneByClass('xv-quick-outline');
+		if (!popup)
+			popup = xv_dom.fromHTML(popup_html);
+		
+		search_fld = popup.getElementsByTagName('input')[0];
+		
 //		hidePopup();
+		
 		var source_pane = xv_dom.getOneByClass('xv-source-pane');
 		source_pane.parentNode.appendChild(popup);
 		

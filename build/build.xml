@@ -39,11 +39,12 @@
 		<compress-css dir="${css-src.dir}" todir="${dist.css.dir}" force="${force-rebuild}"/>
 	</target>
 	
-	<target name="chrome.extension" depends="init" description="Build Google Chrome extension">
+	<target name="chrome.extension" depends="compile.css" description="Build Google Chrome extension">
 		<mkdir dir="${dist.chrome.dir}"/>
 		<copy todir="${dist.chrome.dir}">
-			<fileset dir="${chrome-src.dir}"/>
+			<fileset dir="${chrome-src.dir}" excludes="xv.css"/>
 		</copy>
+		<copy file="${dist.css-full.dir}/main.css" tofile="${dist.chrome.dir}/xv.css"/>
 		<concat destfile="${dist.chrome.dir}/xv.js">
 			<filelist dir="${js-src.dir}">
 				<file name="lib/underscore.js"/>

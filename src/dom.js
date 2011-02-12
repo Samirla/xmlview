@@ -4,6 +4,27 @@
  * @link http://chikuyonok.ru
  */
 var xv_dom = {
+	xhtml_ns: 'http://www.w3.org/1999/xhtml',
+	
+	/**
+	 * Context document used to produce nodes of 
+	 * <code>HTMLElement</code> class. If renderer is used in a XML document
+	 * (like in Google Chrome extension), the default elements produced by
+	 * <code>document.createElement</code> method will be objects of 
+	 * <code>Element</code> class with limited styling support. 
+	 * @type {Document}
+	 * @private
+	 */
+	_html_context: null,
+	
+	/**
+	 * Set HTML context document
+	 * @param {Document} ctx
+	 */
+	setHTMLContext: function(ctx) {
+		this._html_context = ctx;
+	},
+	
 	/**
 	 * Trims whitespace from string
 	 * @param {String} text
@@ -247,14 +268,19 @@ var xv_dom = {
 	 * @return {Element|DocumentFragment}
 	 */
 	fromHTML: function(html) {
-		var div = document.createElement('div'),
+		var context = this._html_context || document,
+			div = context.createElement('div'),
 			f = document.createDocumentFragment();
 		
 		if ('innerHTML' in div) {
 			// working inside HTML document
 			div.innerHTML = html;
-			while (div.firstChild)
-				f.appendChild(div.firstChild);
+			while (div.firstChild) {
+				if (div.firstChild.ownerDocument == document)
+					f.appendChild(div.firstChild);
+				else
+					f.appendChild(document.adoptNode(div.firstChild));
+			}
 		} else {
 			// working inside XML document
 			var doc = xv_utils.toXml('<d>' + html + '</d>'),
@@ -270,7 +296,7 @@ var xv_dom = {
 		
 		return f.childNodes.length == 1 ? f.firstChild : f;
 	},
-	
+		
 	/**
 	 * Empty node: removes all child elements
 	 * @param {Element} elem

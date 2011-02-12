@@ -26,33 +26,37 @@ var xv_dnd_feedback = {
 }
 
 if (canTransform()) {
-	var html = xv_dom.fromHTML('<html><body>' +
-				'<div class="xv-source-pane"><div class="xv-source-pane-inner"></div></div>' +
-				'</body></html>');
-	
 	var source_doc = document.documentElement;
 	
-	var pi = document.createProcessingInstruction('xml-stylesheet', 'type="text/css" href="' + chrome.extension.getURL('xv.css') + '"');
-	document.insertBefore(pi, document.firstChild);
-	document.replaceChild(html, document.documentElement);
+//	var pi = document.createProcessingInstruction('xml-stylesheet', 'type="text/css" href="' + chrome.extension.getURL('xv.css') + '"');
+//	document.insertBefore(pi, document.firstChild);
+//	document.replaceChild(html, document.documentElement);
 	
-	var xml_doc = document.implementation.createDocument();
-	xml_doc.replaceChild(xml_doc.adoptNode(source_doc), xml_doc.documentElement);
 	
-	xv_controller.process(xml_doc);
 	
-	// handle clicks to copy xpath
-	handleDndClicks();
+	chrome.extension.sendRequest({action: 'xv.get-xsl', filePath: 'process.xsl'},
+		function(response) {
+			var xsl_proc = new XSLTProcessor();
+			xsl_proc.importStylesheet(xv_utils.toXml(response.fileText));
+			xsl_proc.setParameter(null, 'css', chrome.extension.getURL('xv.css'));
+			
+			var result = xsl_proc.transformToDocument(document);
+			document.replaceChild(document.adoptNode(result.documentElement), document.documentElement);
+			
+			xv_dom.setHTMLContext(result);
+			
+			var xml_doc = document.implementation.createDocument();
+			xml_doc.replaceChild(xml_doc.adoptNode(source_doc), xml_doc.documentElement);
+			
+			xv_controller.process(xml_doc);
+			
+			// handle clicks to copy xpath
+			handleDndClicks();
+			
+		}
+	);
 	
-	if (document.implementation.createCSSStyleSheet) {
-		setTimeout(function() {
-			var ss = document.firstChild.sheet;
-//			ss.addRule('div[class~=xv-source-pane]', 'right:300px !important', 0);
-//			console.dir(  ss.insertRule('div[class~=xv-source-pane]{right:300px !important}', 0) );
-			console.dir(window);
-		}, 0)
-//		console.dir(document);
-	}
+	
 }
 
 function dummy() {}
