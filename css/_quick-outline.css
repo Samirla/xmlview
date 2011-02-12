@@ -18,18 +18,24 @@ div[class~=xv-quick-outline] {
 	box-shadow: 0 5px 20px rgba(0,0,0,0.2);
 }
 
+div[class~=xv-quick-outline-hidden] {
+	display:none;
+}
+
 div[class~=xv-quick-outline] h2 {
 	font-weight: normal;
 	padding: 10px;
 	border-bottom: 1px solid #c4c4c4;
 }
 
-input[id=fld-xv-search] {
+input[id=fld-quick-outline-search] {
 	width:100%;
+	-webkit-user-modify: read-write-plaintext-only;
+	-webkit-appearance:searchfield;
 }
 
 div[class~=xv-quick-outline-content] {
-	height:300px;
+	max-height:300px;
 	overflow: auto;
 	padding: 10px;
 }

@@ -57,6 +57,7 @@
 				<file name="dnd.js"/>
 				<file name="outline.js"/>
 				<file name="outline_ui.js"/>
+				<file name="quick_outline_ui.js"/>
 				<file name="controller.js"/>
 			</filelist>
 		</concat>
