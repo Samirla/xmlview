@@ -18,7 +18,8 @@
 		
 		/** @type {Element} */
 		source_node,
-		dnd_tooltip = xv_dom.fromHTML('<span class="xv-dnd-tooltip"></span>');
+		/** @type {Element} */
+		dnd_tooltip;
 		
 	var META_KEY = 1, 
 		ALT_KEY = 2,
@@ -240,6 +241,7 @@
 	
 	// init module
 	xv_signals.documentProcessed.addOnce(function() {
+		dnd_tooltip = xv_dom.fromHTML('<span class="xv-dnd-tooltip"></span>');
 		var delegate_items = 'xv-tag-name,xv-attr-name';
 		xv_dom.addEvent(document, 'mouseover', function(/* Event */ evt) {
 			if (isHoverElement(evt.target)) {

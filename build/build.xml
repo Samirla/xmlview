@@ -55,6 +55,7 @@
 				<file name="settings.js"/>
 				<file name="renderer.js"/>
 				<file name="search.js"/>
+				<file name="search_ui.js"/>
 				<file name="dnd.js"/>
 				<file name="outline.js"/>
 				<file name="outline_ui.js"/>

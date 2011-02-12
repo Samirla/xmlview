@@ -18,7 +18,7 @@
 		
 		last_query,
 		/** @type {Element} Popup container */
-		popup = xv_dom.fromHTML('<div class="xv-search-result"><ul class="xv-search-result-content"></ul></div>'),
+		popup,
 		max_visible_results = 20,
 		
 		selected_item = -1,
@@ -218,6 +218,8 @@
 	}
 	
 	xv_signals.documentProcessed.addOnce(function() {
+		popup = xv_dom.fromHTML('<div class="xv-search-result"><ul class="xv-search-result-content"></ul></div>');
+		
 		hidePopup();
 		
 		var panel = xv_dom.getOneByClass('xv-search-panel');
