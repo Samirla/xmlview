@@ -29,6 +29,7 @@
 	<body>
 		<div class="xv-search-panel">
 			<input type="search" class="xv-search-field" spellcheck="false" placeholder="Search by name or XPath" />
+			<span class="xv-search-xpath-result"></span>
 			<a href="{$options_url}" class="xv-options-href" target="_blank">Options</a>
 		</div>
 		<div class="xv-source-pane">

@@ -77,13 +77,36 @@ var xv_search = (function(){
 		var result = [], i = 0;
 		try {
 			// TODO handle namespaces
-			var nodes = doc.evaluate(query, doc, null, XPathResult.ANY_TYPE, null);
-			var n = nodes.iterateNext();
-			while (n && i < max_results) {
-				result.push({node: n});
-				n = nodes.iterateNext();
-				i++;
-			}
+			var xpath_rs = doc.evaluate(query, doc, null, XPathResult.ANY_TYPE, null);
+			
+			switch(xpath_rs.resultType) {
+				case XPathResult.NUMBER_TYPE:
+					result.push({
+						xpath_type: xpath_rs.resultType,
+						value: xpath_rs.numberValue
+					});
+					break;
+				case XPathResult.STRING_TYPE:
+					result.push({
+						xpath_type: xpath_rs.resultType,
+						value: xpath_rs.stringValue
+					});
+					break;
+				case XPathResult.BOOLEAN_TYPE:
+					result.push({
+						xpath_type: xpath_rs.resultType,
+						value: xpath_rs.booleanValue
+					});
+					break;
+				case XPathResult.UNORDERED_NODE_ITERATOR_TYPE:
+					var n = xpath_rs.iterateNext();
+					while (n && i < max_results) {
+						result.push({node: n});
+						n = xpath_rs.iterateNext();
+						i++;
+					}	
+					break;
+				}
 		} catch(e) {}
 		
 		return result.length ? result : null;
@@ -154,7 +177,7 @@ var xv_search = (function(){
 			query = xv_utils.trim(query).toLowerCase();
 			last_search = xv_utils.isXPath(query) ? searchXPath(query) : searchText(query);
 			
-			if (last_search)
+			if (last_search && !(last_search.length == 1 && 'xpath_type' in last_search[0]))
 				last_search = _.map(last_search, function(n) {
 					return postProcessResult(n, query);
 				});

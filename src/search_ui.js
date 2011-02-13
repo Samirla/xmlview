@@ -26,6 +26,8 @@
 		
 		/** @type {Element} Search field */
 		search_field,
+		/** @type {Element} Inline xpath result container */
+		inline_xpath, 
 		
 		hover_lock_timeout,
 		is_hover_locked = false;
@@ -125,24 +127,35 @@
 	 * @return {jQuery}
 	 */
 	function buildSearchResult(found, query) {
-		var items = _.map(found.results, function(n, i) {
-			return '<li class="xv-search-result-item" data-xv-search-ix="' + i + '">' + createSearchResultLabel(n) + '</li>';
-		});
-		
 		// reset selected item
 		selected_item = -1;
 		
-		var content = xv_dom.getOneByClass('xv-search-result-content');
-		xv_dom.empty(content);
-		content.appendChild(xv_dom.fromHTML(items.join('')));
-			
-		if (found.results.length > getMaxVisibleResults()) {
-			xv_dom.addClass(popup, 'xv-search-result-overflow');
-			xv_dom.setCSS(content, {'height': getSearchResultItems()[0].offsetHeight * getMaxVisibleResults()});
+		if (found.results.length == 1 && 'xpath_type' in found.results[0]) {
+			// single xpath result
+			inline_xpath.innerHTML = found.results[0].value;
+			showInlineXpath();
+			hidePopup();
 		} else {
-			xv_dom.removeClass(popup, 'xv-search-result-overflow');
-			xv_dom.setCSS(content, {'height': 'auto'});
+			var items = _.map(found.results, function(n, i) {
+				return '<li class="xv-search-result-item" data-xv-search-ix="' + i + '">' + createSearchResultLabel(n) + '</li>';
+			});
+			
+			var content = xv_dom.getOneByClass('xv-search-result-content');
+			xv_dom.empty(content);
+			content.appendChild(xv_dom.fromHTML(items.join('')));
+			
+			if (found.results.length > getMaxVisibleResults()) {
+				xv_dom.addClass(popup, 'xv-search-result-overflow');
+				xv_dom.setCSS(content, {'height': getSearchResultItems()[0].offsetHeight * getMaxVisibleResults()});
+			} else {
+				xv_dom.removeClass(popup, 'xv-search-result-overflow');
+				xv_dom.setCSS(content, {'height': 'auto'});
+			}
+			
+			hideInlineXpath();
+			showPopup();
 		}
+			
 	}
 	
 	function hidePopup() {
@@ -155,10 +168,19 @@
 		is_visible = true;
 	}
 	
+	function hideInlineXpath() {
+		xv_dom.addClass(inline_xpath, 'xv-search-result-hidden');
+	}
+	
+	function showInlineXpath() {
+		xv_dom.removeClass(inline_xpath, 'xv-search-result-hidden');
+	}
+	
 	function performSearch() {
 		var query = xv_utils.trim(search_field.value).toLowerCase();
 		
 		if (!query) {
+			hideInlineXpath();
 			hidePopup();
 			return;
 		}
@@ -170,9 +192,9 @@
 		last_search = xv_search.search(query);
 		
 		if (last_search.results) {
-			showPopup();
 			buildSearchResult(last_search);
 		} else {
+			hideInlineXpath();
 			hidePopup();
 		}
 	}
@@ -182,7 +204,7 @@
 		hidePopup();
 	}
 	
-	var _doSearch = _.debounce(performSearch, 150);
+	var _doSearch = _.debounce(performSearch, 400);
 	
 	/**
 	 * Handle keyboard event performed on search field
@@ -226,13 +248,14 @@
 	
 	xv_signals.documentProcessed.addOnce(function() {
 		popup = xv_dom.fromHTML('<div class="xv-search-result"><ul class="xv-search-result-content"></ul></div>');
-		
 		hidePopup();
 		
 		var panel = xv_dom.getOneByClass('xv-search-panel');
 		panel.appendChild(popup);
 		
 		search_field = xv_dom.getOneByClass('xv-search-field', panel);
+		inline_xpath = xv_dom.getOneByClass('xv-search-xpath-result', panel);
+		hideInlineXpath();
 		
 		// bind events to search field
 		xv_dom.addEvent(search_field, 'keydown', handleKeyEvent);
@@ -247,6 +270,7 @@
 		xv_dom.addEvent(popup, 'click', function(/* Event */ evt) {
 			runOnDelegated(evt.target, function(ix) {
 				applyProposal(ix);
+				hideInlineXpath();
 				hidePopup();
 			});
 		});
@@ -262,6 +286,7 @@
 		});
 		
 		xv_dom.addEvent(search_field, 'focus', performSearch);
+		xv_dom.addEvent(search_field, 'search', performSearch);
 		
 		xv_dom.addEvent(popup, 'mousedown', function(/* Event */ evt) {
 			evt.preventDefault();

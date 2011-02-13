@@ -20,11 +20,23 @@
 }
 
 .xv-search-field {
-	width:80%;
+	width:70%;
 	max-width:60em;
+	margin-right:1em;
 }
 
 .xv-search-panel .xv-search-result {
 	left:10px;
 	top:40px;
+}
+
+.xv-search-xpath-result {
+	color:#555;
+	text-shadow:0 1px 0 #fff;
+	font-weight:bold;
+}
+
+.xv-search-xpath-result:before {
+	font-weight:normal;
+	content:'XPath result: ';
 }
