@@ -16,8 +16,27 @@ var xv_search = (function(){
 		last_search,
 		
 		/** Max results to be matched */
-		max_results = 200;
+		max_results = 200,
+		namespaces = {};
 		
+		
+	function collectNamespaces(doc) {
+		namespaces = {};
+		_.each(doc.getElementsByTagName('*'), function(node) {
+			_.each(node.attributes, function(attr) {
+				if (startsWith(attr.nodeName, 'xmlns'))
+					namespaces[attr.nodeName.substring(attr.nodeName.indexOf(':') + 1)] = attr.nodeValue;
+			});
+		});
+	}
+	
+	function nsResolver(prefix) {
+		return namespaces[prefix] || null;
+	}
+	
+	function startsWith(str, val) {
+		return str.substr(0, val.length) == val;
+	}
 	
 	/**
 	 * Creates search index item
@@ -76,8 +95,7 @@ var xv_search = (function(){
 	function searchXPath(query) {
 		var result = [], i = 0;
 		try {
-			// TODO handle namespaces
-			var xpath_rs = doc.evaluate(query, doc, null, XPathResult.ANY_TYPE, null);
+			var xpath_rs = doc.evaluate(query, doc, nsResolver, XPathResult.ANY_TYPE, null);
 			
 			switch(xpath_rs.resultType) {
 				case XPathResult.NUMBER_TYPE:
@@ -158,6 +176,7 @@ var xv_search = (function(){
 	
 	xv_signals.documentProcessed.add(function(render_tree, original_tree) {
 		search_index.length = 0;
+		collectNamespaces(original_tree);
 		if (original_tree.nodeType == 9) {
 			buildIndex(original_tree.documentElement);
 			doc = original_tree;
