@@ -12,6 +12,7 @@
 
 <xsl:param name="css" select="'xv.css'"/>
 <xsl:param name="custom_css" select="''"/>
+<xsl:param name="options_url" select="'options.html'"/>
 
 <xsl:template match="/">
 <html lang="en-US">
@@ -28,6 +29,7 @@
 	<body>
 		<div class="xv-search-panel">
 			<input type="search" class="xv-search-field" spellcheck="false" placeholder="Search by name or XPath" />
+			<a href="{$options_url}" class="xv-options-href" target="_blank">Options</a>
 		</div>
 		<div class="xv-source-pane">
 			<div class="xv-source-pane-inner"></div>

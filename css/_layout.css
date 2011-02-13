@@ -1,5 +1,5 @@
 body {
-	font-family: sans-serif;
+	font-family: 'Lucida Grande', arial, sans-serif;
 	font-size: 11px;
 }
 
@@ -107,4 +107,15 @@ body {
 
 .xv-draggable {
 	-webkit-user-drag:element;
+}
+
+.xv-options-href {
+	position:absolute;
+	right:10px;
+	top:50%;
+	margin-top:-0.6em;
+	line-height:1.2;
+	font-size:10px;
+	color:#777;
+	text-shadow:0 1px 0 #fff;
 }

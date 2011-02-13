@@ -67,6 +67,7 @@ if (canTransform()) {
 			chrome.extension.sendRequest({action: 'xv.get-settings'}, function(response){
 				xv_settings.load(response.data);
 				xsl_proc.setParameter(null, 'css', chrome.extension.getURL('xv.css'));
+				xsl_proc.setParameter(null, 'options_url', chrome.extension.getURL('options.html'));
 				xsl_proc.setParameter(null, 'custom_css', xv_settings.getValue('custom_css', ''));
 				
 				var result = xsl_proc.transformToDocument(document);
