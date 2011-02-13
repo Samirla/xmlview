@@ -11,6 +11,7 @@
 />
 
 <xsl:param name="css" select="'xv.css'"/>
+<xsl:param name="custom_css" select="''"/>
 
 <xsl:template match="/">
 <html lang="en-US">
@@ -19,8 +20,10 @@
 		<xsl:comment>
 			<xsl:value-of select="concat(system-property('xsl:version'), '/', system-property('xsl:vendor'), '/', system-property('xsl:vendor-url'))"/>
 		</xsl:comment>
-		
 		<link rel="stylesheet" type="text/css" href="{$css}" media="all" />
+		<style type="text/css">
+			<xsl:value-of select="$custom_css"/>
+		</style>
 	</head>
 	<body>
 		<div class="xv-search-panel">

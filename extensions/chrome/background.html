@@ -1,4 +1,5 @@
 <script type="text/javascript" src="dnd_feedback.js"></script>
+<script type="text/javascript" src="xv.js"></script>
 <script>
 	var xsl = null;
 	function loadXsl(url){
@@ -59,6 +60,12 @@
 					loadXsl(request.filePath);
 					
 				sendResponse({fileText: xsl});
+				break;
+			case 'xv.get-settings':
+				sendResponse({data: xv_settings.dump()});
+				break;
+			case 'xv.store-settings':
+				xv_settings.setValue(request.name, request.value);
 				break;
 		}
 	});

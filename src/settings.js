@@ -20,7 +20,6 @@ var xv_settings = (function(){
 		}
 	}
 	
-	
 	return {
 		/**
 		 * Returns preference value
@@ -37,8 +36,6 @@ var xv_settings = (function(){
 				
 			if (_.isNull(value))
 				value = default_value;
-			
-//			console.log(name, value);
 				
 			switch (typeof default_value) {
 				case 'number':
@@ -72,6 +69,14 @@ var xv_settings = (function(){
 				localStorage.clear();
 			else
 				settings = {};
+		},
+		
+		/**
+		 * Returns dump of all user settings as object
+		 * @return {Object}
+		 */
+		dump: function() {
+			return _.clone(has_ls ? localStorage : settings);
 		}
 	};
 })();

@@ -2,7 +2,37 @@
  * @include "../../src/signals.js"
  */
  
- 
+xv_settings = {
+	_data: {},
+	getValue: function(name, default_value) {
+		var value = (name in this._data) ? this._data[name] : default_value;
+		
+		switch (typeof default_value) {
+			case 'number':
+				return parseFloat(value);
+			case 'boolean':
+				if (typeof value == 'string' && value.toLowerCase() == 'false')
+					value = false;
+				return !!value;
+			default:
+				return value;
+		}
+	},
+	
+	setValue: function(name, value) {
+		this._data[name] = value;
+		chrome.extension.sendRequest({
+			action: 'xv.store-settings', 
+			name: name, 
+			value: value}, dummy);
+	},
+	
+	load: function(obj) {
+		this._data = obj;
+	}
+};
+
+
 function isXML(doc) {
 	return !(doc instanceof HTMLDocument || doc instanceof SVGDocument);
 }
@@ -28,35 +58,32 @@ var xv_dnd_feedback = {
 if (canTransform()) {
 	var source_doc = document.documentElement;
 	
-//	var pi = document.createProcessingInstruction('xml-stylesheet', 'type="text/css" href="' + chrome.extension.getURL('xv.css') + '"');
-//	document.insertBefore(pi, document.firstChild);
-//	document.replaceChild(html, document.documentElement);
-	
-	
-	
 	chrome.extension.sendRequest({action: 'xv.get-xsl', filePath: 'process.xsl'},
 		function(response) {
+			
 			var xsl_proc = new XSLTProcessor();
 			xsl_proc.importStylesheet(xv_utils.toXml(response.fileText));
-			xsl_proc.setParameter(null, 'css', chrome.extension.getURL('xv.css'));
 			
-			var result = xsl_proc.transformToDocument(document);
-			document.replaceChild(document.adoptNode(result.documentElement), document.documentElement);
-			
-			xv_dom.setHTMLContext(result);
-			
-			var xml_doc = document.implementation.createDocument();
-			xml_doc.replaceChild(xml_doc.adoptNode(source_doc), xml_doc.documentElement);
-			
-			xv_controller.process(xml_doc);
-			
-			// handle clicks to copy xpath
-			handleDndClicks();
-			
+			chrome.extension.sendRequest({action: 'xv.get-settings'}, function(response){
+				xv_settings.load(response.data);
+				xsl_proc.setParameter(null, 'css', chrome.extension.getURL('xv.css'));
+				xsl_proc.setParameter(null, 'custom_css', xv_settings.getValue('custom_css', ''));
+				
+				var result = xsl_proc.transformToDocument(document);
+				document.replaceChild(document.adoptNode(result.documentElement), document.documentElement);
+				
+				xv_dom.setHTMLContext(result);
+				
+				var xml_doc = document.implementation.createDocument();
+				xml_doc.replaceChild(xml_doc.adoptNode(source_doc), xml_doc.documentElement);
+				
+				xv_controller.process(xml_doc);
+				
+				// handle clicks to copy xpath
+				handleDndClicks();
+			});
 		}
 	);
-	
-	
 }
 
 function dummy() {}

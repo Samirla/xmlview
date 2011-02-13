@@ -1,0 +1,122 @@
+<!DOCTYPE HTML>
+<html lang="en-US">
+<head>
+	<meta charset="UTF-8">
+	<title>XV extension settings</title>
+	<style type="text/css">
+		body {
+			font-family:'Lucida Grande', arial, sans-serif;
+			font-size:12px;
+			color:#000;
+			background:#fff;
+			margin:0;
+			padding:30px;
+			line-height:1.4;
+		}
+		
+		h1 {
+			font-size:25px;
+			font-weight:normal;
+			margin-top:0;
+			margin-bottom:1.5em;
+		}
+		
+		fieldset {
+			border:none;
+			border-bottom:1px solid #ccc;
+			padding:0;
+			margin:0;
+			margin-bottom:15px;
+		}
+		
+		label {
+			display:inline-block;
+			vertical-align:top;
+			width:15em;
+			margin-right:1em;
+		}
+		
+		input {
+			vertical-align:top;
+		}
+		
+		input[type=text],
+		input[type=number] {
+			padding:3px;
+		}
+		
+		.row {
+			margin-bottom:2em;
+		}
+		
+		.comment {
+			display:block;
+			color:#aaa;
+			font-size:10px;
+			margin-top:0.5em;
+		}
+		
+		.row-textarea label {
+			width:auto;
+			display:block;
+			margin-bottom:0.5em;
+		}
+		
+		textarea {
+			width:50em;
+			height:20em;
+		}
+		
+		input[name='search.max_visible'],
+		input[name=init_depth] {
+			width:5em;
+		}
+		
+		input[name="dnd.xpath_quote"] {
+			width:1em;
+		}
+		
+		input[type=submit] {
+			font-size:20px;
+		}
+	</style>
+</head>
+<body>
+	<h1>XV extension settings</h1>
+	<form action="">
+		<fieldset>
+			<div class="row">
+				<label for="fld-init_depth">Maximum depth level of initially expanded elements</label>
+				<input type="number" name="init_depth" id="fld-init_depth" min="-1" required="required" />
+				<span class="comment">Set value to -1 to expand all elements on load.<br />
+				<strong>WARNING! Setting value to -1 may cause serious performance problems on large XML documents.</strong></span>
+			</div>
+			<div class="row">
+				<label for="fld-search.max_visible">Maximum visible results in search popup</label>
+				<input type="number" name="search.max_visible" id="fld-search.max_visible" min="1" max="100" required="required" />
+			</div>
+			<div class="row">
+				<label for="fld-dnd.xpath_quote">Attribute quote character in Quick XPath expressions</label>
+				<input type="text" name="dnd.xpath_quote" id="fld-dnd.xpath_quote" maxlength="1" />
+			</div>
+		</fieldset>
+		<fieldset>
+			<div class="row row-textarea">
+				<label for="fld-custom_css">Custom CSS (see <a href="http://github.com/sergeche/xmlview/tree/master/css">GitHub repo</a> for examples)</label>
+				<textarea name="custom_css" id="fld-custom_css"></textarea>
+				<span class="comment">You have to reload XML document after updating this property</span>
+			</div>
+		</fieldset>
+		<div class="row">
+			<input type="submit" value="Save" />
+		</div>
+	</form>
+	<p class="about">
+		XV is an <a href="http://github.com/sergeche/xmlview/">open-source project</a> and available for other browsers.<br />
+		Design inspiration: <a href="http://macrabbit.com/espresso/">Espresso Editor</a>
+	</p>
+	<script type="text/javascript" src="xv.js"></script>
+	<script type="text/javascript" src="options.js"></script>
+	
+</body>
+</html>
