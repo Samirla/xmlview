@@ -23,8 +23,8 @@
 	font-family: "Lucida Grande", sans-serif;
 	font-size: 11px;
 	line-height: 16px;
-	margin: 3px 0;
 	display: block;
+	margin: 3px 0 0 0;
 	padding: 0 0 0 15px;
 	white-space: nowrap;
 	overflow: hidden;
@@ -75,10 +75,12 @@
 
 .xv-outline-node .xv-tag-switcher {
 	margin-left:-1em;
+	visibility:visible;
+	color:#8c97a4;
 }
 
 .xv-outline-node .xv-tag-switcher:before {
-	font-size: 8px;
+	font-size: 9px;
 }
 
 .xv-outline-node-empty .xv-tag-switcher {
@@ -102,6 +104,7 @@
 	bottom:0;
 	width:10px;
 	cursor: col-resize;
+	z-index:10;
 }
 
 .xv-outline-node-selected > .xv-outline-node-inner {

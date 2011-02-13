@@ -22,6 +22,11 @@
 		<file name="search_ui.js"/>
 		<file name="controller.js"/>
 		<file name="dnd.js"/>
+		<file name="dnd_feedback.js"/>
+		<file name="outline.js"/>
+		<file name="outline_ui.js"/>
+		<file name="controller.js"/>
+		<file name="selection-notifier.js"/>
 	</filelist>
 	
 	<target name="compile.js" depends="init">
@@ -60,6 +65,7 @@
 				<file name="outline.js"/>
 				<file name="outline_ui.js"/>
 				<file name="controller.js"/>
+				<file name="selection-notifier.js"/>
 			</filelist>
 		</concat>
 		<copy file="${js-src.dir}/dnd_feedback.js" todir="${dist.chrome.dir}"/>

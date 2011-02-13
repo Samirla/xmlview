@@ -1,0 +1,66 @@
+.xv-selection-notifier {
+	position:absolute;
+	z-index:1;
+	display:block;
+	margin:-5px;
+	padding:2px;
+	border:3px solid #f0eb00;
+	/* background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#f0eb00), to(#eed600)); */
+	/* background-image: -moz-linear-gradient(top, #f0eb00, #eed600); */
+	background:rgba(238,214,0,0.1);
+	
+	-webkit-transform-origin:50% 50%;
+	-webkit-animation-name: xv-notify;
+	-webkit-animation-duration: 1s;
+	
+	-webkit-border-radius: 5px;
+	-moz-border-radius: 5px;
+	border-radius: 5px;
+	-webkit-box-shadow: 0 1px 2px rgba(0,0,0,0.8);
+	-moz-box-shadow: 0 1px 2px rgba(0,0,0,0.8);
+	-ms-box-shadow: 0 1px 2px rgba(0,0,0,0.8);
+	box-shadow: 0 1px 2px rgba(0,0,0,0.8);
+}
+
+.xv-selection-notifier:before {
+	display:block;
+	content:'.';
+	text-indent:-2em;
+	overflow:hidden;
+	position:absolute;
+	border:1px solid #000;
+	-webkit-border-radius: 3px;
+	-moz-border-radius: 3px;
+	border-radius: 3px;
+	top:0;
+	left:0;
+	right:0;
+	bottom:0;
+	opacity:0.2;
+}
+
+@-webkit-keyframes "xv-notify" {
+	0% {
+		-webkit-transform: scale(1);
+		-webkit-animation-timing-function: ease-in;
+		opacity:0;
+	}
+
+	6% {
+		opacity:1;
+		-webkit-transform: scale(2);
+		-webkit-animation-timing-function: ease-out;
+	}
+
+	17% {
+		-webkit-transform: scale(1);
+	}
+	
+	70% {
+		opacity:1;
+	}
+	
+	100% {
+		opacity:0;
+	}
+}

@@ -158,13 +158,15 @@ var xv_controller = (function(){
 			});
 			
 			var cur_node = getRenderedNode(node);
-			highlightElement(cur_node, true);
+//			highlightElement(cur_node, true);
 			if ('scrollIntoViewIfNeeded' in cur_node)
 				cur_node.scrollIntoViewIfNeeded();
 			else
 				cur_node.scrollIntoView();
 		}
 	});
+	
+	
 	
 	return {
 		/**
@@ -202,6 +204,7 @@ var xv_controller = (function(){
 		},
 		
 		expandNode: expandNode,
-		collapseNode: collapseNode
+		collapseNode: collapseNode,
+		getRenderedNode: getRenderedNode
 	};
 })();
