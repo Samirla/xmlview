@@ -33,6 +33,8 @@ var xv_outline = (function(){
 			switch (node.nodeType) {
 				case 1: // element
 					return stylizeElement(node, depth);
+				case 4: // cdata
+					return stylizeCDATA(node, depth);
 				case 7: // processing instruction
 					return stylizeProcessingInstruction(node, depth);
 				case 8: // comment
@@ -126,6 +128,24 @@ var xv_outline = (function(){
 		return '<span class="xv-node xv-outline-node xv-outline-comment" ' +
 				'data-xv-id="' + xv_renderer.getId(node) + '">' +
 				'<span class="xv-outline-node-inner">' + v + '</span>' +
+				'</span>';
+	}
+	
+	/**
+	 * @param {Element} node
+	 * @return {String} 
+	 */
+	function stylizeCDATA(node) {
+		var v = _.detect(processText(node.nodeValue || '').split(/\r?\n/), function(n) {return !!n;}) || '';
+		if (v.length > 50)
+			v = v.substring(0, 50) + '...';
+			
+		return '<span class="xv-node xv-outline-node xv-outline-cdata" ' +
+				'data-xv-id="' + xv_renderer.getId(node) + '">' +
+				'<span class="xv-outline-node-inner">' +
+				'<span class="xv-outline-cdata-name">CDATA</span> ' +
+				v +
+				'</span>' +
 				'</span>';
 	}
 	

@@ -53,6 +53,8 @@
 					return stylizeElement(node, depth);
 				case 3: // text node
 					return stylizeTextNode(node, depth);
+				case 4: // text node
+					return stylizeCDATA(node, depth);
 				case 7: // processing instruction
 					return stylizeProcessingInstruction(node, depth);
 				case 8: // comment
@@ -185,6 +187,26 @@
 				'<span class="xv-comment-start">&lt;!-- </span>' +
 				'<span class="xv-comment-value">' + processText(v) + '</span>' +
 				'<span class="xv-comment-end"> --&gt;</span>' +
+				'</span>';
+	}
+	
+	/**
+	 * @param {Element} node
+	 * @return {String} 
+	 */
+	function stylizeCDATA(node) {
+		var v = xv_utils.trim(node.nodeValue),
+			class_name = 'xv-node xv-cdata';
+			
+		if (v.length < oneline_text_len) {
+			class_name += ' xv-one-line';
+		}
+		
+		return '<span class="' + class_name + '" data-xv-id="' + generateId(node) + '">' +
+				'<span class="xv-tag-switcher"></span>' +
+				'<span class="xv-cdata-start">&lt;![CDATA[</span>' +
+				'<span class="xv-cdata-value">' + processText(v) + '</span>' +
+				'<span class="xv-cdata-end"> ]]&gt;</span>' +
 				'</span>';
 	}
 	
