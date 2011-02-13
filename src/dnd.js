@@ -16,6 +16,11 @@
 		data_transfer,
 		dnd_image = new Image,
 		
+		is_mac = /mac\s+os/i.test(navigator.userAgent),
+		
+		os_key = 0,
+		os_modifier = 0,
+		
 		/** @type {Element} */
 		source_node,
 		/** @type {Element} */
@@ -25,6 +30,15 @@
 		ALT_KEY = 2,
 		SHIFT_KEY = 4,
 		CTRL_KEY = 8;
+		
+	if (is_mac) {
+		os_modifier = META_KEY;
+		os_key = 91;
+	} else {
+		os_modifier = CTRL_KEY;
+		os_key = 17;
+	}
+		
 	
 	/**
 	 * Creates modifier keys mask from passed event
@@ -96,16 +110,16 @@
 	function getTransferForNodeName(evt) {
 		var q = getAttrQuote();
 		switch (getKeyMask(evt)) {
-			case META_KEY: // name only
+			case os_modifier: // name only
 				return source_node.nodeName;
-			case META_KEY | ALT_KEY: // name and attr names
+			case os_modifier | ALT_KEY: // name and attr names
 				var attrs = _.map(xv_utils.filterValidAttributes(source_node), function(n) {
 					return '@' + n.name;
 				});
 				
 				return source_node.nodeName + (attrs.length ? '[' + attrs.join(' and ') + ']' : '');
-			case META_KEY | SHIFT_KEY: // name and attr names and values
-			case META_KEY | SHIFT_KEY | ALT_KEY:
+			case os_modifier | SHIFT_KEY: // name and attr names and values
+			case os_modifier | SHIFT_KEY | ALT_KEY:
 				var attrs = _.map(xv_utils.filterValidAttributes(source_node), function(n) {
 					return '@' + n.name + ' = ' + q + escapeQuote(n.value, q) + q;
 				});
@@ -135,13 +149,13 @@
 		};
 			
 		switch (getKeyMask(evt)) {
-			case META_KEY: // name only
+			case os_modifier: // name only
 				return '@' + name;
-			case META_KEY | ALT_KEY: // name with value
+			case os_modifier | ALT_KEY: // name with value
 				return '@' + name + ' = ' + q + getValue() + q;
-			case META_KEY | SHIFT_KEY: // node name with attribute name.
+			case os_modifier | SHIFT_KEY: // node name with attribute name.
 				return source_node.nodeName + '[@' + name + ']';
-			case META_KEY | SHIFT_KEY | ALT_KEY: // node name with attribute name.
+			case os_modifier | SHIFT_KEY | ALT_KEY: // node name with attribute name.
 				return source_node.nodeName + '[@' + name + ' = ' + q + escapeQuote(getValue(), q) + q + ']';
 		}
 		
@@ -247,7 +261,7 @@
 			if (isHoverElement(evt.target)) {
 				drag_elem = evt.target;
 				source_node = xv_renderer.getOriginalNode(xv_dom.bubbleSearch(drag_elem, 'xv-node'));
-				if (evt.metaKey) {
+				if (is_mac ? evt.metaKey : evt.ctrlKey) {
 					enterDndMode(evt);
 				}
 			}
@@ -275,7 +289,7 @@
 		
 		
 		xv_dom.addEvent(document, 'keydown', function(/* Event */ evt) {
-			if (evt.keyCode == 91 && drag_elem) {
+			if (evt.keyCode == os_key && drag_elem) {
 				enterDndMode(evt);
 			}
 				
@@ -285,7 +299,7 @@
 		});
 		
 		xv_dom.addEvent(document, 'keyup', function(/* Event */ evt) {
-			if (evt.keyCode == 91 && drag_elem) {
+			if (evt.keyCode == os_key && drag_elem) {
 				exitDndMode();
 			}
 				
