@@ -37,6 +37,11 @@
 			});
 			
 			target.parentNode.insertBefore(_notifier, target);
+			
+			//fallback for browsers that doesn‘t support CSS animations
+			setTimeout(function() {
+				xv_dom.removeElement(_notifier);
+			}, 1500);
 		}
 	}
 	
