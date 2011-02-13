@@ -22,28 +22,6 @@
 		});
 	}
 
-	chrome.omnibox.onInputChanged.addListener(function(text, suggest) {
-		sendRequest({action: "xv.search", query: text}, suggest);
-	});
-
-	chrome.omnibox.onInputStarted.addListener(function() {
-
-	});
-
-	chrome.omnibox.onInputCancelled.addListener(function() {
-		resetDefaultSuggestion();
-	});
-
-	chrome.omnibox.onInputEntered.addListener(function(text) {
-		sendRequest({action: "xv.search-apply", query: text});
-	});
-
-	function resetDefaultSuggestion() {
-		chrome.omnibox.setDefaultSuggestion({
-			description: '<url><match>xv:</match></url> Find node in current XML document'
-		});
-	}
-
 	chrome.extension.onRequest.addListener(function(request, sender, sendResponse) {
 		switch (request.action) {
 			case 'xv.get-dnd-feedback':
@@ -70,7 +48,6 @@
 		}
 	});
 
-	resetDefaultSuggestion();
 	loadXsl('process.xsl');
 </script>
 <textarea id="ta"></textarea>
