@@ -19,7 +19,6 @@
 		last_query,
 		/** @type {Element} Popup container */
 		popup,
-		max_visible_results = 20,
 		
 		selected_item = -1,
 		
@@ -37,6 +36,14 @@
 	 */
 	function getSearchResultItems() {
 		return xv_dom.getByClass('xv-search-result-item', popup);
+	}
+	
+	/**
+	 * Returns maximum visible results in search popup
+	 * @return {Number}
+	 */
+	function getMaxVisibleResults() {
+		return xv_settings.getValue('search.max_visible', 20);
 	}
 	
 	/**
@@ -129,9 +136,9 @@
 		xv_dom.empty(content);
 		content.appendChild(xv_dom.fromHTML(items.join('')));
 			
-		if (found.results.length > max_visible_results) {
+		if (found.results.length > getMaxVisibleResults()) {
 			xv_dom.addClass(popup, 'xv-search-result-overflow');
-			xv_dom.setCSS(content, {'height': getSearchResultItems()[0].offsetHeight * max_visible_results});
+			xv_dom.setCSS(content, {'height': getSearchResultItems()[0].offsetHeight * getMaxVisibleResults()});
 		} else {
 			xv_dom.removeClass(popup, 'xv-search-result-overflow');
 			xv_dom.setCSS(content, {'height': 'auto'});

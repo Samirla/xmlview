@@ -61,7 +61,7 @@
 	 * @return {String}
 	 */
 	function getAttrQuote() {
-		return "'";
+		return xv_settings.getValue('dnd.xpath_quote', "'");
 	}
 	
 	/**

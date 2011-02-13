@@ -7,6 +7,7 @@
  * @include "dom.js"
  * @include "outline.js"
  * @include "renderer.js"
+ * @include "settings.js"
  */
 (function(){
 	/** @type {Element} Outline pane */
@@ -31,6 +32,7 @@
 	function resizeOutline(width) {
 		width = Math.round(Math.max(120, Math.min(window.innerWidth * 0.5, width)));
 		last_width = width;
+		xv_settings.setValue('outline.width', width);
 		if (pane.style) {
 			// normal browser – just update style
 			xv_dom.setCSS(pane, {width: width});
@@ -177,19 +179,27 @@
 		return xv_dom.hasClass(pane, 'xv-outline-collapsed');
 	}
 	
+	function collapseOutline() {
+		xv_dom.addClass(pane, 'xv-outline-collapsed');
+		pane.style.width = '';
+		xv_dom.setCSS(source_pane, {right: pane.offsetWidth});
+		xv_settings.setValue('outline.collapsed', true);
+	}
+	
+	function expandOutline() {
+		xv_dom.removeClass(pane, 'xv-outline-collapsed');
+		resizeOutline(last_width || pane.offsetWidth);
+		xv_settings.setValue('outline.collapsed', false);
+	}
+	
 	function toggleCollapse(evt) {
 		if (evt)
 			evt.stopPropagation();
 			
 		if (isCollapsed()) {
-			// expand outline
-			xv_dom.removeClass(pane, 'xv-outline-collapsed');
-			resizeOutline(last_width || pane.offsetWidth);
+			expandOutline();
 		} else {
-			// collapse outline
-			xv_dom.addClass(pane, 'xv-outline-collapsed');
-			pane.style.width = '';
-			xv_dom.setCSS(source_pane, {right: pane.offsetWidth});
+			collapseOutline();
 		}
 	}
 	
@@ -231,10 +241,14 @@
 					'</div>');
 					
 			source_pane.parentNode.appendChild(pane);
-			
-			setTimeout(function() {
-				resizeOutline(pane.offsetWidth);
-			});
+			last_width = xv_settings.getValue('outline.width', 300);
+			if (xv_settings.getValue('outline.collapsed', false)) {
+				collapseOutline();
+			} else {
+				setTimeout(function() {
+					resizeOutline(last_width);
+				});
+			}
 		}
 		
 		pane_content = xv_dom.getOneByClass('xv-outline-inner', pane);
@@ -260,7 +274,7 @@
 	xv_signals.documentProcessed.add(function(render_tree, original_tree) {
 		if (pane) {
 			xv_dom.empty(pane_content);
-			pane_content.appendChild(xv_outline.render(original_tree, -1));
+			pane_content.appendChild(xv_outline.render(original_tree, xv_settings.getValue('init_depth', 2)));
 		}
 		
 		attachResizeEvents();

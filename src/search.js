@@ -15,7 +15,7 @@ var xv_search = (function(){
 		/** @type {Array} List of last matched elements */
 		last_search,
 		
-		/** Mac results to be matched */
+		/** Max results to be matched */
 		max_results = 200;
 		
 	

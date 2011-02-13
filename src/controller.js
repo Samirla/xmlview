@@ -6,6 +6,7 @@
  * @include "dom.js"
  * @include "search.js"
  * @include "signals.js"
+ * @include "settings.js"
  */
 var xv_controller = (function(){
 	/** @type {Element} Currently selected element */
@@ -188,7 +189,7 @@ var xv_controller = (function(){
 			}
 			
 			if (data) {
-				var tree = xv_renderer.render(data, 2);
+				var tree = xv_renderer.render(data, xv_settings.getValue('init_depth', 2));
 				
 				if (!pane)
 					pane = xv_dom.getOneByClass('xv-source-pane-inner');
