@@ -4,6 +4,9 @@
  * 
  * @author Sergey Chikuyonok (serge.che@gmail.com)
  * @link http://chikuyonok.ru
+ * 
+ * @include "signals.js"
+ * @include "dom.js"
  */
 var xv_dnd_feedback = (function(){
 	var canvas = document.createElement('canvas'),
@@ -14,13 +17,13 @@ var xv_dnd_feedback = (function(){
 		padding_left = 6,
 		padding_top = 4,
 		bg_pattern;
-	
+		
 	var bg = new Image;
 	bg.onload = function() {
 		bg_pattern = ctx.createPattern(bg, 'repeat');
 	};
 	bg.src = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAbCAIAAAA70dJZAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAHdJREFUeNp0j1EOwCAIQ8Fw/3t6CGW4sg7N1kQ/6qNU7b3POd1dRFpIHqlquOZFYb3vQFqcDz4i9dbiMQnKOAwwebqGMv99mJQIy+M2LBtjgFrzW6TsMpRlRMMmrmg1/ORX3tHHKp957J//r18++2/9cj8V1iXAAFG7oYASmw8VAAAAAElFTkSuQmCC';
-	
+		
 	function roundedRect(ctx, x, y, width, height, radius) {
 		ctx.beginPath();
 		ctx.moveTo(x + radius, y);
