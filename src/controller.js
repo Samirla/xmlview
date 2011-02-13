@@ -130,7 +130,7 @@ var xv_controller = (function(){
 			}
 		});
 		
-		xv_dom.addEvent(document, 'click', function(/* Event */ evt) {
+		xv_dom.addEvent(pane, 'click', function(/* Event */ evt) {
 			if (xv_dom.hasClass(evt.target, 'xv-tag-switcher')) {
 				var elem = xv_dom.bubbleSearch(evt.target, 'xv-node');
 				if (xv_dom.hasClass(elem, 'xv-collapsed')) {

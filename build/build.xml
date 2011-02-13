@@ -36,7 +36,10 @@
 		</compress-js-lib>
 		
 		<concat destfile="${dist.js.dir}/xv-src.js">
-			<filelist refid="js.source"/>
+			<filelist refid="js.common"/>
+			<filelist dir="${js-src.dir}">
+				<file name="dnd_feedback.js"/>
+			</filelist>
 		</concat>
 	</target>
 	
