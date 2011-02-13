@@ -186,11 +186,11 @@
 	-o-transform-origin:bottom left;
 	transform-origin:bottom left;
 	
-	-webkit-transform:rotate(90deg) translateX(-40px) translateY(5px);
-	-moz-transform:rotate(90deg) translateX(-40px) translateY(7px);
-	-ms-transform:rotate(90deg) translateX(-40px) translateY(5px);
-	-o-transform:rotate(90deg) translateX(-40px) translateY(5px);
-	transform:rotate(90deg) translateX(-40px) translateY(5px);
+	-webkit-transform:rotate(90deg) translateX(-25px) translateY(-4px);
+	-moz-transform:rotate(90deg) translateX(-25px) translateY(-4px);
+	-ms-transform:rotate(90deg) translateX(-25px) translateY(-4px);
+	-o-transform:rotate(90deg) translateX(-25px) translateY(-4px);
+	transform:rotate(90deg) translateX(-25px) translateY(-4px);
 }
 
 .xv-outline-collapsed .xv-outline-close,
