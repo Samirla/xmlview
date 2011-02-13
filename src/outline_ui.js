@@ -23,11 +23,14 @@
 		
 		selected_elem,
 		
+		last_width = 0,
+		
 		ss,
 		ss_inserted = false;
 		
 	function resizeOutline(width) {
 		width = Math.round(Math.max(120, Math.min(window.innerWidth * 0.5, width)));
+		last_width = width;
 		if (pane.style) {
 			// normal browser – just update style
 			xv_dom.setCSS(pane, {width: width});
@@ -170,18 +173,25 @@
 		return rendered_nodes[id];
 	}
 	
-	// listen to signals
-	xv_signals.documentProcessed.addOnce(function() {
-		xv_dom.addEvent(document, 'click', function(/* Event */ evt) {
-			if (xv_dom.hasClass(evt.target, 'xv-tag-switcher'))
-				return;
-				
-			var elem = xv_dom.bubbleSearch(evt.target, 'xv-outline-node');
-			if (elem) {
-				highlightElement(elem);
-			}
-		});
-	});
+	function isCollapsed() {
+		return xv_dom.hasClass(pane, 'xv-outline-collapsed');
+	}
+	
+	function toggleCollapse(evt) {
+		if (evt)
+			evt.stopPropagation();
+			
+		if (isCollapsed()) {
+			// expand outline
+			xv_dom.removeClass(pane, 'xv-outline-collapsed');
+			resizeOutline(last_width || pane.offsetWidth);
+		} else {
+			// collapse outline
+			xv_dom.addClass(pane, 'xv-outline-collapsed');
+			pane.style.width = '';
+			xv_dom.setCSS(source_pane, {right: pane.offsetWidth});
+		}
+	}
 	
 	xv_signals.nodeFocused.add(function(/* Element */ node, /* String */ source) {
 		// handle focused node
@@ -208,23 +218,46 @@
 		}
 	});
 	
-	xv_signals.documentProcessed.add(function(render_tree, original_tree) {
+	// listen to signals
+	xv_signals.documentProcessed.addOnce(function() {
+		source_pane = xv_dom.getOneByClass('xv-source-pane');
+		
 		if (!pane) {
 			pane = xv_dom.fromHTML('<div class="xv-outline">' +
+					'<h2 class="xv-outline-header">Outline</h2>' +
+					'<span class="xv-outline-close">×</span>' +
 					'<div class="xv-outline-inner"></div>' +
 					'<div class="xv-outline-rs-handler"></div>' +
 					'</div>');
 					
-			pane_content = xv_dom.getOneByClass('xv-outline-inner', pane);
-			resize_handler = xv_dom.getOneByClass('xv-outline-rs-handler', pane);
-			
-			source_pane = xv_dom.getOneByClass('xv-source-pane');
 			source_pane.parentNode.appendChild(pane);
+			
 			setTimeout(function() {
 				resizeOutline(pane.offsetWidth);
 			});
 		}
-			
+		
+		pane_content = xv_dom.getOneByClass('xv-outline-inner', pane);
+		resize_handler = xv_dom.getOneByClass('xv-outline-rs-handler', pane);
+		
+		xv_dom.addEvent(xv_dom.getOneByClass('xv-outline-close', pane), 'click', toggleCollapse);
+		xv_dom.addEvent(pane, 'click', function(evt) {
+			if (isCollapsed())
+				toggleCollapse();
+		});
+		
+		xv_dom.addEvent(document, 'click', function(/* Event */ evt) {
+			if (xv_dom.hasClass(evt.target, 'xv-tag-switcher'))
+				return;
+				
+			var elem = xv_dom.bubbleSearch(evt.target, 'xv-outline-node');
+			if (elem) {
+				highlightElement(elem);
+			}
+		});
+	});
+	
+	xv_signals.documentProcessed.add(function(render_tree, original_tree) {
 		if (pane) {
 			xv_dom.empty(pane_content);
 			pane_content.appendChild(xv_outline.render(original_tree, -1));
