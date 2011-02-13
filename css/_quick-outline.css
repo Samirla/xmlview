@@ -28,10 +28,8 @@
 	border-bottom: 1px solid #c4c4c4;
 }
 
-#fld-quick-outline-search {
+#fld-xv-quick-outline-search {
 	width:100%;
-	-webkit-user-modify: read-write-plaintext-only;
-	-webkit-appearance:searchfield;
 }
 
 .xv-quick-outline-content {

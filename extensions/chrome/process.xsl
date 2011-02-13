@@ -29,11 +29,6 @@
 		<div class="xv-source-pane">
 			<div class="xv-source-pane-inner"></div>
 		</div>
-		<div class="xv-quick-outline">
-			<span class="xv-quick-outline-close">×</span>
-			<h2><input type="search" name="xv-quick-outline-search" id="fld-xv-quick-outline-search" /></h2>
-			<div class="xv-quick-outline-content"></div>
-		</div>
 	</body>
 </html>
 </xsl:template>
