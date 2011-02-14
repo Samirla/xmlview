@@ -97,9 +97,9 @@ var xv_utils = (function(){
 					|| result.getElementsByTagName('parsererror').length) {
 						
 						
-					var error = result.getElementsByTagName('parsererror')[0];
-						
-				throw "<h2>Can’t parse XML document</h2> \n" + (error ? error.innerHTML : '');
+				var error = result.getElementsByTagName('parsererror')[0];
+				console.log(error);
+				throw "<h2>Can’t parse XML document</h2> \n" + (error ? error.textContent : '');
 			}
 			
 			return result;

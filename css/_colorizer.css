@@ -188,7 +188,7 @@
 }
 
 .xv-collapsed > .xv-cdata-start:after {
-	content: ']]>';
+	content: ']]\u003E';
 }
 
 .xv-pi {

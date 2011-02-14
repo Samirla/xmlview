@@ -60,7 +60,20 @@
 		<copy file="${js-src.dir}/dnd_feedback.js" todir="${dist.chrome.dir}"/>
 	</target>
 	
-	<target name="compile" depends="compile.css, compile.js, chrome.extension">
+	<target name="browser.stylesheet" depends="compile.css, compile.js">
+		<loadfile property="browser.compiled-css" srcFile="${dist.css.dir}/main.css"/>
+		<loadfile property="browser.compiled-js" srcFile="${dist.js.dir}/xv.js"/>
+		<copy file="${basedir}/browser.xsl" todir="${dist.dir}" overwrite="true">
+			<filterchain>
+				<replacetokens>
+					<token key="CSS" value="${browser.compiled-css}"/>
+					<token key="JS" value="${browser.compiled-js}"/>
+				</replacetokens>
+			</filterchain>
+		</copy>
+	</target>
+	
+	<target name="compile" depends="compile.css, compile.js, chrome.extension, browser.stylesheet">
 		<copy file="${basedir}/xml-pretty-print.xslt" tofile="${dist.dir}/xmlview.xsl"/>
 		<echo>Build done</echo>
 	</target>
