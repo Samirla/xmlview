@@ -16,6 +16,10 @@
 	box-sizing:border-box;
 }
 	
+.xv-outline-wrap {
+	position:relative;
+}
+	
 .xv-outline-header {
 	font-weight:bold;
 	text-transform:uppercase;

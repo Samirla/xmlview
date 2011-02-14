@@ -253,11 +253,12 @@
 		
 		if (!pane) {
 			pane = xv_dom.fromHTML('<div class="xv-outline">' +
-					'<h2 class="xv-outline-header">Outline</h2>' +
-					'<span class="xv-outline-close">×</span>' +
-					'<div class="xv-outline-inner"></div>' +
-					'<div class="xv-outline-rs-handler"></div>' +
-					'</div>');
+				'<div class="xv-outline-wrap">' +
+				'<h2 class="xv-outline-header">Outline</h2>' +
+				'<span class="xv-outline-close">×</span>' +
+				'<div class="xv-outline-inner"></div>' +
+				'<div class="xv-outline-rs-handler"></div>' +
+				'</div></div>');
 					
 			source_pane.parentNode.appendChild(pane);
 			last_width = xv_settings.getValue('outline.width', 300);
