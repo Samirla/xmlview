@@ -21,6 +21,9 @@
 		os_key = 0,
 		os_modifier = 0,
 		
+		xpath_mode = 0,
+		use_cycle_mode = true,
+		
 		/** @type {Element} */
 		source_node,
 		/** @type {Element} */
@@ -102,6 +105,19 @@
 		updateTransferImage();
 	}
 	
+	function getXPathModeForEvent(evt) {
+		switch (getKeyMask(evt)) {
+			case os_modifier | ALT_KEY:
+				return 1;
+			case os_modifier | SHIFT_KEY:
+				return 2;
+			case os_modifier | SHIFT_KEY | ALT_KEY:
+				return 3;
+		}
+		
+		return 0;
+	}
+	
 	/**
 	 * Returns transfer data for node name (<code>drag_elem</code>)
 	 * @param {Event} evt
@@ -109,17 +125,23 @@
 	 */
 	function getTransferForNodeName(evt) {
 		var q = getAttrQuote();
-		switch (getKeyMask(evt)) {
-			case os_modifier: // name only
+		
+		if (!use_cycle_mode)
+			xpath_mode = getXPathModeForEvent(evt);
+			
+		xpath_mode %= 3;
+		
+		switch (xpath_mode) {
+			case 0: // name only
 				return source_node.nodeName;
-			case os_modifier | ALT_KEY: // name and attr names
+			case 1: // name and attr names
 				var attrs = _.map(xv_utils.filterValidAttributes(source_node), function(n) {
 					return '@' + n.name;
 				});
 				
 				return source_node.nodeName + (attrs.length ? '[' + attrs.join(' and ') + ']' : '');
-			case os_modifier | SHIFT_KEY: // name and attr names and values
-			case os_modifier | SHIFT_KEY | ALT_KEY:
+			case 2: // name and attr names and values
+			case 3:
 				var attrs = _.map(xv_utils.filterValidAttributes(source_node), function(n) {
 					return '@' + n.name + ' = ' + q + escapeQuote(n.value, q) + q;
 				});
@@ -140,6 +162,11 @@
 			q = getAttrQuote(),
 			value = '';
 			
+		if (!use_cycle_mode)
+			xpath_mode = getXPathModeForEvent(evt);
+			
+		xpath_mode %= 4;
+			
 		var getValue = function() {
 			var value = _.detect(xv_utils.filterValidAttributes(source_node), function(n) {
 				return n.name == name;
@@ -148,14 +175,14 @@
 			return value ? value.value : null;
 		};
 			
-		switch (getKeyMask(evt)) {
-			case os_modifier: // name only
+		switch (xpath_mode) {
+			case 0: // name only
 				return '@' + name;
-			case os_modifier | ALT_KEY: // name with value
+			case 1: // name with value
 				return '@' + name + ' = ' + q + getValue() + q;
-			case os_modifier | SHIFT_KEY: // node name with attribute name.
+			case 2: // node name with attribute name.
 				return source_node.nodeName + '[@' + name + ']';
-			case os_modifier | SHIFT_KEY | ALT_KEY: // node name with attribute name.
+			case 3: // node name with attribute name.
 				return source_node.nodeName + '[@' + name + ' = ' + q + escapeQuote(getValue(), q) + q + ']';
 		}
 		
@@ -165,7 +192,7 @@
 	function updateTransferState(evt) {
 		var state = null,
 			elem = drag_elem || evt.target;
-		
+			
 		if (xv_dom.hasClass(elem, 'xv-tag-name'))
 			state = getTransferForNodeName(evt);
 		else if (xv_dom.hasClass(elem, 'xv-attr-name'))
@@ -229,6 +256,8 @@
 			is_drag_mode = true;
 			xv_signals.dndModeEntered.dispatch(drag_elem, evt);
 		}
+		
+		xpath_mode = 0;
 	}
 	
 	function exitDndMode() {
@@ -241,6 +270,7 @@
 			is_drag_mode = false;
 			xv_signals.dndModeQuit.dispatch();
 		}
+		xpath_mode = 0;
 	}
 	
 	dnd_image.onload = updateTransferImage;
@@ -256,6 +286,9 @@
 	// init module
 	xv_signals.documentProcessed.addOnce(function() {
 		dnd_tooltip = xv_dom.fromHTML('<span class="xv-dnd-tooltip"></span>');
+		
+		use_cycle_mode = xv_settings.getValue('dnd.cycle_mode', true);
+		
 		var delegate_items = 'xv-tag-name,xv-attr-name';
 		xv_dom.addEvent(document, 'mouseover', function(/* Event */ evt) {
 			if (isHoverElement(evt.target)) {
@@ -292,9 +325,14 @@
 			if (evt.keyCode == os_key && drag_elem) {
 				enterDndMode(evt);
 			}
-				
-			if (isModifierKeyTrigger(evt) && drag_elem) {
-				updateTransferState(evt);
+			
+			if (drag_elem) {
+				if (!use_cycle_mode && isModifierKeyTrigger(evt)) {
+					updateTransferState(evt);
+				} else if (use_cycle_mode && evt.keyCode == 16) {
+					xpath_mode++;
+					updateTransferState(evt);
+				}
 			}
 		});
 		
@@ -303,7 +341,7 @@
 				exitDndMode();
 			}
 				
-			if (isModifierKeyTrigger(evt) && drag_elem) {
+			if (!use_cycle_mode && isModifierKeyTrigger(evt) && drag_elem) {
 				updateTransferState(evt);
 			}
 		});
