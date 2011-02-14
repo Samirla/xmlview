@@ -144,6 +144,9 @@
 			xv_dom.empty(content);
 			content.appendChild(xv_dom.fromHTML(items.join('')));
 			
+			showPopup();
+			hideInlineXpath();
+			
 			if (found.results.length > getMaxVisibleResults()) {
 				xv_dom.addClass(popup, 'xv-search-result-overflow');
 				xv_dom.setCSS(content, {'height': getSearchResultItems()[0].offsetHeight * getMaxVisibleResults()});
@@ -151,11 +154,7 @@
 				xv_dom.removeClass(popup, 'xv-search-result-overflow');
 				xv_dom.setCSS(content, {'height': 'auto'});
 			}
-			
-			hideInlineXpath();
-			showPopup();
 		}
-			
 	}
 	
 	function hidePopup() {
@@ -190,6 +189,8 @@
 		
 		last_query = query;
 		last_search = xv_search.search(query);
+		
+//		console.log(query, last_search);
 		
 		if (last_search.results) {
 			buildSearchResult(last_search);
