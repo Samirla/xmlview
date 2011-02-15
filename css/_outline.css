@@ -18,6 +18,7 @@
 	
 .xv-outline-wrap {
 	position:relative;
+	min-height:100%;
 }
 	
 .xv-outline-header {
