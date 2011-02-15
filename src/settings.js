@@ -34,7 +34,7 @@ var xv_settings = (function(){
 			else
 				value = settings[name];
 				
-			if (_.isNull(value))
+			if (_.isNull(value) || _.isUndefined(value))
 				value = default_value;
 				
 			switch (typeof default_value) {
