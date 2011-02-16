@@ -1,6 +1,6 @@
 {
 	"name" : "XV",
-	"version" : "1.0",
+	"version" : "1.0.1",
 	"description" : "View XML files in Google Chrome",
 	"background_page": "background.html",
 	"permissions" : [
