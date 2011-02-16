@@ -1,6 +1,8 @@
 XV is a browser-based XML viewer, available as a Google Chrome and Safari extensions.
 
-!http://media.chikuyonok.ru/xv/overview.png!
+!http://media.chikuyonok.ru/xv/overview-2.png!
+
+"Online demo":http://media.chikuyonok.ru/xmlview/ (works in Chrome, Safari, Firefox)
 
 h2. Current features
 
