@@ -140,6 +140,14 @@ var xv_controller = (function(){
 				}
 			}
 		});
+		
+		xv_dom.addEvent(pane, 'dblclick', function(/* Event */ evt) {
+			var target = xv_dom.bubbleSearch(evt.target, 'xv-tag-open,xv-tag-close,xv-comment-start,xv-comment-end');
+			if (target && !xv_dom.hasClass(target.parentNode, 'xv-one-line')) {
+				collapseNode(target.parentNode);
+				evt.preventDefault();
+			}
+		});
 	});
 		
 	xv_signals.nodeFocused.add(function(/* Element */ node, /* String */ source) {
