@@ -194,12 +194,18 @@ var xv_search = (function(){
 		 */
 		search: function(query) {
 			query = xv_utils.trim(query).toLowerCase();
-			last_search = xv_utils.isXPath(query) ? searchXPath(query) : searchText(query);
 			
-			if (last_search && !(last_search.length == 1 && 'xpath_type' in last_search[0]))
-				last_search = _.map(last_search, function(n) {
-					return postProcessResult(n, query);
-				});
+			try {
+				last_search = xv_utils.isXPath(query) ? searchXPath(query) : searchText(query);
+				
+				if (last_search && !(last_search.length == 1 && 'xpath_type' in last_search[0]))
+					last_search = _.map(last_search, function(n) {
+						return postProcessResult(n, query);
+					});
+				
+			} catch(e) {
+				last_search = null;
+			}
 			
 			return {
 				query: query,
