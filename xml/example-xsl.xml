@@ -1,0 +1,100 @@
+<?xml version="1.0"?>
+<?xml-stylesheet type="text/xsl" href="http://localhost:8009/xmlview/dist/browser.xsl"?>
+<!-- comment -->
+<!--
+	multi
+	line
+	comment
+-->
+<xyz:foo xmlns:xlink='xlink-url' xmlns:xyz='abc' attr1='val"ue1' attr2="valu'e2" attr3="valu'&quot;e2"> <bar>
+
+<test xmlns='http://example.com/def'>asdf</test>
+
+<sub><xyz:bar>test</xyz:bar></sub>
+<selfclosed/>
+
+<selfclosed with='attributes'/>
+
+<attribute bothquotes='"&apos;'/>
+
+<attribute xlink:escaped_attr_values='&amp; &lt;'/>
+<attribute escaped_attr_values='&amp; &lt;'/>
+
+<bar:selfclosed xmlns:bar='http://example.com'/>
+
+<?processing instruction?>
+
+&#76;
+
+&amp;
+
+&lt;
+
+<span>&#76;&amp;&lt;</span>
+
+			<style type='text/css'>
+				body {
+					font-family: monospace;
+				}
+				
+				div.comment {
+					color: #555;
+					white-space: pre;
+				}
+				
+				div.xmlpi {
+					color: red;
+				}
+				
+				div.mixedcontent {
+					margin-left: 10px;
+				}
+				
+				span.tag {
+					color: #11a;
+				}
+				
+				span.attribute.name {
+					color: #080;
+				}
+
+				span.attribute.value {
+					color: black;
+				}
+				
+				span.namespace {
+					color: #88f;
+				}
+				
+				
+				/*
+				span.text {
+					white-space: pre;
+				}
+				*/
+			</style>
+
+<!--
+
+<markup>in comment</markup>
+
+-->
+<![CDATA[ cdata content ]]>
+<!--
+
+<p>Pellentesque eu est a nulla placerat dignissim. Morbi a enim in magna semper bibendum. Etiam scelerisque, nunc ac egestas consequat, odio nibh euismod nulla, eget auctor orci nibh vel nisi. Aliquam erat volutpat. Mauris vel neque sit amet nunc gravida congue sed sit amet purus. Quisque lacus quam, egestas ac tincidunt a, lacinia vel velit. Aenean facilisis nulla vitae urna tincidunt congue sed ut dui. Morbi malesuada nulla nec purus convallis consequat. Vivamus id mollis quam. Morbi ac commodo nulla. In condimentum orci id nisl volutpat bibendum. Quisque commodo hendrerit lorem quis egestas. Maecenas quis tortor arcu. Vivamus rutrum nunc non neque consectetur quis placerat neque lobortis. Nam vestibulum, arcu sodales feugiat consectetur, nisl orci bibendum elit, eu euismod magna sapien ut nibh. Donec semper quam scelerisque tortor dictum gravida. In hac habitasse platea dictumst. Nam pulvinar, odio sed rhoncus suscipit, sem diam ultrices mauris, eu consequat purus metus eu velit. Proin metus odio, aliquam eget molestie nec, gravida ut sapien. Phasellus quis est sed turpis sollicitudin venenatis sed eu odio. Praesent eget neque eu eros interdum malesuada non vel leo. Sed fringilla porta ligula egestas tincidunt. Nullam risus magna, ornare vitae varius eget, scelerisque a libero. Morbi eu porttitor ipsum. Nullam lorem nisi, posuere quis volutpat eget, luctus nec massa. Pellentesque aliquam lacinia tellus sit amet bibendum. Ut posuere justo in enim pretium scelerisque. Etiam ornare vehicula euismod. Vestibulum at risus augue. Sed non semper dolor. Sed fringilla consequat velit a porta. Pellentesque sed lectus pharetra ipsum ultricies commodo non sit amet velit. Suspendisse volutpat lobortis ipsum, in scelerisque nisi iaculis a. Duis pulvinar lacinia commodo. Integer in lorem id nibh luctus aliquam. Sed elementum, est ac sagittis porttitor, neque metus ultricies ante, in accumsan massa nisl non metus. Vivamus sagittis quam a lacus dictum tempor. Nullam in semper ipsum. Cras a est id massa malesuada tincidunt. Etiam a urna tellus. Ut rutrum vehicula dui, eu cursus magna tincidunt pretium. Donec malesuada accumsan quam, et commodo orci viverra et. Integer tincidunt sagittis lectus. Mauris ac ligula quis.</p>
+
+-->
+<foo xlink:foo='baz'>
+ <xyz:what> <a xlink:foo='bar'> <mess/>
+ 
+ ö ä ü
+ 
+ ⌘ ⌥ ⇧ ⌫
+  </a>
+    </xyz:what> </foo></bar>
+<element>
+	text content
+			</element>
+</xyz:foo>
+
