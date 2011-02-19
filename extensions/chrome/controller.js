@@ -38,7 +38,7 @@ function isXML(doc) {
 }
 
 function canTransform() {
-	return document && isXML(document) && document.documentElement;
+	return document && isXML(document) && document.documentElement && !(document.documentElement instanceof HTMLElement);
 }
 
 xv_dom.getByClass = function(class_name, context) {
