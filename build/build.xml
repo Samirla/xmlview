@@ -60,6 +60,18 @@
 		<copy file="${js-src.dir}/dnd_feedback.js" todir="${dist.chrome.dir}"/>
 	</target>
 	
+	<target name="safari.extension" depends="compile.css" description="Build Safari extension">
+		<mkdir dir="${dist.safari.dir}"/>
+		<copy todir="${dist.safari.dir}">
+			<fileset dir="${safari-src.dir}" excludes="xv.css,settings.js"/>
+		</copy>
+		<copy file="${dist.css-full.dir}/main.css" tofile="${dist.safari.dir}/xv.css"/>
+		<concat destfile="${dist.safari.dir}/xv.js">
+			<filelist refid="js.common"/>
+		</concat>
+		<copy file="${js-src.dir}/dnd_feedback.js" todir="${dist.safari.dir}"/>
+	</target>
+	
 	<target name="browser.stylesheet" depends="compile.css, compile.js">
 		<loadfile property="browser.compiled-css" srcFile="${dist.css.dir}/main.css"/>
 		<loadfile property="browser.compiled-js" srcFile="${dist.js.dir}/xv.js"/>
@@ -73,7 +85,7 @@
 		</copy>
 	</target>
 	
-	<target name="compile" depends="compile.css, compile.js, chrome.extension, browser.stylesheet">
+	<target name="compile" depends="compile.css, compile.js, chrome.extension, browser.stylesheet, safari.extension">
 		<copy file="${basedir}/xml-pretty-print.xslt" tofile="${dist.dir}/xmlview.xsl"/>
 		<echo>Build done</echo>
 	</target>

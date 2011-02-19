@@ -1,0 +1,49 @@
+<script type="text/javascript" src="dnd_feedback.js"></script>
+<script type="text/javascript" src="xv.js"></script>
+<script>
+	var xsl = null;
+	function loadXsl(url){
+		var xhr = new XMLHttpRequest();
+		xhr.open('GET', url, true);
+		xhr.onreadystatechange = function(){
+			if (xhr.readyState == 4) {
+				xsl = xhr.responseText;
+			}
+		}
+		xhr.send();
+	}
+	
+	safari.application.addEventListener("message", function(/* Event */ evt){
+		switch (evt.name) {
+			case 'xv.get-dnd-feedback':
+				sendResponse(evt, {image: xv_dnd_feedback.draw(evt.message.text)});
+				break;
+			case 'xv.copy':
+				var ta = document.getElementById('ta');
+				ta.value = evt.message.text;
+				ta.select();
+				sendResponse(evt, {success: document.execCommand("copy", false, null)});
+				break;
+			case 'xv.get-xsl':
+				if (xsl === null)
+					loadXsl(evt.message.filePath);
+					
+				sendResponse(evt, {fileText: xsl});
+				break;
+			case 'xv.get-settings':
+				sendResponse(evt, {data: xv_settings.dump()});
+				break;
+			case 'xv.store-settings':
+				xv_settings.setValue(evt.message.name, evt.message.value);
+				break;
+		}
+	}, false);
+	
+	
+	function sendResponse(evt, data) {
+		evt.target.page.dispatchMessage(evt.name, data);
+	}
+	
+	loadXsl('process.xsl');
+</script>
+<textarea id="ta"></textarea>
