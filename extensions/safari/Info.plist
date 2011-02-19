@@ -46,6 +46,8 @@
 			<string>All</string>
 		</dict>
 	</dict>
+	<key>Update Manifest URL</key>
+	<string>http://media.chikuyonok.ru/xv/safari-update.plist</string>
 	<key>Website</key>
 	<string>https://github.com/sergeche/xmlview</string>
 </dict>

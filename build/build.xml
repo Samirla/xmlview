@@ -63,7 +63,7 @@
 	<target name="safari.extension" depends="compile.css" description="Build Safari extension">
 		<mkdir dir="${dist.safari.dir}"/>
 		<copy todir="${dist.safari.dir}">
-			<fileset dir="${safari-src.dir}" excludes="xv.css,settings.js"/>
+			<fileset dir="${safari-src.dir}" excludes="xv.css,settings.js,safari-update.plist"/>
 		</copy>
 		<copy file="${dist.css-full.dir}/main.css" tofile="${dist.safari.dir}/xv.css"/>
 		<concat destfile="${dist.safari.dir}/xv.js">
