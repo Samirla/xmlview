@@ -15,7 +15,8 @@ _Google Chrome users: click on element will copy XPath to clipboard_
 h3. Download
 
 * "Google Chrome extension":https://chrome.google.com/webstore/detail/eeocglpgjdpaefaedpblffpeebgmgddk/
-* "Safari for Mac extension":https://github.com/sergeche/xmlview/downloads (via Marc Liyanage’s "webkit-xmlview-plugin":https://github.com/liyanage/webkit-xmlview-plugin plugin)
+* "Safari extension":http://media.chikuyonok.ru/xv/xv.safariextz
+* "Safari for Mac plugin":https://github.com/sergeche/xmlview/downloads (via Marc Liyanage’s "webkit-xmlview-plugin":https://github.com/liyanage/webkit-xmlview-plugin plugin)
 
 You can also download an "XSL stylesheet":https://github.com/sergeche/xmlview/downloads and use it for styling XML files with @<?xml-stylesheet type="text/xsl" href="xv-browser.xsl"?>@
 
