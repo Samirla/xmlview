@@ -80,6 +80,7 @@ document.addEventListener('readystatechange', function() {
 
 function doTransform() {
 	// future checks:
+	// https://bugs.webkit.org/show_bug.cgi?id=56263
 	// typeof(window['handleWebKitXMLViewerOnLoadEvent'])
 	// document.getElementById('webkit-xml-viewer-source-xml')
 	var source_doc = _doc.documentElement;
