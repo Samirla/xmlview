@@ -32,13 +32,22 @@ xv_settings = {
 	}
 };
 
+/**
+ * Returns rendered by Chrome XML tree container
+ * @return {HTMLElement} 
+ */
+function getRenderedContent() {
+	var xml_tree_viewer_output = document.getElementsByClassName('pretty-print');
+	return xml_tree_viewer_output && xml_tree_viewer_output[0];
+}
 
 function isXML(doc) {
 	return !(doc instanceof HTMLDocument || doc instanceof SVGDocument);
 }
 
 function canTransform() {
-	return document && isXML(document) && document.documentElement && !(document.documentElement instanceof HTMLElement);
+	return this._doc && ('documentElement' in _doc) && isXML(_doc) && !(_doc.documentElement instanceof HTMLElement);
+//	return document && isXML(document) && document.documentElement && !(document.documentElement instanceof HTMLElement);
 }
 
 xv_dom.getByClass = function(class_name, context) {
@@ -55,12 +64,28 @@ var xv_dnd_feedback = {
 	}
 }
 
-if (canTransform()) {
-	var source_doc = document.documentElement;
+// intercept XML document while it is not replaced by Chrome's XML Tree
+if (!('_doc' in this)) {
+	this['_doc'] = document;
+}
+
+// this code will be executed twice since original document will be replaced 
+// with Chrome's XML tree viewer. The real XML doc will have 'interactive' state,
+// but replaced doc will have 'complete' state
+document.addEventListener('readystatechange', function() {
+	if (document.readyState == 'complete' && canTransform()) {
+		doTransform();
+	}
+});
+
+function doTransform() {
+	// future checks:
+	// typeof(window['handleWebKitXMLViewerOnLoadEvent'])
+	// document.getElementById('webkit-xml-viewer-source-xml')
+	var source_doc = _doc.documentElement;
 	
 	chrome.extension.sendRequest({action: 'xv.get-xsl', filePath: 'process.xsl'},
 		function(response) {
-			
 			var xsl_proc = new XSLTProcessor();
 			xsl_proc.importStylesheet(xv_utils.toXml(response.fileText));
 			
@@ -70,7 +95,7 @@ if (canTransform()) {
 				xsl_proc.setParameter(null, 'options_url', chrome.extension.getURL('options.html'));
 				xsl_proc.setParameter(null, 'custom_css', xv_settings.getValue('custom_css', ''));
 				
-				var result = xsl_proc.transformToDocument(document);
+				var result = xsl_proc.transformToDocument(_doc);
 				document.replaceChild(document.adoptNode(result.documentElement), document.documentElement);
 				
 				xv_dom.setHTMLContext(result);
