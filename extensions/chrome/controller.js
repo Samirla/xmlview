@@ -62,7 +62,7 @@ var xv_dnd_feedback = {
 			fn(response.image);
 		});
 	}
-}
+};
 
 // intercept XML document while it is not replaced by Chrome's XML Tree
 if (!('_doc' in this)) {

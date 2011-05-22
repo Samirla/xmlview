@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en-US">
+	<head>
+		<meta charset="UTF-8"/>
+		<style type="text/css">
+			@CSS@
+		</style>
+	</head>
+	<body>
+		<div class="xv-search-panel">
+			<input type="search" class="xv-search-field" spellcheck="false" placeholder="Search by name or XPath" />
+			<span class="xv-search-xpath-result"></span>
+		</div>
+		<div class="xv-source-pane">
+			<div class="xv-source-pane-inner"></div>
+		</div>
+		
+		<div id="xv-source-data">@SOURCE@</div>
+		
+		<script type="text/javascript">
+			@JS@
+			;xv_controller.process(document.getElementById('xv-source-data').textContent);
+		</script>
+	</body>
+</html>
