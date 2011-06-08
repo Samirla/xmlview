@@ -1,6 +1,6 @@
 {
 	"name" : "XV — XML Viewer",
-	"version" : "1.0.3",
+	"version" : "1.0.4",
 	"description" : "Powerful XML viewer for Google Chrome",
 	"background_page": "background.html",
 	"permissions" : [

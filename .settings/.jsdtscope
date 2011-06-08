@@ -9,5 +9,9 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry exported="true" kind="con" path="org.eclipse.wst.jsdt.launching.baseBrowserLibrary/StandardBrowser/html5"/>
 	<classpathentry exported="true" kind="con" path="org.eclipse.wst.jsdt.USER_LIBRARY/jQuery"/>
+	<classpathentry kind="con" path="org.eclipse.wst.jsdt.USER_LIBRARY/console"/>
+	<classpathentry kind="con" path="org.eclipse.wst.jsdt.USER_LIBRARY/Browser Addons"/>
+	<classpathentry kind="con" path="org.eclipse.wst.jsdt.USER_LIBRARY/Signals"/>
+	<classpathentry kind="con" path="org.eclipse.wst.jsdt.USER_LIBRARY/underscore.js"/>
 	<classpathentry kind="output" path=""/>
 </classpath>

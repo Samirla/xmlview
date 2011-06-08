@@ -64,55 +64,6 @@ var xv_dnd_feedback = {
 	}
 };
 
-// intercept XML document while it is not replaced by Chrome's XML Tree
-if (!('_doc' in this)) {
-	this['_doc'] = document;
-}
-
-// this code will be executed twice since original document will be replaced 
-// with Chrome's XML tree viewer. The real XML doc will have 'interactive' state,
-// but replaced doc will have 'complete' state
-document.addEventListener('readystatechange', function() {
-	if (document.readyState == 'complete' && canTransform()) {
-		doTransform();
-	}
-});
-
-function doTransform() {
-	// future checks:
-	// https://bugs.webkit.org/show_bug.cgi?id=56263
-	// typeof(window['handleWebKitXMLViewerOnLoadEvent'])
-	// document.getElementById('webkit-xml-viewer-source-xml')
-	var source_doc = _doc.documentElement;
-	
-	chrome.extension.sendRequest({action: 'xv.get-xsl', filePath: 'process.xsl'},
-		function(response) {
-			var xsl_proc = new XSLTProcessor();
-			xsl_proc.importStylesheet(xv_utils.toXml(response.fileText));
-			
-			chrome.extension.sendRequest({action: 'xv.get-settings'}, function(response){
-				xv_settings.load(response.data);
-				xsl_proc.setParameter(null, 'css', chrome.extension.getURL('xv.css'));
-				xsl_proc.setParameter(null, 'options_url', chrome.extension.getURL('options.html'));
-				xsl_proc.setParameter(null, 'custom_css', xv_settings.getValue('custom_css', ''));
-				
-				var result = xsl_proc.transformToDocument(_doc);
-				document.replaceChild(document.adoptNode(result.documentElement), document.documentElement);
-				
-				xv_dom.setHTMLContext(result);
-				
-				var xml_doc = document.implementation.createDocument();
-				xml_doc.replaceChild(xml_doc.adoptNode(source_doc), xml_doc.documentElement);
-				
-				xv_controller.process(xml_doc);
-				
-				// handle clicks to copy xpath
-				handleDndClicks();
-			});
-		}
-	);
-}
-
 function dummy() {}
 
 function handleDndClicks() {
@@ -139,3 +90,84 @@ function handleDndClicks() {
 		}
 	}, false);
 }
+
+function doTransform(data) {
+	// future checks:
+	// https://bugs.webkit.org/show_bug.cgi?id=56263
+	// typeof(window['handleWebKitXMLViewerOnLoadEvent'])
+	// document.getElementById('webkit-xml-viewer-source-xml')
+	console.log('do transform');
+//	var source_doc = _doc.documentElement;
+	
+	chrome.extension.sendRequest({action: 'xv.get-xsl', filePath: 'process.xsl'},
+		function(response) {
+			var xsl_proc = new XSLTProcessor();
+			xsl_proc.importStylesheet(xv_utils.toXml(response.fileText));
+			
+			chrome.extension.sendRequest({action: 'xv.get-settings'}, function(response){
+				xv_settings.load(response.data);
+				xsl_proc.setParameter(null, 'css', chrome.extension.getURL('xv.css'));
+				xsl_proc.setParameter(null, 'options_url', chrome.extension.getURL('options.html'));
+				xsl_proc.setParameter(null, 'custom_css', xv_settings.getValue('custom_css', ''));
+				
+				var result = xsl_proc.transformToDocument(_doc);
+				document.replaceChild(document.adoptNode(result.documentElement), document.documentElement);
+				
+				xv_dom.setHTMLContext(result);
+				
+				var xml_doc = document.implementation.createDocument();
+				var replacement = null;
+				if (data instanceof Document) {
+					replacement = xml_doc.adoptNode(data.documentElement);
+				} else {
+					// assume 'data' is a node with HTML elements in it
+					replacement = xml_doc.createDocumentFragment();
+					_.each(data.childNodes, function(elem){
+						replacement.appendChild(xml_doc.importNode(elem, true));
+					});
+				}
+				xml_doc.replaceChild(replacement, xml_doc.documentElement);
+				
+				xv_controller.process(xml_doc);
+				
+				// handle clicks to copy xpath
+				handleDndClicks();
+			});
+		}
+	);
+}
+
+// XXX init
+
+// Chrome 12.x+ check: https://bugs.webkit.org/show_bug.cgi?id=56263
+//if (typeof(window.reloadWithWebKitXMLViewerDisabled) == 'function') {
+//	window.reloadWithWebKitXMLViewerDisabled();
+//} else if (window.currentDocumentIsXMLWithoutStyle && currentDocumentIsXMLWithoutStyle()) {
+//	console.log('show custom');
+////	showCustomXMLViewer();
+//}
+
+//intercept XML document while it is not replaced by Chrome's XML Tree
+// Chrome 11.x
+if (!('_doc' in this)) {
+	this['_doc'] = document;
+}
+	
+// this code will be executed twice since original document will be replaced 
+// with Chrome's XML tree viewer. The real XML doc will have 'interactive' state,
+// but replaced doc will have 'complete' state
+document.addEventListener('readystatechange', function() {
+	if (document.readyState == 'complete') {
+		if (canTransform())
+			doTransform(this['_doc']);
+		else {
+			// Chrome 12.x
+			var el = document.getElementById('webkit-xml-viewer-source-xml');
+			if (el) {
+				el.parentNode.removeChild(el);
+				doTransform(el);
+			}
+		} 
+	}
+});
+
