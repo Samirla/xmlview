@@ -14,7 +14,7 @@ _Google Chrome users: click on element will copy XPath to clipboard_
 
 h3. Download
 
-* "Google Chrome extension":https://chrome.google.com/webstore/detail/eeocglpgjdpaefaedpblffpeebgmgddk/
+* "Google Chrome extension":https://chrome.google.com/webstore/detail/eeocglpgjdpaefaedpblffpeebgmgddk
 * "Safari extension":http://media.chikuyonok.ru/xv/xv.safariextz
 * "Safari for Mac plugin":https://github.com/sergeche/xmlview/downloads (via Marc Liyanage’s "webkit-xmlview-plugin":https://github.com/liyanage/webkit-xmlview-plugin plugin)
 
