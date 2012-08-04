@@ -1,0 +1,111 @@
+<?xml version="1.0"?>
+<project name="XML View" basedir="./" default="compile">
+	<property file="${basedir}/build/build.properties"/>
+	
+	<taskdef resource="org/apache/tools/ant/taskdefs/default.properties">
+		<classpath>
+			<pathelement location="${basedir}/build/frontend-builder.jar" />
+			<pathelement location="${basedir}/build/compiler.jar"/>
+			<pathelement location="${basedir}/build/yuicompressor.jar"/>
+		</classpath>
+	</taskdef>
+	
+	<target name="init">
+		<mkdir dir="${dist.dir}"/>
+		<mkdir dir="${dist.css.dir}"/>
+		<mkdir dir="${dist.js.dir}"/>
+	</target>
+	
+	<filelist dir="${js-src.dir}" id="js.common">
+		<file name="lib/underscore.js"/>
+		<file name="lib/js-signals.js"/>
+		<file name="signals.js"/>
+		<file name="utils.js"/>
+		<file name="dom.js"/>
+		<file name="settings.js"/>
+		<file name="renderer.js"/>
+		<file name="search.js"/>
+		<file name="search_ui.js"/>
+		<file name="dnd.js"/>
+		<file name="outline.js"/>
+		<file name="outline_ui.js"/>
+		<file name="controller.js"/>
+		<file name="selection-notifier.js"/>
+		<file name="clipboard.js"/>
+	</filelist>
+	
+	<target name="compile.js" depends="init">
+		<compile-js destfile="${dist.js.dir}/xv.js">
+			<filelist refid="js.common"/>
+			<filelist dir="${js-src.dir}">
+				<file name="dnd_feedback.js"/>
+			</filelist>
+		</compile-js>
+		
+		<concat destfile="${dist.js.dir}/xv-src.js">
+			<filelist refid="js.common"/>
+			<filelist dir="${js-src.dir}">
+				<file name="dnd_feedback.js"/>
+			</filelist>
+		</concat>
+	</target>
+	
+	<target name="compile.css" depends="init">
+		<compile-css dir="${css-src.dir}" todir="${dist.css.dir}"/>
+	</target>
+	
+	<target name="chrome.extension" depends="compile.css" description="Build Google Chrome extension">
+		<mkdir dir="${dist.chrome.dir}"/>
+		<copy todir="${dist.chrome.dir}">
+			<fileset dir="${chrome-src.dir}" excludes="xv.css"/>
+		</copy>
+		<copy file="${dist.css.dir}/main.css" tofile="${dist.chrome.dir}/xv.css"/>
+		<concat destfile="${dist.chrome.dir}/xv.js">
+			<filelist refid="js.common"/>
+		</concat>
+		<copy file="${js-src.dir}/dnd_feedback.js" todir="${dist.chrome.dir}"/>
+	</target>
+	
+	<target name="safari.extension" depends="compile.css" description="Build Safari extension">
+		<mkdir dir="${dist.safari.dir}"/>
+		<copy todir="${dist.safari.dir}">
+			<fileset dir="${safari-src.dir}" excludes="xv.css,settings.js,safari-update.plist"/>
+		</copy>
+		<copy file="${dist.css.dir}/main.css" tofile="${dist.safari.dir}/xv.css"/>
+		<concat destfile="${dist.safari.dir}/xv.js">
+			<filelist refid="js.common"/>
+		</concat>
+		<copy file="${js-src.dir}/dnd_feedback.js" todir="${dist.safari.dir}"/>
+	</target>
+	
+	<target name="browser.stylesheet" depends="compile.css, compile.js">
+		<loadfile property="browser.compiled-css" srcFile="${dist.css.dir}/main.css"/>
+		<loadfile property="browser.compiled-js" srcFile="${dist.js.dir}/xv.js"/>
+		<copy file="${basedir}/browser.xsl" todir="${dist.dir}" overwrite="true">
+			<filterchain>
+				<replacetokens>
+					<token key="CSS" value="${browser.compiled-css}"/>
+					<token key="JS" value="${browser.compiled-js}"/>
+				</replacetokens>
+			</filterchain>
+		</copy>
+	</target>
+	
+	<target name="eclipse.extension" depends="compile.css, compile.js" description="Build Eclipse extension resource">
+		<loadfile property="browser.compiled-css" srcFile="${dist.css.dir}/main.css"/>
+		<loadfile property="browser.compiled-js" srcFile="${dist.js.dir}/xv.js"/>
+		<copy file="${basedir}/eclipse.html" todir="${dist.dir}" overwrite="true">
+			<filterchain>
+				<replacetokens>
+					<token key="CSS" value="${browser.compiled-css}"/>
+					<token key="JS" value="${browser.compiled-js}"/>
+				</replacetokens>
+			</filterchain>
+		</copy>
+	</target>
+	
+	<target name="compile" depends="compile.css, compile.js, chrome.extension, browser.stylesheet, safari.extension, eclipse.extension">
+		<copy file="${basedir}/xml-pretty-print.xslt" tofile="${dist.dir}/xmlview.xsl"/>
+		<echo>Build done</echo>
+	</target>
+</project>
