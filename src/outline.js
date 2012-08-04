@@ -81,7 +81,7 @@ var xv_outline = (function(){
 		result.push('<span class="xv-node xv-outline-node xv-outline-tag' + add_class + '" data-xv-id="' + xv_renderer.getId(node) + '">');
 		result.push('<span class="xv-tag-switcher"></span>');
 		result.push('<span class="xv-outline-node-inner">');
-		result.push('<span class="xv-outline-tag-name">' + node.nodeName +'</span>');
+		result.push('<span class="xv-outline-item xv-outline-tag-name">' + node.nodeName +'</span>');
 		if (attrs && attrs.length)
 			result.push(' ' + attrs.join(', '));
 			
@@ -111,7 +111,7 @@ var xv_outline = (function(){
 	function stylizeProcessingInstruction(node) {
 		return '<span class="xv-node xv-outline-node xv-outline-pi" data-xv-id="' + xv_renderer.getId(node) + '">' +
 				'<span class="xv-outline-node-inner">' +
-				'<span class="xv-outline-pi-name">' + node.nodeName+ '</span>' +
+				'<span class="xv-outline-item xv-outline-pi-name">' + node.nodeName+ '</span>' +
 				'</span>' +
 				'</span>';
 	}
@@ -143,7 +143,7 @@ var xv_outline = (function(){
 		return '<span class="xv-node xv-outline-node xv-outline-cdata" ' +
 				'data-xv-id="' + xv_renderer.getId(node) + '">' +
 				'<span class="xv-outline-node-inner">' +
-				'<span class="xv-outline-cdata-name">CDATA</span> ' +
+				'<span class="xv-outline-item xv-outline-cdata-name">CDATA</span> ' +
 				v +
 				'</span>' +
 				'</span>';

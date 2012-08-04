@@ -1,0 +1,44 @@
+<!DOCTYPE HTML>
+<html lang="en-US">
+<head>
+	<meta charset="UTF-8"/>
+	<title>XML View example</title>
+	<link rel="stylesheet" href="./css/main.css" media="all" />
+	<script src="./src/lib/underscore.js"></script>
+	<script src="./src/lib/js-signals.js"></script>
+	<script src="./src/signals.js"></script>
+	<script src="./src/utils.js"></script>
+	<script src="./src/dom.js"></script>
+	<script src="./src/settings.js"></script>
+	<script src="./src/renderer.js"></script>
+	<script src="./src/search.js"></script>
+	<script src="./src/search_ui.js"></script>
+	<script src="./src/dnd.js"></script>
+	<script src="./src/outline.js"></script>
+	<script src="./src/outline_ui.js"></script>
+	<script src="./src/controller.js"></script>
+	<script src="./src/selection-notifier.js"></script>
+	<script src="./src/clipboard.js"></script>
+	<script src="./src/dnd_feedback.js"></script>
+</head>
+<body>
+	<div class="xv-search-panel">
+		<input type="search" class="xv-search-field" spellcheck="false" placeholder="Search by name or XPath" />
+		<span class="xv-search-xpath-result"></span>
+	</div>
+	<div class="xv-source-pane">
+		<div class="xv-source-pane-inner"></div>
+	</div>
+	
+	<script type="text/javascript">
+		var xhr = new XMLHttpRequest();
+		xhr.open('GET', './xml/example.xml', true);
+		xhr.onreadystatechange = function(){
+			if (xhr.readyState == 4) {
+				xv_controller.process(xhr.responseXML);
+			}
+		}
+		xhr.send();
+	</script>
+</body>
+</html>
