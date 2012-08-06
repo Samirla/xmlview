@@ -1,8 +1,11 @@
 {
 	"name" : "XV — XML Viewer",
-	"version" : "1.0.4",
+	"version" : "1.0.5",
 	"description" : "Powerful XML viewer for Google Chrome",
-	"background_page": "background.html",
+	"manifest_version": 2,
+	"background": {
+		"scripts": ["dnd_feedback.js", "xv.js", "background.js"]
+	},
 	"permissions" : [
 		"tabs",
 		"http://*/*",
@@ -18,5 +21,6 @@
 		"js": ["xv.js", "controller.js"],
 		"matches": ["http://*/*", "https://*/*", "file://*/*"],
 		"run_at": "document_start"
-	}]
+	}],
+	"web_accessible_resources": ["xv.css"]
 }
