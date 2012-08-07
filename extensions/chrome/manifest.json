@@ -4,10 +4,11 @@
 	"description" : "Powerful XML viewer for Google Chrome",
 	"manifest_version": 2,
 	"background": {
-		"scripts": ["dnd_feedback.js", "xv.js", "background.js"]
+		"page": "background.html"
 	},
 	"permissions" : [
 		"tabs",
+		"clipboardWrite",
 		"http://*/*",
 		"https://*/*"
 	],
@@ -22,5 +23,10 @@
 		"matches": ["http://*/*", "https://*/*", "file://*/*"],
 		"run_at": "document_start"
 	}],
-	"web_accessible_resources": ["xv.css"]
+	"web_accessible_resources": ["xv.css"],
+	
+	"page_action": {
+		"default_icon": "icon-page-action.png",
+		"default_title": "Toggle page rendering with XV plugin"
+	}
 }

@@ -21,7 +21,7 @@ xv_settings = {
 	
 	setValue: function(name, value) {
 		this._data[name] = value;
-		chrome.extension.sendRequest({
+		chrome.extension.sendMessage({
 			action: 'xv.store-settings', 
 			name: name, 
 			value: value}, dummy);
@@ -58,7 +58,7 @@ xv_dom.getByClass = function(class_name, context) {
 
 var xv_dnd_feedback = {
 	draw: function(text, fn) {
-		chrome.extension.sendRequest({action: 'xv.get-dnd-feedback', text: text}, function(response){
+		chrome.extension.sendMessage({action: 'xv.get-dnd-feedback', text: text}, function(response){
 			fn(response.image);
 		});
 	}
@@ -84,7 +84,7 @@ function handleDndClicks() {
 	
 	document.addEventListener('click', function(evt) {
 		if (is_dnd_mode && copy_text) {
-			chrome.extension.sendRequest({action: 'xv.copy', text: copy_text}, dummy);
+			chrome.extension.sendMessage({action: 'xv.copy', text: copy_text}, dummy);
 			evt.preventDefault();
 			evt.stopPropagation();
 		}
@@ -96,21 +96,19 @@ function doTransform(data) {
 	// https://bugs.webkit.org/show_bug.cgi?id=56263
 	// typeof(window['handleWebKitXMLViewerOnLoadEvent'])
 	// document.getElementById('webkit-xml-viewer-source-xml')
-	console.log('do transform');
-//	var source_doc = _doc.documentElement;
 	
-	chrome.extension.sendRequest({action: 'xv.get-xsl', filePath: 'process.xsl'},
+	chrome.extension.sendMessage({action: 'xv.get-xsl', filePath: 'process.xsl'},
 		function(response) {
 			var xsl_proc = new XSLTProcessor();
 			xsl_proc.importStylesheet(xv_utils.toXml(response.fileText));
 			
-			chrome.extension.sendRequest({action: 'xv.get-settings'}, function(response){
+			chrome.extension.sendMessage({action: 'xv.get-settings'}, function(response){
 				xv_settings.load(response.data);
 				xsl_proc.setParameter(null, 'css', chrome.extension.getURL('xv.css'));
 				xsl_proc.setParameter(null, 'options_url', chrome.extension.getURL('options.html'));
 				xsl_proc.setParameter(null, 'custom_css', xv_settings.getValue('custom_css', ''));
 				
-				var result = xsl_proc.transformToDocument(_doc);
+				var result = xsl_proc.transformToDocument(data);
 				document.replaceChild(document.adoptNode(result.documentElement), document.documentElement);
 				
 				xv_dom.setHTMLContext(result);
@@ -152,20 +150,52 @@ function doTransform(data) {
 if (!('_doc' in this)) {
 	this['_doc'] = document;
 }
-	
+
+function togglePageAction(isEnabled) {
+	chrome.extension.sendMessage({
+		action: isEnabled ? 'xv.show-page-action' : 'xv.hide-page-action'
+	});
+}
+
 // this code will be executed twice since original document will be replaced 
 // with Chrome's XML tree viewer. The real XML doc will have 'interactive' state,
 // but replaced doc will have 'complete' state
 document.addEventListener('readystatechange', function() {
 	if (document.readyState == 'complete') {
-		if (canTransform())
+		if (canTransform()) {
 			doTransform(this['_doc']);
-		else {
+			togglePageAction(false);
+		} else {
 			// Chrome 12.x
 			var el = document.getElementById('webkit-xml-viewer-source-xml');
 			if (el) {
 				el.parentNode.removeChild(el);
 				doTransform(el);
+				togglePageAction(false);
+			} else {
+				// let’s see if current URL is in forced list
+				togglePageAction(true);
+				chrome.extension.sendMessage({action: 'xv.get-settings'}, function(response) {
+					var forcedURLs = JSON.parse(response.data.forced_urls || '[]');
+					if (_.include(forcedURLs, document.URL)) {
+						var xhr = new XMLHttpRequest();
+						xhr.onreadystatechange = function() {
+							if (xhr.readyState == 4) {
+								if (xhr.status == 200) {
+									try {
+										doTransform(xv_utils.toXml(xhr.responseText));
+									} catch (e) {
+										console.log('XV: Unable to render document: invalid XML');
+										console.error(e);
+									}
+								}
+							}
+						};
+						
+						xhr.open("GET", document.URL, true);
+						xhr.send();
+					}
+				});
 			}
 		} 
 	}
