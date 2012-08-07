@@ -45,9 +45,15 @@ function isXML(doc) {
 	return !(doc instanceof HTMLDocument || doc instanceof SVGDocument);
 }
 
-function canTransform() {
-	return this._doc && ('documentElement' in _doc) && isXML(_doc) && !(_doc.documentElement instanceof HTMLElement);
-//	return document && isXML(document) && document.documentElement && !(document.documentElement instanceof HTMLElement);
+function canTransform(doc) {
+	doc = doc || this._doc;
+	if (!doc)
+		return false;
+	
+	if (doc.nodeType == 1)
+		doc = doc.ownerDocument;
+	
+	return 'documentElement' in doc && isXML(doc) && !(doc.documentElement instanceof HTMLElement);
 }
 
 xv_dom.getByClass = function(class_name, context) {
@@ -102,7 +108,7 @@ function doTransform(data) {
 			var xsl_proc = new XSLTProcessor();
 			xsl_proc.importStylesheet(xv_utils.toXml(response.fileText));
 			
-			chrome.extension.sendMessage({action: 'xv.get-settings'}, function(response){
+			chrome.extension.sendMessage({action: 'xv.get-settings'}, function(response) {
 				xv_settings.load(response.data);
 				xsl_proc.setParameter(null, 'css', chrome.extension.getURL('xv.css'));
 				xsl_proc.setParameter(null, 'options_url', chrome.extension.getURL('options.html'));
@@ -145,10 +151,8 @@ function doTransform(data) {
 ////	showCustomXMLViewer();
 //}
 
-//intercept XML document while it is not replaced by Chrome's XML Tree
-// Chrome 11.x
-if (!('_doc' in this)) {
-	this['_doc'] = document;
+if (!('__canRenderWithXV' in this)) {
+	this['__canRenderWithXV'] = canTransform(document);
 }
 
 function togglePageAction(isEnabled) {
@@ -157,47 +161,49 @@ function togglePageAction(isEnabled) {
 	});
 }
 
+function parseCurrentPage() {
+	var xhr = new XMLHttpRequest();
+	xhr.onreadystatechange = function() {
+		if (xhr.readyState == 4) {
+			if (xhr.status == 200 || xhr.status == 0) {
+				try {
+					doTransform(xv_utils.toXml(xhr.responseText));
+				} catch (e) {
+					console.log('XV: Unable to render document: invalid XML');
+					console.error(e);
+				}
+			}
+		}
+	};
+	
+	xhr.open("GET", document.URL, true);
+	xhr.send();
+}
+
+
 // this code will be executed twice since original document will be replaced 
 // with Chrome's XML tree viewer. The real XML doc will have 'interactive' state,
 // but replaced doc will have 'complete' state
 document.addEventListener('readystatechange', function() {
 	if (document.readyState == 'complete') {
-		if (canTransform()) {
-			doTransform(this['_doc']);
+		var el = document && document.getElementById('webkit-xml-viewer-source-xml');
+		if (el) { // Chrome 12.x with native XML viewer
+			el.parentNode.removeChild(el);
+			doTransform(el);
+			togglePageAction(false);
+		} else if (__canRenderWithXV) {
+			parseCurrentPage();
 			togglePageAction(false);
 		} else {
-			// Chrome 12.x
-			var el = document.getElementById('webkit-xml-viewer-source-xml');
-			if (el) {
-				el.parentNode.removeChild(el);
-				doTransform(el);
-				togglePageAction(false);
-			} else {
-				// let’s see if current URL is in forced list
-				togglePageAction(true);
-				chrome.extension.sendMessage({action: 'xv.get-settings'}, function(response) {
-					var forcedURLs = JSON.parse(response.data.forced_urls || '[]');
-					if (_.include(forcedURLs, document.URL)) {
-						var xhr = new XMLHttpRequest();
-						xhr.onreadystatechange = function() {
-							if (xhr.readyState == 4) {
-								if (xhr.status == 200) {
-									try {
-										doTransform(xv_utils.toXml(xhr.responseText));
-									} catch (e) {
-										console.log('XV: Unable to render document: invalid XML');
-										console.error(e);
-									}
-								}
-							}
-						};
-						
-						xhr.open("GET", document.URL, true);
-						xhr.send();
-					}
-				});
-			}
-		} 
+			// let’s see if current URL is in forced list
+			togglePageAction(true);
+			chrome.extension.sendMessage({action: 'xv.get-settings'}, function(response) {
+				var forcedURLs = JSON.parse(response.data.forced_urls || '[]');
+				if (_.include(forcedURLs, document.URL)) {
+					parseCurrentPage();
+				}
+			});
+		}
 	}
 });
 

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<page xmlns:test="test" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xhtml="http://www.w3.org/1999/xhtml">
+    <test:b-table test:style="with-borders" test:isBEM="yes">
+        <test:caption>Очередь заданий</test:caption>
+        <test:filter test:modname="status">
+            <test:b-menu test:layout="horiz-complex">
+                <test:item><test:text>Показывать задания со статусом:</test:text></test:item>
+                <test:item><test:declaration>
+                        <test:b-form-checkbox test:checked="yes" test:disabled="yes" test:focused="yes"/>
+                    </test:declaration>
+                    <test:b-form-checkbox test:size="13" test:checked="yes" test:isBEM="yes" id="done" value="done">
+                        <test:checkbox/>
+                        <test:bg>
+                            <test:tick/>
+                        </test:bg>
+                    </test:b-form-checkbox>
+                    <xhtml:label for="done">done</xhtml:label></test:item>
+            </test:b-menu>
+        </test:filter>
+        <test:head>
+            <test:row>
+                <test:cell>Имя</test:cell>
+                <test:cell>Добавлена</test:cell>
+                <test:cell>Стартовала</test:cell>
+                <test:cell>Финишировала</test:cell>
+                <test:cell>Статус</test:cell>
+                <test:cell/>
+                <test:cell/>
+            </test:row>
+        </test:head>
+        <test:body>
+        </test:body>
+    </test:b-table>
+</page>

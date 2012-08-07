@@ -1,6 +1,6 @@
 {
 	"name" : "XV — XML Viewer",
-	"version" : "1.0.5",
+	"version" : "1.0.6",
 	"description" : "Powerful XML viewer for Google Chrome",
 	"manifest_version": 2,
 	"background": {
