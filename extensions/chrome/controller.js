@@ -102,7 +102,6 @@ function doTransform(data) {
 	// https://bugs.webkit.org/show_bug.cgi?id=56263
 	// typeof(window['handleWebKitXMLViewerOnLoadEvent'])
 	// document.getElementById('webkit-xml-viewer-source-xml')
-	
 	chrome.extension.sendMessage({action: 'xv.get-xsl', filePath: 'process.xsl'},
 		function(response) {
 			var xsl_proc = new XSLTProcessor();
@@ -162,6 +161,8 @@ function togglePageAction(isEnabled) {
 }
 
 function parseCurrentPage() {
+	// it may look awkward, but doing XHR request rather that parsing current
+	// document is the most reliable way to get correctly parsed XML
 	var xhr = new XMLHttpRequest();
 	xhr.onreadystatechange = function() {
 		if (xhr.readyState == 4) {
@@ -179,7 +180,6 @@ function parseCurrentPage() {
 	xhr.open("GET", document.URL, true);
 	xhr.send();
 }
-
 
 // this code will be executed twice since original document will be replaced 
 // with Chrome's XML tree viewer. The real XML doc will have 'interactive' state,

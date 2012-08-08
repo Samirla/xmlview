@@ -99,6 +99,11 @@
 				<label for="fld-dnd.xpath_quote">Attribute quote character in Quick XPath expressions</label>
 				<input type="text" name="dnd.xpath_quote" id="fld-dnd.xpath_quote" maxlength="1" />
 			</div>
+			<div class="row">
+				<input type="checkbox" name="intercept_requests" id="fld-intercept_requests" value="1" />
+				<label for="fld-intercept_requests">Intercept requests for XML, RSS and ATOM documents</label>
+				<strong class="comment">WARNING! With this option enabled, Chrome won’t be able to handle RSS and ATOM feeds.</strong>
+			</div>
 		</fieldset>
 		<fieldset>
 			<div class="row row-textarea">
@@ -115,8 +120,8 @@
 		XV is an <a href="http://github.com/sergeche/xmlview/">open-source project</a> and available for other browsers.<br />
 		Design inspiration: <a href="http://macrabbit.com/espresso/">Espresso Editor</a>
 	</p>
-	<script type="text/javascript" src="xv.js"></script>
-	<script type="text/javascript" src="options.js"></script>
+	<script src="xv.js"></script>
+	<script src="options.js"></script>
 	
 </body>
 </html>

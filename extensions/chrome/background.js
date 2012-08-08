@@ -1,5 +1,5 @@
 var xsl = null;
-var lastTabId = null;
+var interceptedContentTypes = ['text/xml', 'application/xml', 'application/atom+xml', 'application/rss+xml'];
 
 function loadXsl(url){
 	var xhr = new XMLHttpRequest();
@@ -44,21 +44,73 @@ chrome.extension.onMessage.addListener(function(request, sender, sendResponse) {
 	}
 });
 
-chrome.pageAction.onClicked.addListener(function(tab) {
-	// toggle forced XV display for current url
-	var forcedURLs = JSON.parse(localStorage.getItem('forced_urls') || '[]');
-	if (_.include(forcedURLs, tab.url)) {
-		forcedURLs = _.without(forcedURLs, tab.url);
-	} else {
+function addForcedUrl(url, forcedURLs) {
+	forcedURLs = forcedURLs || JSON.parse(localStorage.getItem('forced_urls') || '[]');
+	if (!_.include(forcedURLs, url)) {
 		// make sure there’s no bloated list of documents
 		while (forcedURLs.length > 500)
 			forcedURLs.shift();
 		
-		forcedURLs.push(tab.url);
+		forcedURLs.push(url);
 	}
 	
 	localStorage.setItem('forced_urls', JSON.stringify(forcedURLs));
+}
+
+function removeForcedUrl(url, forcedURLs) {
+	forcedURLs = forcedURLs || JSON.parse(localStorage.getItem('forced_urls') || '[]');
+	forcedURLs = _.without(forcedURLs, url);
+	localStorage.setItem('forced_urls', JSON.stringify(forcedURLs));
+}
+
+chrome.pageAction.onClicked.addListener(function(tab) {
+	// toggle forced XV display for current url
+	var forcedURLs = JSON.parse(localStorage.getItem('forced_urls') || '[]');
+	if (_.include(forcedURLs, tab.url)) {
+		removeForcedUrl(tab.url, forcedURLs);
+	} else {
+		addForcedUrl(tab.url, forcedURLs);
+	}
+	
 	chrome.tabs.reload(tab.id);
 });
+
+chrome.webRequest.onHeadersReceived.addListener(
+	function(details) {
+		if (~details.statusLine.indexOf('200 OK')) {
+			var shouldIntercept = localStorage.getItem('intercept_requests');
+			if (!shouldIntercept || shouldIntercept == 'false') {
+				removeForcedUrl(details.url);
+				return;
+			}
+			
+			var isModified = false;
+			_.each(details.responseHeaders, function(header) {
+				if (header.name.toLowerCase() == 'content-type') {
+					var headerValue = header.value.toLowerCase();
+					var matchedType = _.find(interceptedContentTypes, function(t) {
+						return ~headerValue.indexOf(t);
+					});
+					
+					if (matchedType) {
+						var parts = headerValue.split(';');
+						parts[0] = 'text/plain';
+						header.value = parts.join(';');
+						isModified = true;
+					}
+				}
+			});
+			
+			if (isModified) {
+				addForcedUrl(details.url);
+				return {responseHeaders: details.responseHeaders};
+			}
+		}
+	}, 
+	{
+		'urls': ['http://*/*', 'https://*/*'],
+		'types': ['main_frame']
+	}, 
+	['blocking', 'responseHeaders']);
 
 loadXsl('process.xsl');
