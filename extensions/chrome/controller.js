@@ -160,7 +160,7 @@ function togglePageAction(isEnabled) {
 	});
 }
 
-function parseCurrentPage() {
+function renderPage(url) {
 	// it may look awkward, but doing XHR request rather that parsing current
 	// document is the most reliable way to get correctly parsed XML
 	var xhr = new XMLHttpRequest();
@@ -177,7 +177,7 @@ function parseCurrentPage() {
 		}
 	};
 	
-	xhr.open("GET", document.URL, true);
+	xhr.open("GET", url || document.URL, true);
 	xhr.send();
 }
 
@@ -186,13 +186,22 @@ function parseCurrentPage() {
 // but replaced doc will have 'complete' state
 document.addEventListener('readystatechange', function() {
 	if (document.readyState == 'complete') {
+		
+		if (window.webkitIntent) {
+			var url = window.webkitIntent.getExtra('url');
+			renderPage(url);
+			togglePageAction(false);
+			return;
+		}
+		
+		
 		var el = document && document.getElementById('webkit-xml-viewer-source-xml');
 		if (el) { // Chrome 12.x with native XML viewer
 			el.parentNode.removeChild(el);
 			doTransform(el);
 			togglePageAction(false);
 		} else if (__canRenderWithXV) {
-			parseCurrentPage();
+			renderPage();
 			togglePageAction(false);
 		} else {
 			// let’s see if current URL is in forced list
@@ -200,7 +209,7 @@ document.addEventListener('readystatechange', function() {
 			chrome.extension.sendMessage({action: 'xv.get-settings'}, function(response) {
 				var forcedURLs = JSON.parse(response.data.forced_urls || '[]');
 				if (_.include(forcedURLs, document.URL)) {
-					parseCurrentPage();
+					renderPage();
 				}
 			});
 		}

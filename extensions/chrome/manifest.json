@@ -1,6 +1,6 @@
 {
 	"name" : "XV — XML Viewer",
-	"version" : "1.0.7",
+	"version" : "1.0.8",
 	"description" : "Powerful XML viewer for Google Chrome",
 	"manifest_version": 2,
 	"background": {
@@ -30,5 +30,13 @@
 	"page_action": {
 		"default_icon": "icon-page-action.png",
 		"default_title": "Toggle page rendering with XV plugin"
+	},
+
+	"intents" : {
+		"http://webintents.org/view": [{
+			"type": ["application/atom+xml", "application/rss+xml"],
+			"title": "View Feed",
+			"href": "feed.html"
+		}]
 	}
 }
