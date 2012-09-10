@@ -8,7 +8,7 @@
 
 <test xmlns='http://example.com/def'>asdf</test>
 
-<sub><xyz:bar>test</xyz:bar></sub>
+<sub><xyz:bar href="http://www.example.com">link to www.example.com</xyz:bar></sub>
 <selfclosed/>
 
 <selfclosed with='attributes'/>
