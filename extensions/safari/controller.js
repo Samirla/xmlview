@@ -48,6 +48,10 @@ xv_dnd_feedback = {
 
 xv_dnd_feedback.__fn = null;
 
+function webkitRenderer() {
+	return document && document.getElementById('webkit-xml-viewer-source-xml');
+}
+
 (function(){
 	var xsl_proc;
 	
@@ -60,6 +64,8 @@ xv_dnd_feedback.__fn = null;
 	}
 	
 	function canTransform() {
+		if (webkitRenderer())
+			return true;
 		return document && isXML(document) && document.documentElement && !(document.documentElement instanceof HTMLElement);
 	}
 	
@@ -75,8 +81,13 @@ xv_dnd_feedback.__fn = null;
 				xsl_proc.setParameter(null, 'css', safari.extension.baseURI + 'xv.css');
 				xsl_proc.setParameter(null, 'custom_css', xv_settings.getValue('custom_css', ''));
 				
-				var source_doc = document.documentElement;
-				var result = xsl_proc.transformToDocument(document);
+				var doc = document;
+				if (webkitRenderer()) {
+					doc = xv_utils.toXml(webkitRenderer().innerHTML);
+				}
+				
+				var source_doc = doc.documentElement;
+				var result = xsl_proc.transformToDocument(doc);
 				document.replaceChild(document.adoptNode(result.documentElement), document.documentElement);
 				
 				xv_dom.setHTMLContext(result);
