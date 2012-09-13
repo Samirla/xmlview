@@ -5,6 +5,9 @@
 var xv_utils = (function(){
 	var re_not_xpath = /^[\w\-\:]+$/;
 	
+	// regexp from http://www.regexguru.com/2008/11/detecting-urls-in-a-block-of-text/
+	var reURL = /\b(?:(?:https?|ftp|file|feed):\/\/|www\.|ftp\.)[\-A-Z0-9\+&@#\/%=~_\|\$\?\!:,\.]*[A-Z0-9+&@#\/%=~_|$]/ig;
+	
 	return {
 		/**
 		 * Trim whitespace from the beginning and the end of string
@@ -113,6 +116,23 @@ var xv_utils = (function(){
 		filterValidAttributes: function(elem) {
 			return _.filter(elem.attributes, function(n) {
 				return n.name.indexOf('data-xv-') != 0;
+			});
+		},
+		
+		/**
+		 * Finds URLs inside text and wraps it with &lt;a&gt; tag
+		 * @param {String} text
+		 * @returns {String}
+		 */
+		findURLs: function(text) {
+			return text.replace(reURL, function(url) {
+				// has protocol?
+				var href = url;
+				if (!/^[a-z]+:\/\//i.test(href)) {
+					href = 'http://' + href;
+				}
+				
+				return '<a href="' + href + '" class="xv-url">' + url + '</a>';
 			});
 		}
 	};

@@ -9,6 +9,7 @@
 	var _id = 0,
 		orig_elems = {},
 		oneline_text_len = 100;
+	
 		
 	/**
 	 * Returns node internal id, if exists
@@ -148,7 +149,8 @@
 	}
 	
 	function processText(text) {
-		return xv_utils.escapeHTML(xv_utils.trim(text));
+		text = xv_utils.escapeHTML(xv_utils.trim(text));
+		return xv_utils.findURLs(text);
 	}
 	
 	/**

@@ -29,10 +29,9 @@
 	<div class="xv-source-pane">
 		<div class="xv-source-pane-inner"></div>
 	</div>
-	
 	<script type="text/javascript">
 		var xhr = new XMLHttpRequest();
-		xhr.open('GET', './xml/ns.xml', true);
+		xhr.open('GET', './xml/example.xml', true);
 		xhr.onreadystatechange = function(){
 			if (xhr.readyState == 4) {
 				xv_controller.process(xhr.responseXML);
