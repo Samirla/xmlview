@@ -34,12 +34,6 @@ xv_settings = {
 
 //fallback to old Chrome API
 var sendMessage = chrome.extension.sendMessage || chrome.extension.sendRequest;
-//function sendMessage() {
-//	var fn = chrome.extension.sendMessage || chrome.extension.sendRequest;
-//	return fn.apply(chrome.extension, arguments);
-//}
-
-//var sendMessage = chrome.extension.sendMessage || chrome.extension.sendRequest;
 
 
 /**
@@ -196,9 +190,12 @@ function renderPage(url) {
 // but replaced doc will have 'complete' state
 document.addEventListener('readystatechange', function() {
 	if (document.readyState == 'complete') {
-		
-		if (window.webkitIntent) {
-			var url = window.webkitIntent.getExtra('url');
+		var webIntent = window.webkitIntent || window.intent;
+		if (webIntent) {
+			var url = webIntent.getExtra ? webIntent.getExtra('url') : webIntent.data[0].url;
+			if (!url)
+				return;
+			
 			renderPage(url);
 			togglePageAction(false);
 			return;
