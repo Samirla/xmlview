@@ -6,7 +6,7 @@ var xv_utils = (function(){
 	var re_not_xpath = /^[\w\-\:]+$/;
 	
 	// regexp from http://www.regexguru.com/2008/11/detecting-urls-in-a-block-of-text/
-	var reURL = /\b(?:(?:https?|ftp|file|feed):\/\/|www\.|ftp\.)[\-A-Z0-9\+&@#\/%=~_\|\$\?\!:,\.]*[A-Z0-9+&@#\/%=~_|$]/ig;
+	var reURL = /\b(?:(?:https?|ftp|file|feed):\/\/|www\.|ftp\.)[\-A-Z0-9\+&@#\/%=~_\|\$\?\!:,\.\(\)]*[A-Z0-9+&@#\/%=~_|$]/ig;
 	
 	return {
 		/**
