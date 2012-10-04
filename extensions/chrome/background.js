@@ -12,7 +12,7 @@ function loadXsl(url){
 	xhr.send();
 }
 
-chrome.extension.onMessage.addListener(function(request, sender, sendResponse) {
+(chrome.extension.onMessage || chrome.extension.onRequest).addListener(function(request, sender, sendResponse) {
 	switch (request.action) {
 		case 'xv.get-dnd-feedback':
 			sendResponse({image: xv_dnd_feedback.draw(request.text)});

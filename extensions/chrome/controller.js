@@ -21,7 +21,7 @@ xv_settings = {
 	
 	setValue: function(name, value) {
 		this._data[name] = value;
-		chrome.extension.sendMessage({
+		sendMessage({
 			action: 'xv.store-settings', 
 			name: name, 
 			value: value}, dummy);
@@ -31,6 +31,16 @@ xv_settings = {
 		this._data = obj;
 	}
 };
+
+//fallback to old Chrome API
+var sendMessage = chrome.extension.sendMessage || chrome.extension.sendRequest;
+//function sendMessage() {
+//	var fn = chrome.extension.sendMessage || chrome.extension.sendRequest;
+//	return fn.apply(chrome.extension, arguments);
+//}
+
+//var sendMessage = chrome.extension.sendMessage || chrome.extension.sendRequest;
+
 
 /**
  * Returns rendered by Chrome XML tree container
@@ -64,7 +74,7 @@ xv_dom.getByClass = function(class_name, context) {
 
 var xv_dnd_feedback = {
 	draw: function(text, fn) {
-		chrome.extension.sendMessage({action: 'xv.get-dnd-feedback', text: text}, function(response){
+		sendMessage({action: 'xv.get-dnd-feedback', text: text}, function(response){
 			fn(response.image);
 		});
 	}
@@ -90,7 +100,7 @@ function handleDndClicks() {
 	
 	document.addEventListener('click', function(evt) {
 		if (is_dnd_mode && copy_text) {
-			chrome.extension.sendMessage({action: 'xv.copy', text: copy_text}, dummy);
+			sendMessage({action: 'xv.copy', text: copy_text}, dummy);
 			evt.preventDefault();
 			evt.stopPropagation();
 		}
@@ -102,12 +112,12 @@ function doTransform(data) {
 	// https://bugs.webkit.org/show_bug.cgi?id=56263
 	// typeof(window['handleWebKitXMLViewerOnLoadEvent'])
 	// document.getElementById('webkit-xml-viewer-source-xml')
-	chrome.extension.sendMessage({action: 'xv.get-xsl', filePath: 'process.xsl'},
+	sendMessage({action: 'xv.get-xsl', filePath: 'process.xsl'},
 		function(response) {
 			var xsl_proc = new XSLTProcessor();
 			xsl_proc.importStylesheet(xv_utils.toXml(response.fileText));
 			
-			chrome.extension.sendMessage({action: 'xv.get-settings'}, function(response) {
+			sendMessage({action: 'xv.get-settings'}, function(response) {
 				xv_settings.load(response.data);
 				xsl_proc.setParameter(null, 'css', chrome.extension.getURL('xv.css'));
 				xsl_proc.setParameter(null, 'options_url', chrome.extension.getURL('options.html'));
@@ -155,7 +165,7 @@ if (!('__canRenderWithXV' in this)) {
 }
 
 function togglePageAction(isEnabled) {
-	chrome.extension.sendMessage({
+	sendMessage({
 		action: isEnabled ? 'xv.show-page-action' : 'xv.hide-page-action'
 	});
 }
@@ -206,7 +216,7 @@ document.addEventListener('readystatechange', function() {
 		} else {
 			// let’s see if current URL is in forced list
 			togglePageAction(true);
-			chrome.extension.sendMessage({action: 'xv.get-settings'}, function(response) {
+			sendMessage({action: 'xv.get-settings'}, function(response) {
 				var forcedURLs = JSON.parse(response.data.forced_urls || '[]');
 				if (_.include(forcedURLs, document.URL)) {
 					renderPage();
