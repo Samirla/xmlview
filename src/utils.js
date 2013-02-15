@@ -120,20 +120,28 @@ var xv_utils = (function(){
 		},
 		
 		/**
-		 * Finds URLs inside text and wraps it with &lt;a&gt; tag
+		 * Splits text into array with URLs in odd positions
+		 * @param {String} text
+		 * @returns {Array}
+		 */
+		findURLs: function(text) {
+			var reDelim = new RegExp('(' + reURL.source + ')', 'ig');
+			return text.split(reDelim);
+		},
+
+		/**
+		 * Formats URL as link with sanitized URL and text
 		 * @param {String} text
 		 * @returns {String}
 		 */
-		findURLs: function(text) {
-			return text.replace(reURL, function(url) {
-				// has protocol?
-				var href = url;
-				if (!/^[a-z]+:\/\//i.test(href)) {
-					href = 'http://' + href;
-				}
-				
-				return '<a href="' + href + '" class="xv-url">' + url + '</a>';
-			});
+		formatURL: function(url) {
+			// has protocol?
+			var href = url;
+			if (!/^[a-z]+:\/\//i.test(href)) {
+				href = 'http://' + href;
+			}
+
+			return '<a href="' + href + '" class="xv-url">' + this.escapeHTML(url) + '</a>';
 		}
 	};
 })();
