@@ -149,8 +149,18 @@
 	}
 	
 	function processText(text) {
-		text = xv_utils.escapeHTML(xv_utils.trim(text));
-		return xv_utils.findURLs(text);
+		var urls = xv_utils.findURLs(xv_utils.trim(text));
+
+		var result = _.map(urls, function (text, i) {
+			// odd elements are urls
+			if (i % 2 === 1) {
+				return xv_utils.formatURL(text);
+			} else {
+				return xv_utils.escapeHTML(text);
+			}
+		});
+
+		return result.join('');
 	}
 	
 	/**
