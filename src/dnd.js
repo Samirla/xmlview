@@ -14,7 +14,7 @@
 		is_dragging = false,
 		is_drag_mode = false,
 		data_transfer,
-		dnd_image = new Image,
+		dnd_image = null,
 		
 		is_mac = /mac\s+os/i.test(navigator.userAgent),
 		
@@ -96,11 +96,15 @@
 	}
 	
 	function updateTransferImage() {
-		if (data_transfer && dnd_image.src)
+		if (data_transfer && dnd_image && dnd_image.src)
 			data_transfer.setDragImage(dnd_image, 6, dnd_image.height);
 	}
 	
 	function setTransferImage(data_url) {
+		if (!dnd_image) {
+			dnd_image = new Image();
+			dnd_image.onload = updateTransferImage;
+		}
 		dnd_image.src = data_url;
 		updateTransferImage();
 	}
@@ -272,8 +276,6 @@
 		}
 		xpath_mode = 0;
 	}
-	
-	dnd_image.onload = updateTransferImage;
 	
 	xv_signals.dndModeEntered.add(function(elem, evt) {
 		attachTooltip(evt);
