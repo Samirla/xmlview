@@ -1,8 +1,8 @@
 XV is a browser-based XML viewer, available as a Google Chrome and Safari extensions.
 
-!http://media.chikuyonok.ru/xv/overview-2.png!
+!http://files.chikuyonok.ru/xv/screenshot.png!
 
-"Online demo":http://media.chikuyonok.ru/xmlview/ (works in Chrome, Safari, Firefox)
+"Online demo":http://files.chikuyonok.ru/xv/ (works in Chrome, Safari, Firefox)
 
 h2. Current features
 
@@ -15,8 +15,7 @@ _Google Chrome users: click on element will copy XPath to clipboard_
 h3. Download
 
 * "Google Chrome extension":https://chrome.google.com/webstore/detail/eeocglpgjdpaefaedpblffpeebgmgddk
-* "Safari extension":http://media.chikuyonok.ru/xv/xv.safariextz
-* "Safari for Mac plugin":https://github.com/sergeche/xmlview/downloads (via Marc Liyanage’s "webkit-xmlview-plugin":https://github.com/liyanage/webkit-xmlview-plugin plugin)
+* "Safari extension":http://files.chikuyonok.ru/xv/xv.safariextz
 
 You can also download an "XSL stylesheet":https://github.com/sergeche/xmlview/downloads and use it for styling XML files with @<?xml-stylesheet type="text/xsl" href="xv-browser.xsl"?>@
 
