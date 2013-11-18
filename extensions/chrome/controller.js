@@ -122,7 +122,13 @@ function doTransform(data) {
 				
 				xv_dom.setHTMLContext(result);
 				
-				var xml_doc = document.implementation.createDocument();
+				var doctype = document.implementation.createDocumentType('html',
+                                        '-//W3C//DTD XHTML 1.0 Transitional//EN',
+                                        'http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd');
+ 
+                                var xml_doc = document.implementation.createDocument(
+                                        'http://www.w3.org/1999/xhtml', 'html', doctype);
+ 
 				var replacement = null;
 				if (data instanceof Document) {
 					replacement = xml_doc.adoptNode(data.documentElement);
