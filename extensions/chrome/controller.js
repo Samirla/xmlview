@@ -46,7 +46,9 @@ function getRenderedContent() {
 }
 
 function isXML(doc) {
-	return !(doc instanceof HTMLDocument || doc instanceof SVGDocument);
+	var docElem = doc.documentElement;
+	var isSVG = docElem && docElem.namespaceURI == 'http://www.w3.org/2000/svg';
+	return !(doc instanceof HTMLDocument || isSVG);
 }
 
 function canTransform(doc) {
