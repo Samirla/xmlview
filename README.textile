@@ -19,6 +19,11 @@ h3. Download
 
 You can also download an "XSL stylesheet":https://github.com/sergeche/xmlview/downloads and use it for styling XML files with @<?xml-stylesheet type="text/xsl" href="xv-browser.xsl"?>@
 
+h3. Installation
+
+h4. Chrome
+* Got to chrome://extensions/ and Enable XV — XML Viewer. If you want the viewer to automatically process XML feeds, Click on Options and tick the box <strong>Intercept requests for XML, RSS and ATOM documents</strong>
+
 h3. Note for Safari on Mac plugin
 
 Due to plugin’s nature, the styled XML is very unresponsive on mouse hover events (like Quick XPath mode) so you have to click on area of interest to get focus. I’m looking for a solutions of this problem.
