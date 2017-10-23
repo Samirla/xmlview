@@ -11,6 +11,7 @@
 		"clipboardWrite",
 		"webRequest",
 		"webRequestBlocking",
+		"storage",
 		"http://*/*",
 		"https://*/*"
 	],
@@ -30,13 +31,5 @@
 	"page_action": {
 		"default_icon": "icon-page-action.png",
 		"default_title": "Toggle page rendering with XV plugin"
-	},
-
-	"intents" : {
-		"http://webintents.org/view": [{
-			"type": ["application/atom+xml", "application/rss+xml"],
-			"title": "View Feed",
-			"href": "feed.html"
-		}]
 	}
 }

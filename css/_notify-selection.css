@@ -6,37 +6,30 @@
 	padding:2px;
 	border:1px solid rgba(255,216,0,0.42);
 	background:rgba(255,198,0,0.4);
-	background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(rgba(255,198,0,0.1)), to(rgba(255,198,0,0.5)));
-	background: -moz-linear-gradient(top, rgba(255,198,0,0), rgba(255,198,0,0.6));
+	background: linear-gradient(rgba(255,198,0,0), rgba(255,198,0,0.6));
 	
-	-webkit-transform-origin:50% 50%;
-	-webkit-animation-name: xv-notify;
-	-webkit-animation-duration: 1s;
+	transform-origin:50% 50%;
+	animation: xv-notify 1s;
 	
-	-webkit-border-radius: 5px;
-	-moz-border-radius: 5px;
 	border-radius: 5px;
-	-webkit-box-shadow: 0 2px 3px rgba(0,0,0,0.3);
-	-moz-box-shadow: 0 2px 3px rgba(0,0,0,0.3);
-	-ms-box-shadow: 0 2px 3px rgba(0,0,0,0.3);
 	box-shadow: 0 2px 3px rgba(0,0,0,0.3);
 }
 
-@-webkit-keyframes "xv-notify" {
+@keyframes xv-notify {
 	0% {
-		-webkit-transform: scale(1);
-		-webkit-animation-timing-function: ease-in;
+		transform: scale(1);
+		animation-timing-function: ease-in;
 		opacity:0;
 	}
 
 	6% {
 		opacity:1;
-		-webkit-transform: scale(2);
-		-webkit-animation-timing-function: ease-out;
+		transform: scale(2);
+		animation-timing-function: ease-out;
 	}
 
 	17% {
-		-webkit-transform: scale(1);
+		transform: scale(1);
 	}
 	
 	70% {

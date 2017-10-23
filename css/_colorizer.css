@@ -1,7 +1,7 @@
 .xv-node {
 	padding:0.25em 0 0.2em 15px;
-	font-family:'Consolas', 'DejaVu Sans Mono', monospace;
-	position:relative;
+	font-family: Consolas, 'DejaVu Sans Mono', Menlo, monospace;
+	position: relative;
 	display: block;
 }
 
@@ -97,8 +97,7 @@
 
 .xv-collapsed > .xv-tag-open,
 .xv-collapsed.xv-comment > .xv-comment-start {
-	background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#fbf0c3), to(#f7e683)) !important;
-	background-image: -moz-linear-gradient(top, #fbf0c3, #f7e683);
+	background-image: linear-gradient(#fbf0c3, #f7e683);
 	background-color:#f7e683 !important;
 	color:#b89946 !important;
 	text-shadow:0 1px 0 #fcf4d2;

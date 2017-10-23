@@ -32,17 +32,12 @@ body {
 	top:100px;
 	width:30em;
 	padding: 20px;
-	-webkit-border-radius: 10px;
-	-moz-border-radius: 10px;
 	border-radius: 10px;
 	border: 1px solid #ccc;
 	margin-left:-15em;
 	font-size: 15px;
 	color:#c00;
 	line-height: 1.5;
-	-webkit-box-shadow: 0 0 10px rgba(0,0,0,0.3);
-	-moz-box-shadow: 0 0 10px rgba(0,0,0,0.3);
-	-ms-box-shadow: 0 0 10px rgba(0,0,0,0.3);
 	box-shadow: 0 0 10px rgba(0,0,0,0.3);
 }
 
@@ -70,8 +65,6 @@ body {
 	position: absolute;
 	display: inline-block;
 	font-size: 11px !important;
-	-webkit-border-radius: 5px;
-	-moz-border-radius: 5px;
 	border-radius: 5px;
 	background: #000;
 	opacity: 0.8;
@@ -95,10 +88,7 @@ body {
 	margin-top:-3px;
 	background: #000;
 	z-index: -1;
-	-webkit-transform: rotate(45deg);
-	-moz-transform: rotate(45deg);
-	-o-transform: rotate(45deg);
-	-ms-transform: rotate(45deg);
+	transform: rotate(45deg);
 }
 
 .xv-dnd-tooltip-hidden {
@@ -110,10 +100,7 @@ body {
 }
 
 .xv-options-href {
-	position:absolute;
-	right:10px;
-	top:50%;
-	margin-top:-0.6em;
+	margin-top: 0.2em;
 	line-height:1.2;
 	font-size:10px;
 	color:#777;

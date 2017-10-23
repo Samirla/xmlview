@@ -1,0 +1,29 @@
+{
+  "name": "xmlview",
+  "version": "1.0.0",
+  "description": "XV is a browser-based XML viewer, available as a Google Chrome and Safari extensions.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sergeche/xmlview.git"
+  },
+  "keywords": [],
+  "author": "Sergey Chikuyonok <serge.che@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/sergeche/xmlview/issues"
+  },
+  "homepage": "https://github.com/sergeche/xmlview#readme",
+  "devDependencies": {
+    "autoprefixer": "^7.1.6",
+    "gulp": "^3.9.1",
+    "gulp-concat": "^2.6.1",
+    "gulp-postcss": "^7.0.0",
+    "gulp-uglify": "^3.0.0",
+    "postcss-import": "^11.0.0",
+    "postcss-url": "^7.1.2"
+  }
+}
