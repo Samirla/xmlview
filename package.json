@@ -4,7 +4,8 @@
   "description": "XV is a browser-based XML viewer, available as a Google Chrome and Safari extensions.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+		"test": "echo \"Error: no test specified\" && exit 1",
+		"chrome": "gulp chrome"
   },
   "repository": {
     "type": "git",
