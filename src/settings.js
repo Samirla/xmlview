@@ -9,16 +9,9 @@
  * @link http://chikuyonok.ru
  */
 var xv_settings = (function(){
-	var settings = {},
-		has_ls = hasLocalStorage();
-		
-	function hasLocalStorage() {
-		try {
-			return 'localStorage' in window && window['localStorage'] !== null;
-		} catch (e) {
-			return false;
-		}
-	}
+	var settings = {};
+
+	chrome.storage.local.get(resp => settings = resp);
 	
 	return {
 		/**
@@ -27,15 +20,11 @@ var xv_settings = (function(){
 		 * @return {Object}
 		 */
 		getValue: function(name, default_value) {
-			var value;
-			
-			if (has_ls)
-				value = localStorage.getItem(name);
-			else
-				value = settings[name];
+			var value = settings[name];
 				
-			if (_.isNull(value) || _.isUndefined(value))
+			if (value == null) {
 				value = default_value;
+			}
 				
 			switch (typeof default_value) {
 				case 'number':
@@ -55,20 +44,16 @@ var xv_settings = (function(){
 		 * @param {Object} value
 		 */
 		setValue: function(name, value) {
-			if (has_ls)
-				localStorage.setItem(name, value);
-			else
-				settings[name] = value;
+			settings[name] = value;
+			chrome.storage.local.set(settings);
 		},
 		
 		/**
 		 * Removes all stored data
 		 */
 		reset: function() {
-			if (has_ls)
-				localStorage.clear();
-			else
-				settings = {};
+			settings = {};
+			chrome.storage.local.clear();
 		},
 		
 		/**
@@ -76,7 +61,7 @@ var xv_settings = (function(){
 		 * @return {Object}
 		 */
 		dump: function() {
-			return _.clone(has_ls ? localStorage : settings);
+			Object.assign({}, settings);
 		}
 	};
 })();

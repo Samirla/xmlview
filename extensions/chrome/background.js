@@ -1,10 +1,11 @@
 var xsl = null;
 var interceptedContentTypes = ['text/xml', 'application/xml', 'application/atom+xml', 'application/rss+xml'];
+const forcedUrlsKey = 'forced_urls';
 
-function loadXsl(url){
+function loadXsl(url) {
 	var xhr = new XMLHttpRequest();
 	xhr.open('GET', url, true);
-	xhr.onreadystatechange = function(){
+	xhr.onreadystatechange = function () {
 		if (xhr.readyState == 4) {
 			xsl = xhr.responseText;
 		}
@@ -12,28 +13,30 @@ function loadXsl(url){
 	xhr.send();
 }
 
-(chrome.extension.onMessage || chrome.extension.onRequest).addListener(function(request, sender, sendResponse) {
+chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
 	switch (request.action) {
 		case 'xv.get-dnd-feedback':
-			sendResponse({image: xv_dnd_feedback.draw(request.text)});
+			sendResponse({ image: xv_dnd_feedback.draw(request.text) });
 			break;
 		case 'xv.copy':
 			var ta = document.getElementById('ta');
 			ta.value = request.text;
 			ta.select();
-			sendResponse({success: document.execCommand("copy", false, null)});
+			sendResponse({ success: document.execCommand("copy", false, null) });
 			break;
 		case 'xv.get-xsl':
 			if (xsl === null)
 				loadXsl(request.filePath);
-				
-			sendResponse({fileText: xsl});
+
+			sendResponse({ fileText: xsl });
 			break;
 		case 'xv.get-settings':
-			sendResponse({data: xv_settings.dump()});
-			break;
+			chrome.storage.local.get(data => sendResponse({ data }));
+			return true;
 		case 'xv.store-settings':
-			xv_settings.setValue(request.name, request.value);
+			const payload = {};
+			payload[request.name] = request.value;
+			chrome.storage.local.set(payload);
 			break;
 		case 'xv.show-page-action':
 			chrome.pageAction.show(sender.tab.id);
@@ -44,73 +47,90 @@ function loadXsl(url){
 	}
 });
 
-function addForcedUrl(url, forcedURLs) {
-	forcedURLs = forcedURLs || JSON.parse(localStorage.getItem('forced_urls') || '[]');
-	if (!_.include(forcedURLs, url)) {
-		// make sure there’s no bloated list of documents
-		while (forcedURLs.length > 500)
-			forcedURLs.shift();
-		
-		forcedURLs.push(url);
-	}
-	
-	localStorage.setItem('forced_urls', JSON.stringify(forcedURLs));
+function getForcedUrls() {
+	return new Promise((resolve, reject) => {
+		chrome.storage.local.get(forcedUrlsKey, resp => {
+			const urls = resp && resp[forcedUrlsKey] || [];
+			resolve(urls);
+		});
+	});
 }
 
-function removeForcedUrl(url, forcedURLs) {
-	forcedURLs = forcedURLs || JSON.parse(localStorage.getItem('forced_urls') || '[]');
-	forcedURLs = _.without(forcedURLs, url);
-	localStorage.setItem('forced_urls', JSON.stringify(forcedURLs));
+function setForcedUrls(urls) {
+	return new Promise(resolve => {
+		const payload = {};
+		payload[forcedUrlsKey] = urls;
+		chrome.storage.local.set(payload, () => resolve(urls));
+	});
 }
 
-chrome.pageAction.onClicked.addListener(function(tab) {
+function addForcedUrl(url) {
+	return getForcedUrls().then(urls => {
+		if (!urls.includes(url)) {
+			// make sure there’s no bloated list of documents
+			while (urls.length > 500) {
+				urls.shift();
+			}
+
+			urls.push(url);
+			return setForcedUrls(urls);
+		}
+	});
+}
+
+function removeForcedUrl(url) {
+	return getForcedUrls().then(urls => {
+		return setForcedUrls(urls.filter(entry => entry !== url));
+	});
+}
+
+chrome.pageAction.onClicked.addListener(function (tab) {
 	// toggle forced XV display for current url
-	var forcedURLs = JSON.parse(localStorage.getItem('forced_urls') || '[]');
-	if (_.include(forcedURLs, tab.url)) {
-		removeForcedUrl(tab.url, forcedURLs);
-	} else {
-		addForcedUrl(tab.url, forcedURLs);
-	}
-	
-	chrome.tabs.reload(tab.id);
+	getForcedUrls().then(urls => {
+		const promise = urls.includes(tab.url) ? removeForcedUrl(tab.url) : addForcedUrl(tab.url);
+
+		promise.then(() => chrome.tabs.reload(tab.id));
+	});
 });
 
-chrome.webRequest.onHeadersReceived.addListener(
-	function(details) {
-		if (~details.statusLine.indexOf('200 OK')) {
-			var shouldIntercept = localStorage.getItem('intercept_requests');
-			if (!shouldIntercept || shouldIntercept == 'false') {
-				removeForcedUrl(details.url);
-				return;
-			}
-			
-			var isModified = false;
-			_.each(details.responseHeaders, function(header) {
-				if (header.name.toLowerCase() == 'content-type') {
-					var headerValue = header.value.toLowerCase();
-					var matchedType = _.find(interceptedContentTypes, function(t) {
-						return ~headerValue.indexOf(t);
-					});
-					
-					if (matchedType) {
-						var parts = headerValue.split(';');
-						parts[0] = 'text/plain';
-						header.value = parts.join(';');
-						isModified = true;
-					}
-				}
-			});
-			
-			if (isModified) {
-				addForcedUrl(details.url);
-				return {responseHeaders: details.responseHeaders};
-			}
-		}
-	}, 
-	{
-		'urls': ['http://*/*', 'https://*/*'],
-		'types': ['main_frame']
-	}, 
-	['blocking', 'responseHeaders']);
+// chrome.webRequest.onHeadersReceived.addListener(
+// 	function (details) {
+// 		if (~details.statusLine.indexOf('200 OK')) {
+// 			chrome.storage.local.get('intercept_requests', resp => {
+// 				var shouldIntercept = resp['intercept_requests'];
+// 				if (!shouldIntercept || shouldIntercept == 'false') {
+// 					removeForcedUrl(details.url);
+// 					return;
+// 				}
+
+// 				var isModified = false;
+// 				_.each(details.responseHeaders, function (header) {
+// 					if (header.name.toLowerCase() == 'content-type') {
+// 						var headerValue = header.value.toLowerCase();
+// 						var matchedType = _.find(interceptedContentTypes, function (t) {
+// 							return ~headerValue.indexOf(t);
+// 						});
+
+// 						if (matchedType) {
+// 							var parts = headerValue.split(';');
+// 							parts[0] = 'text/plain';
+// 							header.value = parts.join(';');
+// 							isModified = true;
+// 						}
+// 					}
+// 				});
+
+// 				if (isModified) {
+// 					addForcedUrl(details.url);
+// 					return { responseHeaders: details.responseHeaders };
+// 				}
+// 			});
+// 		}
+// 	},
+// 	{
+// 		'urls': ['http://*/*', 'https://*/*'],
+// 		'types': ['main_frame']
+// 	},
+// 	['blocking', 'responseHeaders']);
 
 loadXsl('process.xsl');

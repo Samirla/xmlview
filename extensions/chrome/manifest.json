@@ -29,7 +29,11 @@
 	"web_accessible_resources": ["xv.css"],
 	
 	"page_action": {
-		"default_icon": "icon-page-action.png",
+		"default_icon": {
+			"16": "page-action-16.png",
+			"24": "page-action-24.png",
+			"32": "page-action-32.png"
+		},
 		"default_title": "Toggle page rendering with XV plugin"
 	}
 }

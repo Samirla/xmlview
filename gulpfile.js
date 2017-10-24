@@ -52,7 +52,7 @@ gulp.task('chrome:css', () => {
 });
 
 gulp.task('chrome:assets', () => {
-	return gulp.src('./extensions/chrome/**')
+	return gulp.src(['./extensions/chrome/**', './src/dnd_feedback.js'])
 		.pipe(gulp.dest(outChrome));
 });
 

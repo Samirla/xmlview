@@ -33,7 +33,7 @@ xv_settings = {
 };
 
 //fallback to old Chrome API
-var sendMessage = chrome.extension.sendMessage || chrome.extension.sendRequest;
+var sendMessage = chrome.runtime.sendMessage;
 
 
 /**
@@ -182,7 +182,7 @@ function renderPage(url) {
 				try {
 					doTransform(xv_utils.toXml(xhr.responseText));
 				} catch (e) {
-					console.log('XV: Unable to render document: invalid XML');
+					console.log('XV Extension: Unable to render document: invalid XML');
 					console.error(e);
 				}
 			}
@@ -222,8 +222,8 @@ document.addEventListener('readystatechange', function() {
 			// let’s see if current URL is in forced list
 			togglePageAction(true);
 			sendMessage({action: 'xv.get-settings'}, function(response) {
-				var forcedURLs = JSON.parse(response.data.forced_urls || '[]');
-				if (_.include(forcedURLs, document.URL)) {
+				var forcedURLs = response.data.forced_urls;
+				if (forcedURLs && _.include(forcedURLs, document.URL)) {
 					renderPage();
 				}
 			});
