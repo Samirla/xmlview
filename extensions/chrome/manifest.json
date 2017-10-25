@@ -1,6 +1,6 @@
 {
 	"name" : "XV — XML Viewer",
-	"version" : "1.1.1",
+	"version" : "1.1.2",
 	"description" : "Powerful XML viewer for Google Chrome",
 	"manifest_version": 2,
 	"background": {
@@ -25,6 +25,10 @@
 		"js": ["xv.js", "controller.js"],
 		"matches": ["http://*/*", "https://*/*", "file://*/*"],
 		"run_at": "document_start"
+	}, {
+		"js": ["sizzle.js"],
+		"matches": ["http://*/*", "https://*/*", "file://*/*"],
+		"run_at": "document_end"
 	}],
 	"web_accessible_resources": ["xv.css"],
 

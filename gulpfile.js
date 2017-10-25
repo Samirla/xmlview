@@ -11,7 +11,7 @@ const autoprefixer = require('autoprefixer');
 
 const production = process.env.NODE_ENV === 'production';
 const postcssPlugins = [
-	inlineImport(), 
+	inlineImport(),
 	autoprefixer({ browsers: '> 5%'}),
 	inlineUrl({ url: 'inline' })
 
@@ -39,10 +39,10 @@ const coreFiles = [
 gulp.task('chrome', ['chrome:js', 'chrome:css', 'chrome:assets']);
 
 gulp.task('chrome:js', () => {
-	return gulp.src(coreFiles.concat('sizzle.js'), { cwd: './src' })
+	return gulp.src(coreFiles, { cwd: './src' })
 		.pipe(concat('xv.js'))
 		.pipe(production ? uglify() : pass())
-		.pipe(gulp.dest(outChrome))
+		.pipe(gulp.dest(outChrome));
 });
 
 gulp.task('chrome:css', () => {
