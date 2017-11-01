@@ -93,10 +93,6 @@ chrome.pageAction.onClicked.addListener(function (tab) {
 	});
 });
 
-chrome.runtime.onInstalled.addListener(function() {
-	chrome.storage.local.set({ time: new Date().getTime() });
-});
-
 // chrome.webRequest.onHeadersReceived.addListener(
 // 	function (details) {
 // 		if (~details.statusLine.indexOf('200 OK')) {
