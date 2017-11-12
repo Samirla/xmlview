@@ -201,7 +201,7 @@
 	function collapseOutline() {
 		xv_dom.addClass(pane, 'xv-outline-collapsed');
 		pane.style.width = '';
-		xv_dom.setCSS(source_pane, {right: pane.offsetWidth});
+		xv_dom.setCSS(source_pane, {right: 22});
 		xv_settings.setValue('outline.collapsed', true);
 	}
 	

@@ -13,12 +13,18 @@ function loadXsl(url) {
 	xhr.send();
 }
 
+// Do some analytics
+window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+ga('create', 'UA-21435223-1', 'auto');
+ga('set', 'checkProtocolTask', null);
+
 chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
 	switch (request.action) {
 		case 'xv.get-dnd-feedback':
 			sendResponse({ image: xv_dnd_feedback.draw(request.text) });
 			break;
 		case 'xv.copy':
+			ga('send', 'event', 'Interaction', 'Copy tag');
 			var ta = document.getElementById('ta');
 			ta.value = request.text;
 			ta.select();
@@ -43,6 +49,9 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
 			break;
 		case 'xv.hide-page-action':
 			chrome.pageAction.hide(sender.tab.id);
+			break;
+		case 'xv.analytics':
+			ga('send', 'event', request.category, request.event, request.label);
 			break;
 	}
 });
@@ -87,7 +96,17 @@ function removeForcedUrl(url) {
 chrome.pageAction.onClicked.addListener(function (tab) {
 	// toggle forced XV display for current url
 	getForcedUrls().then(urls => {
-		const promise = urls.includes(tab.url) ? removeForcedUrl(tab.url) : addForcedUrl(tab.url);
+		const m = (tab.url || '').match(/^\w+:/);
+		const protocol = m && m[0];
+		let promise;
+
+		if (urls.includes(tab.url)) {
+			ga('send', 'event', 'Page Action', 'Disable', protocol);
+			promise = removeForcedUrl(tab.url);
+		} else {
+			ga('send', 'event', 'Page Action', 'Enable', protocol);
+			promise = addForcedUrl(tab.url);
+		}
 
 		promise.then(() => chrome.tabs.reload(tab.id));
 	});

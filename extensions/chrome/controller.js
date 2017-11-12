@@ -103,7 +103,35 @@ function handleDndClicks() {
 	}, false);
 }
 
+function track(category, event) {
+	sendMessage({ action: 'xv.analytics', category, event });
+}
+
+const trackSearch = _.throttle(() => track('Main', 'Search by XPath'), 1000);
+const trackingEventHandler = {
+	handleEvent(evt) {
+		if (evt.type === 'input' && hasClass(evt.target, 'xv-search-field')) {
+			trackSearch();
+		} else if (evt.type === 'click') {
+			if (hasClass(evt.target, 'xv-outline-close')) {
+				track('Main', 'Hide outline');
+			} else if (evt.target.closest('.xv-outline-node')) {
+				track('Main', 'Click on outline node');
+			} else if (evt.target.closest('.xv-tag')) {
+				track('Main', 'Click on main node');
+			} else if (evt.target.closest('.xv-outline-collapsed')) {
+				track('Main', 'Show outline');
+			}
+		}
+	}
+}
+
+function hasClass(elem, className) {
+	return elem && elem.classList.contains(className);
+}
+
 function doTransform(data) {
+	track('Main', 'Render page');
 	// future checks:
 	// https://bugs.webkit.org/show_bug.cgi?id=56263
 	// typeof(window['handleWebKitXMLViewerOnLoadEvent'])
@@ -147,6 +175,10 @@ function doTransform(data) {
 				
 				// handle clicks to copy xpath
 				handleDndClicks();
+
+				// Track UI events
+				document.addEventListener('input', trackingEventHandler);
+				document.addEventListener('click', trackingEventHandler);
 			});
 		}
 	);
