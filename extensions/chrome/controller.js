@@ -184,6 +184,9 @@ function doTransform(data) {
 				document.addEventListener('input', trackingEventHandler);
 				document.addEventListener('click', trackingEventHandler);
 
+				// Init copy-on-click
+				initNodeCopy(document);
+
 				// Add CarbonAds
 				addAds(document);
 			});
@@ -233,7 +236,6 @@ function renderPage(url) {
 }
 
 function addAds(parent) {
-	console.log('insert ads to', parent);
 	const target = parent.querySelector('.xv-outline-footer');
 	if (target) {
 		const mainScript = createAdsScript(carbonUrl);
@@ -252,6 +254,75 @@ function createAdsScript(src) {
 	script.src = src;
 
 	return script;
+}
+
+function initNodeCopy(parent) {
+	const modifier = 18; // ALT key code
+	const tooltip = xv_dom.fromHTML('<span class="xv-dnd-tooltip xv-dnd-tooltip" style="left:auto"></span>');
+	let targetNode = null;
+	let hasKeyModifier = false;
+
+	const checkPopup = () => {
+		if (targetNode && hasKeyModifier) {
+			tooltip.textContent = 'Copy to clipboard';
+			tooltip.classList.remove('xv-dnd-tooltip-hidden');
+			targetNode.parentNode.insertBefore(tooltip, targetNode);
+		} else {
+			tooltip.classList.add('xv-dnd-tooltip-hidden');
+		}
+	}
+
+	parent.addEventListener('mouseover', evt => {
+		targetNode = evt.target.closest('.xv-tag-open') || null;
+		checkPopup();
+	});
+
+	parent.addEventListener('keydown', evt => {		
+		if (evt.keyCode === modifier) {
+			hasKeyModifier = true;
+			checkPopup();
+		}
+	});
+
+	parent.addEventListener('keyup', evt => {
+		if (evt.keyCode === modifier) {
+			hasKeyModifier = false;
+			checkPopup();
+		}
+	});
+
+	parent.addEventListener('click', evt => {
+		if (targetNode && hasKeyModifier) {
+			evt.stopPropagation();
+			evt.preventDefault();
+			console.log('prevent');
+			
+			const sourceNode = xv_renderer.getOriginalNode(targetNode.closest('.xv-node'));
+			if (sourceNode) {
+				const serializer = new XMLSerializer();
+				console.log(serializer.serializeToString(sourceNode));
+				tooltip.textContent = 'Copied!'
+			}
+		}
+	});
+}
+
+/**
+ * Converts given node to string
+ * @param {Node} node
+ * @param {String} indentStr,
+ * @param {Number} indentSize
+ * @return {String}
+ */
+function serializeNode(node, indentStr, indentSize) {
+	indentStr = indentStr || '\t';
+	indentSize = 0;
+	let output = '';
+
+	switch (node.nodeType) {
+
+	}
+
 }
 
 // this code will be executed twice since original document will be replaced 

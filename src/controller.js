@@ -119,6 +119,11 @@ var xv_controller = (function(){
 	// listen to signals
 	xv_signals.documentProcessed.addOnce(function() {
 		xv_dom.addEvent(document, 'click', function(/* Event */ evt) {
+			console.log('is prevented?', evt.defaultPrevented);
+			
+			if (evt.defaultPrevented) {
+				return;
+			}
 			var elem = xv_dom.bubbleSearch(evt.target, 'xv-tag-open,xv-tag-close,xv-comment-start');
 			if (elem) {
 				elem = xv_dom.bubbleSearch(elem, 'xv-node');
@@ -206,8 +211,8 @@ var xv_controller = (function(){
 				
 				xv_dom.empty(pane);
 				pane.appendChild(tree);
-				
-				xv_signals.documentProcessed.dispatch(tree, data);
+
+				requestAnimationFrame(() => xv_signals.documentProcessed.dispatch(tree, data));
 				return tree;
 			}
 		},
