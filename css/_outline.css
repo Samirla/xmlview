@@ -1,21 +1,29 @@
 .xv-outline {
 	position: absolute;
-	top:37px;
-	bottom:0;
-	width:300px;
-	right:0;
-	overflow: auto;
-	padding-right:10px;
+	top: 37px;
+	bottom: 0;
+	width: 300px;
+	right: 0;
 	font-family:'Lucida Grande', arial, sans-serif;
 	background: #f5f5f5;
-	font-size:11px;
-	border-left:1px solid #b4b4b4;
-	box-sizing:border-box;
+	font-size: 11px;
+	border-left: 1px solid #b4b4b4;
+	box-sizing: border-box;
+	display: flex;
+	flex-direction: column;
 }
 	
 .xv-outline-wrap {
-	position:relative;
-	min-height:100%;
+	position: relative;
+	overflow: auto;
+	flex: 1 1;
+}
+
+.xv-outline-footer {
+	flex: 0 0;
+	border-top: 1px solid #b4b4b4;
+	padding: 5px;
+	background: #ffffff;
 }
 	
 .xv-outline-header {
@@ -234,6 +242,31 @@
 
 .xv-outline-collapsed .xv-outline-close,
 .xv-outline-collapsed .xv-outline-rs-handler,
-.xv-outline-collapsed .xv-outline-inner {
+.xv-outline-collapsed .xv-outline-inner,
+.xv-outline-collapsed .xv-outline-footer {
 	display:none;
+}
+
+.carbon-img {
+	display: block;
+	float: left;
+	margin: 5px;
+}
+
+.carbon-text {
+	line-height: 1.4;
+	text-decoration: none;
+	display: block;
+	min-width: 100px;
+	overflow: hidden;
+}
+
+.carbon-text:hover {
+	text-decoration: underline;
+}
+
+.carbon-poweredby {
+	display: block;
+	margin-top: 5px;
+	color: #aaa;
 }

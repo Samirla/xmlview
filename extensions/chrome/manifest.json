@@ -26,7 +26,7 @@
 		"matches": ["http://*/*", "https://*/*", "file://*/*"],
 		"run_at": "document_start"
 	}],
-	"content_security_policy": "script-src 'self' https://ssl.google-analytics.com https://www.google-analytics.com; object-src 'self'",
+	"content_security_policy": "script-src 'self' https://ssl.google-analytics.com https://www.google-analytics.com https://*.carbonads.com https://sup.emmet.io; object-src 'self'",
 	"web_accessible_resources": ["xv.css"],
 
 	"page_action": {

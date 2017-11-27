@@ -258,7 +258,7 @@
 				'<span class="xv-outline-close">×</span>' +
 				'<div class="xv-outline-inner"></div>' +
 				'<div class="xv-outline-rs-handler"></div>' +
-				'</div></div>');
+				'</div><div class="xv-outline-footer"></div></div>');
 					
 			source_pane.parentNode.appendChild(pane);
 			last_width = xv_settings.getValue('outline.width', 300);

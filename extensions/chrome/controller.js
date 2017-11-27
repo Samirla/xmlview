@@ -1,7 +1,11 @@
 /**
  * @include "../../src/signals.js"
  */
- 
+
+const fallbackDomain = 'sup.emmet.io';
+const carbonUrl = 'https://cdn.carbonads.com/carbon.js?zoneid=1673&serve=C6AILKT&placement=emmetreview';
+const fallbackUrl = carbonUrl.replace(/^(\w+:\/\/)([^\/]+)/, '$1' + fallbackDomain) + '&cd=' + fallbackDomain;
+
 xv_settings = {
 	_data: {},
 	getValue: function(name, default_value) {
@@ -153,11 +157,11 @@ function doTransform(data) {
 				xv_dom.setHTMLContext(result);
 				
 				var doctype = document.implementation.createDocumentType('html',
-                                        '-//W3C//DTD XHTML 1.0 Transitional//EN',
-                                        'http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd');
+					'-//W3C//DTD XHTML 1.0 Transitional//EN',
+					'http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd');
  
-                                var xml_doc = document.implementation.createDocument(
-                                        'http://www.w3.org/1999/xhtml', 'html', doctype);
+				var xml_doc = document.implementation.createDocument(
+						'http://www.w3.org/1999/xhtml', 'html', doctype);
  
 				var replacement = null;
 				if (data instanceof Document) {
@@ -179,6 +183,9 @@ function doTransform(data) {
 				// Track UI events
 				document.addEventListener('input', trackingEventHandler);
 				document.addEventListener('click', trackingEventHandler);
+
+				// Add CarbonAds
+				addAds(document);
 			});
 		}
 	);
@@ -223,6 +230,28 @@ function renderPage(url) {
 	
 	xhr.open("GET", url || document.URL, true);
 	xhr.send();
+}
+
+function addAds(parent) {
+	console.log('insert ads to', parent);
+	const target = parent.querySelector('.xv-outline-footer');
+	if (target) {
+		const mainScript = createAdsScript(carbonUrl);
+		mainScript.onerror = function() {
+			mainScript.remove();
+			target.appendChild(createAdsScript(fallbackUrl));
+		}
+		target.appendChild(mainScript);
+	}
+}
+
+function createAdsScript(src) {
+	const script = document.createElement('script');
+	script.async = true;
+	script.id = "_carbonads_js";
+	script.src = src;
+
+	return script;
 }
 
 // this code will be executed twice since original document will be replaced 
