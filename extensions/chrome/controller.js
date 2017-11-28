@@ -10,7 +10,7 @@ xv_settings = {
 	_data: {},
 	getValue: function(name, default_value) {
 		var value = (name in this._data) ? this._data[name] : default_value;
-		
+
 		switch (typeof default_value) {
 			case 'number':
 				return parseFloat(value);
@@ -22,15 +22,15 @@ xv_settings = {
 				return value;
 		}
 	},
-	
+
 	setValue: function(name, value) {
 		this._data[name] = value;
 		sendMessage({
-			action: 'xv.store-settings', 
-			name: name, 
+			action: 'xv.store-settings',
+			name: name,
 			value: value}, dummy);
 	},
-	
+
 	load: function(obj) {
 		this._data = obj;
 	}
@@ -42,7 +42,7 @@ var sendMessage = chrome.runtime.sendMessage;
 
 /**
  * Returns rendered by Chrome XML tree container
- * @return {HTMLElement} 
+ * @return {HTMLElement}
  */
 function getRenderedContent() {
 	var xml_tree_viewer_output = document.getElementsByClassName('pretty-print');
@@ -59,10 +59,10 @@ function canTransform(doc) {
 	doc = doc || this._doc;
 	if (!doc)
 		return false;
-	
+
 	if (doc.nodeType == 1)
 		doc = doc.ownerDocument;
-	
+
 	return 'documentElement' in doc && isXML(doc) && !(doc.documentElement instanceof HTMLElement);
 }
 
@@ -85,19 +85,19 @@ function dummy() {}
 function handleDndClicks() {
 	var is_dnd_mode = false,
 		copy_text = '';
-		
+
 	xv_signals.dndModeEntered.add(function() {
 		is_dnd_mode = true;
 	});
-	
+
 	xv_signals.dndModeQuit.add(function() {
 		is_dnd_mode = false;
 	});
-	
+
 	xv_signals.dndMessageChanged.add(function(message) {
 		copy_text = message;
 	});
-	
+
 	document.addEventListener('click', function(evt) {
 		if (is_dnd_mode && copy_text) {
 			sendMessage({action: 'xv.copy', text: copy_text}, dummy);
@@ -144,25 +144,25 @@ function doTransform(data) {
 		function(response) {
 			var xsl_proc = new XSLTProcessor();
 			xsl_proc.importStylesheet(xv_utils.toXml(response.fileText));
-			
+
 			sendMessage({action: 'xv.get-settings'}, function(response) {
 				xv_settings.load(response.data);
 				xsl_proc.setParameter(null, 'css', chrome.extension.getURL('xv.css'));
 				xsl_proc.setParameter(null, 'options_url', chrome.extension.getURL('options.html'));
 				xsl_proc.setParameter(null, 'custom_css', xv_settings.getValue('custom_css', ''));
-				
+
 				var result = xsl_proc.transformToDocument(data);
 				document.replaceChild(document.adoptNode(result.documentElement), document.documentElement);
-				
+
 				xv_dom.setHTMLContext(result);
-				
+
 				var doctype = document.implementation.createDocumentType('html',
 					'-//W3C//DTD XHTML 1.0 Transitional//EN',
 					'http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd');
- 
+
 				var xml_doc = document.implementation.createDocument(
 						'http://www.w3.org/1999/xhtml', 'html', doctype);
- 
+
 				var replacement = null;
 				if (data instanceof Document) {
 					replacement = xml_doc.adoptNode(data.documentElement);
@@ -174,9 +174,9 @@ function doTransform(data) {
 					});
 				}
 				xml_doc.replaceChild(replacement, xml_doc.documentElement);
-				
+
 				xv_controller.process(xml_doc);
-				
+
 				// handle clicks to copy xpath
 				handleDndClicks();
 
@@ -184,11 +184,8 @@ function doTransform(data) {
 				document.addEventListener('input', trackingEventHandler);
 				document.addEventListener('click', trackingEventHandler);
 
-				// Init copy-on-click
-				initNodeCopy(document);
-
 				// Add CarbonAds
-				addAds(document);
+				setTimeout(() => addAds(document), 10);
 			});
 		}
 	);
@@ -230,7 +227,7 @@ function renderPage(url) {
 			}
 		}
 	};
-	
+
 	xhr.open("GET", url || document.URL, true);
 	xhr.send();
 }
@@ -256,76 +253,7 @@ function createAdsScript(src) {
 	return script;
 }
 
-function initNodeCopy(parent) {
-	const modifier = 18; // ALT key code
-	const tooltip = xv_dom.fromHTML('<span class="xv-dnd-tooltip xv-dnd-tooltip" style="left:auto"></span>');
-	let targetNode = null;
-	let hasKeyModifier = false;
-
-	const checkPopup = () => {
-		if (targetNode && hasKeyModifier) {
-			tooltip.textContent = 'Copy to clipboard';
-			tooltip.classList.remove('xv-dnd-tooltip-hidden');
-			targetNode.parentNode.insertBefore(tooltip, targetNode);
-		} else {
-			tooltip.classList.add('xv-dnd-tooltip-hidden');
-		}
-	}
-
-	parent.addEventListener('mouseover', evt => {
-		targetNode = evt.target.closest('.xv-tag-open') || null;
-		checkPopup();
-	});
-
-	parent.addEventListener('keydown', evt => {		
-		if (evt.keyCode === modifier) {
-			hasKeyModifier = true;
-			checkPopup();
-		}
-	});
-
-	parent.addEventListener('keyup', evt => {
-		if (evt.keyCode === modifier) {
-			hasKeyModifier = false;
-			checkPopup();
-		}
-	});
-
-	parent.addEventListener('click', evt => {
-		if (targetNode && hasKeyModifier) {
-			evt.stopPropagation();
-			evt.preventDefault();
-			console.log('prevent');
-			
-			const sourceNode = xv_renderer.getOriginalNode(targetNode.closest('.xv-node'));
-			if (sourceNode) {
-				const serializer = new XMLSerializer();
-				console.log(serializer.serializeToString(sourceNode));
-				tooltip.textContent = 'Copied!'
-			}
-		}
-	});
-}
-
-/**
- * Converts given node to string
- * @param {Node} node
- * @param {String} indentStr,
- * @param {Number} indentSize
- * @return {String}
- */
-function serializeNode(node, indentStr, indentSize) {
-	indentStr = indentStr || '\t';
-	indentSize = 0;
-	let output = '';
-
-	switch (node.nodeType) {
-
-	}
-
-}
-
-// this code will be executed twice since original document will be replaced 
+// this code will be executed twice since original document will be replaced
 // with Chrome's XML tree viewer. The real XML doc will have 'interactive' state,
 // but replaced doc will have 'complete' state
 document.addEventListener('readystatechange', function() {
@@ -335,13 +263,13 @@ document.addEventListener('readystatechange', function() {
 			var url = webIntent.getExtra ? webIntent.getExtra('url') : webIntent.data[0].url;
 			if (!url)
 				return;
-			
+
 			renderPage(url);
 			togglePageAction(false);
 			return;
 		}
-		
-		
+
+
 		var el = document && document.getElementById('webkit-xml-viewer-source-xml');
 		if (el) { // Chrome 12.x with native XML viewer
 			el.parentNode.removeChild(el);
