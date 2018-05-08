@@ -229,6 +229,7 @@ function renderPage(url) {
 	};
 
 	xhr.open("GET", url || document.URL, true);
+	xhr.setRequestHeader("Accept", "application/xml,application/xhtml+xml,text/html;q=0.8,*/*;q=0.7");
 	xhr.send();
 }
 
