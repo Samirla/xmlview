@@ -37,6 +37,7 @@
 			// normal browser – just update style
 			xv_dom.setCSS(pane, {width: width});
 			xv_dom.setCSS(source_pane, {right: width});
+			xv_dom.setCSS(source_pane, {height: (window.innerHeight - 37 + 1)});
 		} else {
 			// Freakin' crazy way to update XML element style:
 			// modify document’s stylesheet with new rules.
